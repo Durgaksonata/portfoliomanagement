@@ -1,5 +1,6 @@
 package com.sonata.portfoliomanagement.model;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,13 +8,70 @@ import java.util.List;
 
 @Getter
 @Setter
+
 public class RevenueDTO {
 
     private List<String> projectList;
     private List<String> dmList;
     private List<String> accountList;
     private List<String> pmList;
-    private List<Integer> financialYear;
+    public List<String> getProjectList() {
+		return projectList;
+	}
+
+	public void setProjectList(List<String> projectList) {
+		this.projectList = projectList;
+	}
+
+	public List<String> getDmList() {
+		return dmList;
+	}
+
+	public void setDmList(List<String> dmList) {
+		this.dmList = dmList;
+	}
+
+	public List<String> getAccountList() {
+		return accountList;
+	}
+
+	public void setAccountList(List<String> accountList) {
+		this.accountList = accountList;
+	}
+
+	public List<String> getPmList() {
+		return pmList;
+	}
+
+	public void setPmList(List<String> pmList) {
+		this.pmList = pmList;
+	}
+
+	public List<Integer> getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(List<Integer> financialYear) {
+		this.financialYear = financialYear;
+	}
+
+	public List<String> getVerticalList() {
+		return verticalList;
+	}
+
+	public void setVerticalList(List<String> verticalList) {
+		this.verticalList = verticalList;
+	}
+
+	public List<String> getClassificationList() {
+		return classificationList;
+	}
+
+	public void setClassificationList(List<String> classificationList) {
+		this.classificationList = classificationList;
+	}
+
+	private List<Integer> financialYear;
     private List<String> verticalList;
     private List<String> classificationList;
 
@@ -40,65 +98,6 @@ public class RevenueDTO {
     public void setMyList(List<String> myList) {
         this.myList = myList;
     }
-    
-    public List<String> getVerticalList() {
-        return verticalList;
-    }
-
-    public void setVerticalList(List<String> verticalList) {
-        this.verticalList = verticalList;
-    }
-    
-    public List<String> getClassificationList() {
-        return classificationList;
-    }
-
-    public void setClassificationList(List<String> classificationList) {
-        this.classificationList = classificationList;
-    }
-    
-    public List<Integer> getFinancialYear() {
-        return financialYear;
-    }
-
-    public void setFinancialYear(List<Integer> financialYear) {
-        this.financialYear = financialYear;
-    }
-    
-    public List<String> getProjectList() {
-        return projectList;
-    }
-
-    public void setProjectList(List<String> projectList) {
-        this.projectList = projectList;
-    }
-    
-    public List<String> getDmList() {
-        return dmList;
-    }
-
-    public void setDmList(List<String> dmList) {
-        this.dmList = dmList;
-    }
-    
-    public List<String> getAccountList() {
-        return accountList;
-    }
-
-    public void setAccountList(List<String> accountList) {
-        this.accountList = accountList;
-    }
-    
-    public List<String> getPmList() {
-        return pmList;
-    }
-
-    public void setPmList(List<String> pmList) {
-        this.pmList = pmList;
-    }
-    
-    
-    
 
     // Getter and setter methods for getanotherList
     private List<Integer> getanotherList;

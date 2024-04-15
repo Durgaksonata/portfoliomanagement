@@ -14,6 +14,7 @@ public class AccountBudgets {
 	public AccountBudgets() {
 		super();
 	}
+
 	public AccountBudgets(int id, String vertical, String classification, String deliveryManager, String account,
 			String projectManager, String projectName, int financialYear, Date month, String quarter, float budget) {
 		super();
