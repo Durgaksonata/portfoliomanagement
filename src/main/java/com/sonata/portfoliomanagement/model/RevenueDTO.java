@@ -16,8 +16,10 @@ public class RevenueDTO {
     private List<Integer> financialYear;
     private List<String> verticalList;
     private List<String> classificationList;
+    private List<String> quarterList;
 
-    public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList) {
+
+    public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList,List<String> quarterList) {
         this.projectList = projectList;
         this.dmList = dmList;
         this.accountList = accountList;
@@ -25,6 +27,7 @@ public class RevenueDTO {
         this.financialYear = financialYear;
         this.verticalList = verticalList;
         this.classificationList = classificationList;
+        this.quarterList = quarterList;
     }
 
     public RevenueDTO() {
@@ -40,75 +43,12 @@ public class RevenueDTO {
     public void setMyList(List<String> myList) {
         this.myList = myList;
     }
-    
-    public List<String> getVerticalList() {
-        return verticalList;
-    }
-
-    public void setVerticalList(List<String> verticalList) {
-        this.verticalList = verticalList;
-    }
-    
-    public List<String> getClassificationList() {
-        return classificationList;
-    }
-
-    public void setClassificationList(List<String> classificationList) {
-        this.classificationList = classificationList;
-    }
-    
-    public List<Integer> getFinancialYear() {
-        return financialYear;
-    }
-
-    public void setFinancialYear(List<Integer> financialYear) {
-        this.financialYear = financialYear;
-    }
-    
-    public List<String> getProjectList() {
-        return projectList;
-    }
-
-    public void setProjectList(List<String> projectList) {
-        this.projectList = projectList;
-    }
-    
-    public List<String> getDmList() {
-        return dmList;
-    }
-
-    public void setDmList(List<String> dmList) {
-        this.dmList = dmList;
-    }
-    
-    public List<String> getAccountList() {
-        return accountList;
-    }
-
-    public void setAccountList(List<String> accountList) {
-        this.accountList = accountList;
-    }
-    
-    public List<String> getPmList() {
-        return pmList;
-    }
-
-    public void setPmList(List<String> pmList) {
-        this.pmList = pmList;
-    }
-    
-    
-    
 
     // Getter and setter methods for getanotherList
     private List<Integer> getanotherList;
 
     public List<Integer> getGetanotherList() {
         return getanotherList;
-    }
-
-    public void setGetanotherList(List<Integer> getanotherList) {
-        this.getanotherList = getanotherList;
     }
 
     // Method to check if the DTO is empty
