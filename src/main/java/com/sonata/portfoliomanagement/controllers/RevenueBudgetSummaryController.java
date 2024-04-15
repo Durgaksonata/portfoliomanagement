@@ -2,7 +2,6 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 import com.sonata.portfoliomanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +24,6 @@ public class RevenueBudgetSummaryController {
 	DataEntryRepository dataEntryRepo;
 
 	RestTemplate restTemplate = new RestTemplate();
-	List<String> stringList = new ArrayList<>();
-	
-	
-//	@PostMapping("/saveRevenue")
-//    public ResponseEntity<RevenueBudgetSummary> createAcBudgets(@RequestBody RevenueBudgetSummary revenue) {
-//		RevenueBudgetSummary createRevenueBudgets = revenueRepo.save(revenue);
-//        return new ResponseEntity<>(createRevenueBudgets, HttpStatus.CREATED);
-//    }
 
 	//method to add data into revenue table
 	@PostMapping("/save")
@@ -42,11 +33,13 @@ public class RevenueBudgetSummaryController {
 	    
 	    return new ResponseEntity<>(createdRevenue, HttpStatus.CREATED);
 	}
+
 	@GetMapping("/get")
 	public ResponseEntity<List<RevenueBudgetSummary>> getAllRevenueBudgets() {
 		List<RevenueBudgetSummary> allRevenueBudgets = revenueRepo.findAll();
 		return ResponseEntity.ok(allRevenueBudgets);
 	}
+
 	@GetMapping("/{id}")
 	public RevenueBudgetSummary getbyid(@PathVariable int id) {
 		return revenueRepo.findById(id).get();
@@ -62,7 +55,6 @@ public class RevenueBudgetSummaryController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-
 
 	//method to get only the list of DeliveryManagers present-->
 	@GetMapping("/getdmlist")
@@ -102,7 +94,6 @@ public class RevenueBudgetSummaryController {
 
 		return resultList;
 	}
-	
 	
 	//getting list for all accounts only-->
 	@GetMapping("/getaccountlist")
@@ -181,10 +172,6 @@ public class RevenueBudgetSummaryController {
 	        return resultList;
 	    }
 
-
-
-
-	
 	//getting list for all vertical only-->
 	@GetMapping("/getverticallist")
 	public List<String> getVerticalList()
@@ -222,14 +209,8 @@ public class RevenueBudgetSummaryController {
 		return resultList2;
 	}
 
-
-
-
-
 	//List of all methods along with  all the data
 
-
-	
 	//getting classification list-->
 	@GetMapping("/getclassificationlist")
 	public List<String> getClassificationList()
@@ -249,7 +230,6 @@ public class RevenueBudgetSummaryController {
 		return stringList1;
 	}
 
-
 	@GetMapping("/classifications")
 	public List<RevenueBudgetSummary> getRevenuebyClassification(@RequestBody RevenueDTO classificationList) {
 		// Call the POST endpoint to get the list of strings
@@ -268,10 +248,6 @@ public class RevenueBudgetSummaryController {
 		return resultList1;
 	}
 
-
-
-
-	
 	//getting list for all projects only-->
 	@GetMapping("/getprojectlist")
 	public List<String> getProjectList()
@@ -309,11 +285,6 @@ public class RevenueBudgetSummaryController {
 		return resultList3;
 	}
 
-
-
-
-
-	
 	//getting list for all years only-->
 	@GetMapping("/getfinancialyearlist")
 	public List<Integer> getFinancialYearList() {
@@ -326,7 +297,6 @@ public class RevenueBudgetSummaryController {
 	}
 
 	//This POST method puts the specific FYs required to get data from.Multiple Fys sent through the GET method below
-
 	@PostMapping("/FY/post")
 	public List<Integer> fyIntegerList(@RequestBody RevenueDTO yearsList) {
 		List<Integer> integerList = yearsList.getGetanotherList();
@@ -344,9 +314,6 @@ public class RevenueBudgetSummaryController {
 		}
 		return resultList;
 	}
-
-
-
 	
 	//get all quarters-->
 	@GetMapping("/getquarterlist")
@@ -386,8 +353,6 @@ public class RevenueBudgetSummaryController {
 
 		return resultList;
 	}
-
-
 	
 	//get all Months-->
 	@GetMapping("/getmonthlist")
@@ -399,11 +364,6 @@ public class RevenueBudgetSummaryController {
 	    }
 	    return monthList.stream().distinct().collect(Collectors.toList());
 	}
-	//-----------------------------------------------------------------------------
-
-
-
-
 
 	//this method is going to add multiple years,accounts for a dm into a single array object instead of adding each account as a seperate object within the list-->
 	@GetMapping("/ultraFilter")
@@ -449,7 +409,8 @@ public class RevenueBudgetSummaryController {
 
 		return ResponseEntity.ok(project);
 	}
-	//list all pms under multiple acnt
+
+	//list all pms under multiple account
 	@GetMapping("/pmbyaccount")
 	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO pmList){
 		List<String>accountNames = pmList.getMyList();
@@ -464,6 +425,7 @@ public class RevenueBudgetSummaryController {
 
 		return ResponseEntity.ok(projectManager);
 	}
+
 	@GetMapping("/dmbyclassification")
 	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
 		List<String> classificationNames = classificationList.getMyList();
@@ -476,8 +438,6 @@ public class RevenueBudgetSummaryController {
 		}
 		return ResponseEntity.ok(dmNames);
 	}
-
-
 
 	@GetMapping("/financialYearByProject")
 	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {
@@ -528,50 +488,7 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
-
-
-
-
-
-
-
-
-
-//	@GetMapping("/financialYearByCriteria")
-//	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(@RequestBody RevenueDTO criteria) {
-//		List<String> verticals = criteria.getVerticalList();
-//		List<String> classifications = criteria.getClassificationList();
-//		List<String> dmList = criteria.getDmList();
-//		List<String> accountList = criteria.getAccountList();
-//		List<String> pmList = criteria.getPmList();
-//		List<String> projectList = criteria.getProjectList();
-//		List<Integer> financialYears = criteria.getFinancialYear(); // Assuming getFinancialYearList() returns a list of financial years
-//		List<RevenueBudgetSummary> financialData = new ArrayList<>();
-//
-//		for (String vertical : verticals) {
-//			for (String classification : classifications) {
-//				for (String dm : dmList) {
-//					for (String account : accountList) {
-//						for (String pm : pmList) {
-//							for (String project : projectList) {
-//								for (Integer financialYear : financialYears) {
-//									List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYear(
-//											vertical, classification, dm, account, pm, project, financialYear);
-//									financialData.addAll(revenues);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//
-//		return ResponseEntity.ok(financialData);
-//	}
-
-//
-
-
+	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
 	@GetMapping("/financialYearByCriteria")
 	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(@RequestBody RevenueDTO criteria) {
 		// Check if any field has been provided in the request
@@ -580,64 +497,104 @@ public class RevenueBudgetSummaryController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		List<RevenueBudgetSummary> financialData;
+		List<RevenueBudgetSummary> financialData = null;
 
-		// Check if financial year criteria is provided
-		if (criteria.getFinancialYear() != null && !criteria.getFinancialYear().isEmpty()) {
-			// If financial year criteria is provided, fetch data for the specified years
-			financialData = revenueRepo.findByFinancialYearIn(criteria.getFinancialYear());
+		// Fetch data only if all criteria are provided and match
+		if (areAllCriteriaMatched(criteria)) {
+			financialData = fetchData(criteria);
 		} else {
-			// If no financial year criteria provided, further check other criteria
-			if (criteria.getProjectList() != null) {
-				// If projectList is provided, fetch data by projectList
-				financialData = revenueRepo.findByProjectNameIn(criteria.getProjectList());
-			} else if (criteria.getVerticalList() != null) {
-				// If verticalList is provided, fetch data by verticalList
-				financialData = revenueRepo.findByVerticalIn(criteria.getVerticalList());
-			} else if (criteria.getClassificationList() != null) {
-				// If classificationList is provided, fetch data by classificationList
-				financialData = revenueRepo.findByClassificationIn(criteria.getClassificationList());
-			} else if (criteria.getDmList() != null) {
-				// If dmList is provided, fetch data by dmList
-				financialData = revenueRepo.findByDeliveryManagerIn(criteria.getDmList());
-			} else if (criteria.getAccountList() != null) {
-				// If accountList is provided, fetch data by accountList
-				financialData = revenueRepo.findByAccountIn(criteria.getAccountList());
-			} else if (criteria.getPmList() != null) {
-				// If pmList is provided, fetch data by pmList
-				financialData = revenueRepo.findByProjectManagerIn(criteria.getPmList());
-			} else {
-				// If no specific field provided, return all data
-				financialData = revenueRepo.findAll();
-			}
+			// Indicate that the specified data doesn't exist
+			financialData = Collections.emptyList(); // Or you can set it to null
 		}
 
 		return ResponseEntity.ok(financialData);
 	}
 
+	private boolean areAllCriteriaMatched(RevenueDTO criteria) {
+		// Check if all criteria are provided and match
+		return criteria.getFinancialYear() != null &&
+				criteria.getProjectList() != null &&
+				criteria.getVerticalList() != null &&
+				criteria.getClassificationList() != null &&
+				criteria.getDmList() != null &&
+				criteria.getAccountList() != null &&
+				criteria.getPmList() != null;
+	}
 
 
+	//creating a criteria for specifying by quarters as well as a filter-->
+	@GetMapping("/quarterByCriteria")
+	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteriaofQuarter(@RequestBody RevenueDTO criteria1) {
+		// Check if any field has been provided in the request
+		if (criteria1.isEmpty()) {
+			// If no fields provided, return bad request
+			return ResponseEntity.badRequest().build();
+		}
+
+		List<RevenueBudgetSummary> financialData1 = null;
+
+		// Fetch data only if all criteria are provided and match
+		if (areAllCriteriaMatchedforQuarter(criteria1)) {
+			financialData1 = fetchData(criteria1);
+		} else {
+			// Indicate that the specified data doesn't exist
+			financialData1 = Collections.emptyList(); // Or you can set it to null
+		}
+
+		return ResponseEntity.ok(financialData1);
+	}
+
+	private boolean areAllCriteriaMatchedforQuarter(RevenueDTO criteria1) {
+		// Check if all criteria are provided and match
+		return criteria1.getFinancialYear() != null &&
+				criteria1.getProjectList() != null &&
+				criteria1.getVerticalList() != null &&
+				criteria1.getClassificationList() != null &&
+				criteria1.getDmList() != null &&
+				criteria1.getAccountList() != null &&
+				criteria1.getPmList() != null &&
+				criteria1.getQuarterList() != null;
+	}
+
+
+	private List<RevenueBudgetSummary> fetchData(RevenueDTO criteria) {
+		// Fetch data from the repository based on the provided criteria
+		return revenueRepo.findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerIn(
+				criteria.getFinancialYear(),
+				criteria.getProjectList(),
+				criteria.getVerticalList(),
+				criteria.getClassificationList(),
+				criteria.getDmList(),
+				criteria.getAccountList(),
+				criteria.getPmList()
+		);
+	}
 
 	@GetMapping("/dm/{deliveryManager}")
 	public List<RevenueBudgetSummary> getRevenuesByDM(@PathVariable("deliveryManager") String deliveryManager) {
 		List<RevenueBudgetSummary> revenues = revenueRepo.findBydeliveryManager(deliveryManager);
 		return revenues;
 	}
+
 	@GetMapping("/quarter/{quarter}")
 	public List<RevenueBudgetSummary> getRevenuesByquarter(@PathVariable("quarter") String quarter) {
 		List<RevenueBudgetSummary> revenues = revenueRepo.findByquarter(quarter);
 		return revenues;
 	}
+
 	@GetMapping("/month/{month}")
-	public List<RevenueBudgetSummary> getRevenuesBymonth(@PathVariable("month") String month) {
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByquarter(month);
+	public List<RevenueBudgetSummary> getRevenuesByMonth(@PathVariable("month") int month) {
+		// Assuming month corresponds to financial year
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByFinancialYear(month);
 		return revenues;
 	}
+
 	@GetMapping("/account/{account}")
 	public List getRevenuesByAccount(@PathVariable("account") String account) {
 		List revenues = revenueRepo.findByAccount(account);
 		return revenues;
 	}
+
 	@GetMapping("/financialYear/{year}")
 	public List getByFinancialYear(@PathVariable("year") int year) {
 		return revenueRepo.findByFinancialYear(year);
@@ -661,8 +618,5 @@ public class RevenueBudgetSummaryController {
 	public List<RevenueBudgetSummary> getRevenueByProjectName(@PathVariable("projectName") String projectName) {
 		return revenueRepo.findByProjectName(projectName);
 	}
-
-
-
 
 }
