@@ -379,117 +379,100 @@ public class RevenueBudgetSummaryController {
 	}
 
 	//this method is getting the list of accounts only by giving the dm names in the request body in postman.this list to be sent in the next method connecting to it.
-	@GetMapping("/accountbydm")
+	@PostMapping("/accountbydm")
 	public ResponseEntity<Set<String>> getAccountByDM(@RequestBody RevenueDTO dmList) {
 		List<String> dmNames = dmList.getMyList();
-		Set<String> accountNames = new HashSet<>();
-
-		for (String dmName : dmNames) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManager(dmName);
-			for (RevenueBudgetSummary revenue : revenues) {
-				accountNames.add(revenue.getAccount());
-			}
+		Set<String> account = new HashSet<>();
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerIn(dmNames);
+		for (RevenueBudgetSummary revenue : revenues) {
+			account.add(revenue.getAccount());
 		}
-
-		return ResponseEntity.ok(accountNames);
+		return ResponseEntity.ok(account);
 	}
 
 
-	@GetMapping("/projectbypm")
+	@PostMapping("/projectbypm1")
 	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
 		List<String> pmNames = pmList.getMyList();
 		Set<String> project = new HashSet<>();
 
-		for (String pmName : pmNames) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByprojectManager(pmName);
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
 			for (RevenueBudgetSummary revenue : revenues) {
 				project.add(revenue.getProjectName());
 			}
-		}
+
 
 		return ResponseEntity.ok(project);
 	}
 
 	//list all pms under multiple account
-	@GetMapping("/pmbyaccount")
+	@PostMapping("/pmbyaccount")
 	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO pmList){
 		List<String>accountNames = pmList.getMyList();
 		Set<String>  projectManager= new HashSet<>();
 
-		for (String acntName : accountNames) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByAccount(acntName);
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountIn(accountNames);
 			for (RevenueBudgetSummary revenue : revenues) {
 				projectManager.add(revenue.getProjectManager());
 			}
-		}
 
 		return ResponseEntity.ok(projectManager);
 	}
 
-	@GetMapping("/dmbyclassification")
+	@PostMapping("/dmbyclassification")
 	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
 		List<String> classificationNames = classificationList.getMyList();
 		Set<String> dmNames = new HashSet<>();
-		for (String classificationName : classificationNames) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByClassification(classificationName); // Change method name
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByClassificationIn(classificationNames); // Change method name
 			for (RevenueBudgetSummary revenue : revenues) {
 				dmNames.add(revenue.getDeliveryManager());
 			}
-		}
 		return ResponseEntity.ok(dmNames);
 	}
 
-	@GetMapping("/financialYearByProject")
+	@PostMapping("/financialYearByProject")
 	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {
 		List<String> projectNames = projectList.getMyList();
 		Set<Integer> financialYears = new HashSet<>();
 
-		for (String projectName : projectNames) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectName(projectName);
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectNameIn(projectNames);
 			for (RevenueBudgetSummary revenue : revenues) {
 				financialYears.add(revenue.getFinancialYear());
 			}
-		}
 		return ResponseEntity.ok(financialYears);
 	}
 
 
 //In th request body for this method. we enter two things. vertical and classification and this will give the dm list under these specifics-->
-	@GetMapping("/dmbyvertical&classification")
+	@PostMapping("/dmbyvertical&classification")
 	public ResponseEntity<Set<String>> getDMByVerticalAndClassification(@RequestBody RevenueDTO dmList) {
 		List<String> verticals = dmList.getVerticalList();
 		List<String> classifications = dmList.getClassificationList();
 		Set<String> deliveryManagerNames = new HashSet<>();
 
-		for (String vertical : verticals) {
-			for (String classification : classifications) {
-				List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalAndClassification(vertical, classification);
+				List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalInAndClassificationIn(verticals, classifications);
 				for (RevenueBudgetSummary revenue : revenues) {
 					deliveryManagerNames.add(revenue.getDeliveryManager());
 				}
-			}
-		}
 
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
-	@GetMapping("/dmbyvertical")
+	@PostMapping("/dmbyvertical")
 	public ResponseEntity<Set<String>> getDMByVertical(@RequestBody RevenueDTO verticalList) {
 		List<String> verticals = verticalList.getMyList();
 		Set<String> deliveryManagerNames = new HashSet<>();
 
-		for (String vertical : verticals) {
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByVertical(vertical);
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalIn(verticals);
 			for (RevenueBudgetSummary revenue : revenues) {
 				deliveryManagerNames.add(revenue.getDeliveryManager());
 			}
-		}
 
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
 	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
-	@GetMapping("/financialYearByCriteria")
+	@PostMapping("/financialYearByCriteria")
 	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(@RequestBody RevenueDTO criteria) {
 		// Check if any field has been provided in the request
 		if (criteria.isEmpty()) {
@@ -523,7 +506,7 @@ public class RevenueBudgetSummaryController {
 
 
 	//creating a criteria for specifying by quarters as well as a filter-->
-	@GetMapping("/quarterByCriteria")
+	@PostMapping ("/quarterByCriteria")
 	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteriaofQuarter(@RequestBody RevenueDTO criteria1) {
 		// Check if any field has been provided in the request
 		if (criteria1.isEmpty()) {
@@ -573,16 +556,32 @@ public class RevenueBudgetSummaryController {
 
 	private List<RevenueBudgetSummary> fetchData(RevenueDTO criteria) {
 		// Fetch data from the repository based on the provided criteria
-		return revenueRepo.findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerIn(
+		return revenueRepo.findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerInAndQuarterIn(
 				criteria.getFinancialYear(),
 				criteria.getProjectList(),
 				criteria.getVerticalList(),
 				criteria.getClassificationList(),
 				criteria.getDmList(),
 				criteria.getAccountList(),
-				criteria.getPmList()
+				criteria.getPmList(),
+				criteria.getQuarterList());
+
+	}
+
+	private List<RevenueBudgetSummary> fetchData1(RevenueDTO criteria1) {
+		// Fetch data from the repository based on the provided criteria
+		return revenueRepo.findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerInAndQuarterIn(
+				criteria1.getFinancialYear(),
+				criteria1.getProjectList(),
+				criteria1.getVerticalList(),
+				criteria1.getClassificationList(),
+				criteria1.getDmList(),
+				criteria1.getAccountList(),
+				criteria1.getPmList(),
+				criteria1.getQuarterList()
 		);
 	}
+
 
 	@GetMapping("/dm/{deliveryManager}")
 	public List<RevenueBudgetSummary> getRevenuesByDM(@PathVariable("deliveryManager") String deliveryManager) {
