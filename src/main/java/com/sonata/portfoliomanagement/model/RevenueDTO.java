@@ -55,6 +55,17 @@ public class RevenueDTO {
     public boolean isEmpty() {
         return projectList == null && dmList == null && accountList == null && pmList == null && financialYear == null && verticalList == null && classificationList == null;
     }
+
+    public boolean areAllCriteriaMatched() {
+        // Check if all criteria are provided and match
+        return this.getFinancialYear() != null &&
+                this.getProjectList() != null &&
+                this.getVerticalList() != null &&
+                this.getClassificationList() != null &&
+                this.getDmList() != null &&
+                this.getAccountList() != null &&
+                this.getPmList() != null;
+    }
 }
 
 

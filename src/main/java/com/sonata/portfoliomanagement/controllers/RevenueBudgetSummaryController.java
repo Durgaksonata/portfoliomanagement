@@ -68,32 +68,7 @@ public class RevenueBudgetSummaryController {
 		return dmList.stream().distinct().collect(Collectors.toList());
 	}
 
-//	//This POST method puts the specific DMS required to get data from.Multiple DMs sent through the GET method below
-//	@PostMapping("/DM/post")
-//	public List<String> stringList(@RequestBody RevenueDTO dmList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList = dmList.getMyList();
-//		return stringList;
-//	}
-//
-//	//The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple DMS
-//	@GetMapping("/DMs")
-//	public List<RevenueBudgetSummary> getRevenuebyDM(@RequestBody RevenueDTO dmList) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/DM/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, dmList, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByDeliveryManager(getList);
-//			resultList.addAll(filteredList);
-//		}
-//
-//		return resultList;
-//	}
+
 
 	@GetMapping("/DMs/{dmList}")
 	public List<RevenueBudgetSummary> getRevenuebyDM(@PathVariable List<String> dmList) {
@@ -121,32 +96,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return accountList.stream().distinct().collect(Collectors.toList());
 	}
-//	//This POST method puts the specific accounts required to get data from.Multiple accounts sent through the GET method below
-//	@PostMapping("/account/post")
-//	public List<String> stringListForAccount(@RequestBody RevenueDTO accountList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList = accountList.getMyList();
-//		return stringList;
-//	}
-//
-//	//The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple accounts
-//	@GetMapping("/Accounts")
-//	public List<RevenueBudgetSummary> getRevenuebyAccount(@RequestBody RevenueDTO accountList) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/account/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, accountList, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByAccount(getList);
-//			resultList.addAll(filteredList);
-//		}
-//
-//		return resultList;
-//	}
+
 
 	@GetMapping("/Accounts/{accountList}")
 	public List<RevenueBudgetSummary> getRevenuebyAccount(@PathVariable List<String> accountList) {
@@ -174,33 +124,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return pmList.stream().distinct().collect(Collectors.toList());
 	}
-//
-//	//This POST method puts the specific DMS required to get data from.Multiple DMs sent through the GET method below
-//	    @PostMapping("/pm/post")
-//	    public List<String> pmstringList(@RequestBody RevenueDTO pmlist) {
-//	        // Extract the list of strings from the RevenueDTO object
-//	        List<String> pmstringList = pmlist.getMyList();
-//	        return pmstringList;
-//	    }
-//
-//	    //The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple DMS
-//	    @GetMapping("/pms")
-//	    public List<RevenueBudgetSummary> getRevenuebyPM(@RequestBody RevenueDTO pmlist) {
-//	        // Call the POST endpoint to get the list of strings
-//	        String postUrl = "http://localhost:8081/revenuebudgets/pm/post";
-//	        List<String> postResponse = restTemplate.postForObject(postUrl, pmlist, List.class);
-//
-//	        // Create a list to store Revenue objects
-//	        List<RevenueBudgetSummary> resultList = new ArrayList<>();
-//
-//	        // Iterate over the response strings and filter Revenue objects accordingly
-//	        for (String getList : postResponse) {
-//	           List<RevenueBudgetSummary> filteredList =revenueRepo.findByprojectManager(getList);
-//	           resultList.addAll(filteredList);
-//	        }
-//
-//	        return resultList;
-//	    }
+
 
 	@GetMapping("/pms/{pmList}")
 	public List<RevenueBudgetSummary> getRevenuebyPM(@PathVariable List<String> pmList) {
@@ -228,31 +152,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return verticalList.stream().distinct().collect(Collectors.toList());
 	}
-//
-//	@PostMapping("/vertical/post")
-//	public List<String> stringList2(@RequestBody RevenueDTO verticalList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList2 = verticalList.getMyList();
-//		return stringList2;
-//	}
-//
-//	@GetMapping("/verticals")
-//	public List<RevenueBudgetSummary> getRevenueByVertical(@RequestBody RevenueDTO verticalList) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/vertical/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, verticalList, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList2 = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByVertical(getList);
-//			resultList2.addAll(filteredList);
-//		}
-//
-//		return resultList2;
-//	}
+
 
 	@GetMapping("/verticals/{verticalList}")
 	public List<RevenueBudgetSummary> getRevenueByVertical(@PathVariable List<String> verticalList) {
@@ -282,31 +182,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return classficationList.stream().distinct().collect(Collectors.toList());
 	}
-//
-//	@PostMapping("/classification/post")
-//	public List<String> stringList1(@RequestBody RevenueDTO classificationList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList1 = classificationList.getMyList();
-//		return stringList1;
-//	}
-//
-//	@GetMapping("/classifications")
-//	public List<RevenueBudgetSummary> getRevenuebyClassification(@RequestBody RevenueDTO classificationList) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/classification/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, classificationList, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList1 = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByclassification(getList);
-//			resultList1.addAll(filteredList);
-//		}
-//
-//		return resultList1;
-//	}
+
 
 	@GetMapping("/classifications/{classificationList}")
 	public List<RevenueBudgetSummary> getRevenuebyClassification(@PathVariable List<String> classificationList) {
@@ -335,31 +211,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return projectList.stream().distinct().collect(Collectors.toList());
 	}
-//
-//	@PostMapping("/project/post")
-//	public List<String> stringList3(@RequestBody RevenueDTO projectList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList3 = projectList.getMyList();
-//		return stringList3;
-//	}
-//
-//	@GetMapping("/projects")
-//	public List<RevenueBudgetSummary> getRevenueByProject(@RequestBody RevenueDTO projectList) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/project/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, projectList, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList3 = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByProjectName(getList);
-//			resultList3.addAll(filteredList);
-//		}
-//
-//		return resultList3;
-//	}
+
 
 	@GetMapping("/projects/{projectList}")
 	public List<RevenueBudgetSummary> getRevenueByProject(@PathVariable List<String> projectList) {
@@ -387,24 +239,6 @@ public class RevenueBudgetSummaryController {
 	    return fyList.stream().distinct().collect(Collectors.toList());
 	}
 
-//	//This POST method puts the specific FYs required to get data from.Multiple Fys sent through the GET method below
-//	@PostMapping("/FY/post")
-//	public List<Integer> fyIntegerList(@RequestBody RevenueDTO yearsList) {
-//		List<Integer> integerList = yearsList.getGetanotherList();
-//		return integerList;
-//	}
-//
-//	@GetMapping("/FYs")
-//	public List<RevenueBudgetSummary> getRevenuebyFY(@RequestBody RevenueDTO yearsList) {
-//		String postUrl = "http://localhost:8081/revenuebudgets/FY/post";
-//		List<Integer> postResponse = restTemplate.postForObject(postUrl, yearsList, List.class);
-//		List<RevenueBudgetSummary> resultList = new ArrayList<>();
-//		for (Integer year : postResponse) {
-//			List<RevenueBudgetSummary> filteredList = revenueRepo.findByFinancialYear(year);
-//			resultList.addAll(filteredList);
-//		}
-//		return resultList;
-//	}
 
 	@GetMapping("/FYs/{yearsList}")
 	public List<RevenueBudgetSummary> getRevenueByFY(@PathVariable List<Integer> yearsList) {
@@ -433,32 +267,6 @@ public class RevenueBudgetSummaryController {
 		return quarterList.stream().distinct().collect(Collectors.toList());
 	}
 
-	//This POST method puts the specific quarters required to get data from.Multiple quarters sent through the GET method below
-//	@PostMapping("/quarter/post")
-//	public List<String> stringListForQuarter(@RequestBody RevenueDTO quarterList) {
-//		// Extract the list of strings from the RevenueDTO object
-//		List<String> stringList = quarterList.getMyList();
-//		return stringList;
-//	}
-//
-//	//The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple quartersS
-//	@GetMapping("/quarters")
-//	public List<RevenueBudgetSummary> getRevenuebyquarter(@RequestBody RevenueDTO quarterlist) {
-//		// Call the POST endpoint to get the list of strings
-//		String postUrl = "http://localhost:8081/revenuebudgets/quarter/post";
-//		List<String> postResponse = restTemplate.postForObject(postUrl, quarterlist, List.class);
-//
-//		// Create a list to store Revenue objects
-//		List<RevenueBudgetSummary> resultList = new ArrayList<>();
-//
-//		// Iterate over the response strings and filter Revenue objects accordingly
-//		for (String getList : postResponse) {
-//			List<RevenueBudgetSummary> filteredList =revenueRepo.findByquarter(getList);
-//			resultList.addAll(filteredList);
-//		}
-//
-//		return resultList;
-//	}
 
 	@GetMapping("/quarters/{quarterList}")
 	public List<RevenueBudgetSummary> getRevenueByQuarter(@PathVariable List<String> quarterList) {
@@ -500,117 +308,6 @@ public class RevenueBudgetSummaryController {
 	}
 
 	//this method is getting the list of accounts only by giving the dm names in the request body in postman.this list to be sent in the next method connecting to it.
-
-
-	//	@GetMapping("/accountbydm")
-//	public ResponseEntity<Set<String>> getAccountByDM(@RequestBody RevenueDTO dmList) {
-//		List<String> dmNames = dmList.getMyList();
-//		Set<String> accountNames = new HashSet<>();
-//
-//		for (String dmName : dmNames) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManager(dmName);
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				accountNames.add(revenue.getAccount());
-//			}
-//		}
-//		return ResponseEntity.ok(accountNames);
-//	}
-
-
-//	@GetMapping("/projectbypm")
-//	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
-//		List<String> pmNames = pmList.getMyList();
-//		Set<String> project = new HashSet<>();
-//
-//		for (String pmName : pmNames) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByprojectManager(pmName);
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				project.add(revenue.getProjectName());
-//			}
-//		}
-//
-//		return ResponseEntity.ok(project);
-//	}
-
-
-
-	//list all pms under multiple account
-//	@GetMapping("/pmbyaccount")
-//	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO pmList){
-//		List<String>accountNames = pmList.getMyList();
-//		Set<String>  projectManager= new HashSet<>();
-//
-//		for (String acntName : accountNames) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByAccount(acntName);
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				projectManager.add(revenue.getProjectManager());
-//			}
-//		}
-//
-//		return ResponseEntity.ok(projectManager);
-//	}
-//
-//	@GetMapping("/dmbyclassification")
-//	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
-//		List<String> classificationNames = classificationList.getMyList();
-//		Set<String> dmNames = new HashSet<>();
-//		for (String classificationName : classificationNames) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByClassification(classificationName); // Change method name
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				dmNames.add(revenue.getDeliveryManager());
-//			}
-//		}
-//		return ResponseEntity.ok(dmNames);
-//	}
-//
-//	@GetMapping("/financialYearByProject")
-//	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {
-//		List<String> projectNames = projectList.getMyList();
-//		Set<Integer> financialYears = new HashSet<>();
-//
-//		for (String projectName : projectNames) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectName(projectName);
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				financialYears.add(revenue.getFinancialYear());
-//			}
-//		}
-//		return ResponseEntity.ok(financialYears);
-//	}
-//
-//
-////In th request body for this method. we enter two things. vertical and classification and this will give the dm list under these specifics-->
-//	@GetMapping("/dmbyvertical&classification")
-//	public ResponseEntity<Set<String>> getDMByVerticalAndClassification(@RequestBody RevenueDTO dmList) {
-//		List<String> verticals = dmList.getVerticalList();
-//		List<String> classifications = dmList.getClassificationList();
-//		Set<String> deliveryManagerNames = new HashSet<>();
-//
-//		for (String vertical : verticals) {
-//			for (String classification : classifications) {
-//				List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalAndClassification(vertical, classification);
-//				for (RevenueBudgetSummary revenue : revenues) {
-//					deliveryManagerNames.add(revenue.getDeliveryManager());
-//				}
-//			}
-//		}
-//
-//		return ResponseEntity.ok(deliveryManagerNames);
-//	}
-//
-//	@GetMapping("/dmbyvertical")
-//	public ResponseEntity<Set<String>> getDMByVertical(@RequestBody RevenueDTO verticalList) {
-//		List<String> verticals = verticalList.getMyList();
-//		Set<String> deliveryManagerNames = new HashSet<>();
-//
-//		for (String vertical : verticals) {
-//			List<RevenueBudgetSummary> revenues = revenueRepo.findByVertical(vertical);
-//			for (RevenueBudgetSummary revenue : revenues) {
-//				deliveryManagerNames.add(revenue.getDeliveryManager());
-//			}
-//		}
-//
-//		return ResponseEntity.ok(deliveryManagerNames);
-//	}
 
 
 
@@ -718,19 +415,47 @@ public class RevenueBudgetSummaryController {
 
 
 
-	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
+
+
 	@GetMapping("/financialYearByCriteria")
-	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(@RequestBody RevenueDTO criteria) {
-		// Check if any field has been provided in the request
-		if (criteria.isEmpty()) {
-			// If no fields provided, return bad request
+	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(
+			@RequestParam(value = "verticalList", required = false) List<String> verticalList,
+			@RequestParam(value = "classificationList", required = false) List<String> classificationList,
+			@RequestParam(value = "dmList", required = false) List<String> dmList,
+			@RequestParam(value = "accountList", required = false) String accountList,
+			@RequestParam(value = "pmList", required = false) List<String> pmList,
+			@RequestParam(value = "projectList", required = false) List<String> projectList,
+			@RequestParam(value = "financialYear", required = false) List<Integer> financialYear) {
+
+		// Check if any query parameter has been provided
+		if (verticalList == null || classificationList == null || dmList == null ||
+				accountList == null || pmList == null || projectList == null || financialYear == null) {
+			// If any parameter is missing, return bad request
 			return ResponseEntity.badRequest().build();
 		}
+
+		RevenueDTO criteria = new RevenueDTO();
+		criteria.setVerticalList(verticalList);
+		criteria.setClassificationList(classificationList);
+		criteria.setDmList(dmList);
+
+		// Handle accountList
+		if (accountList != null) {
+			List<String> accountListValues = Arrays.asList(accountList.split(","));
+			criteria.setAccountList(accountListValues);
+
+		} else {
+			criteria.setAccountList(Collections.emptyList());
+		}
+
+		criteria.setPmList(pmList);
+		criteria.setProjectList(projectList);
+		criteria.setFinancialYear(financialYear);
 
 		List<RevenueBudgetSummary> financialData = null;
 
 		// Fetch data only if all criteria are provided and match
-		if (areAllCriteriaMatched(criteria)) {
+		if (criteria.areAllCriteriaMatched()) {
 			financialData = fetchData(criteria);
 		} else {
 			// Indicate that the specified data doesn't exist
@@ -740,16 +465,15 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(financialData);
 	}
 
-	private boolean areAllCriteriaMatched(RevenueDTO criteria) {
-		// Check if all criteria are provided and match
-		return criteria.getFinancialYear() != null &&
-				criteria.getProjectList() != null &&
-				criteria.getVerticalList() != null &&
-				criteria.getClassificationList() != null &&
-				criteria.getDmList() != null &&
-				criteria.getAccountList() != null &&
-				criteria.getPmList() != null;
-	}
+
+
+
+
+
+
+
+
+
 
 
 	//creating a criteria for specifying by quarters as well as a filter-->
