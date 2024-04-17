@@ -495,19 +495,19 @@ public class RevenueBudgetSummaryController {
 		for (String quarter : quarters) {
 			switch (quarter) {
 				case "Q1":
-					months.addAll(getMonthsForQuarter(1, monthFormat));
-					break;
-				case "Q2":
 					months.addAll(getMonthsForQuarter(4, monthFormat));
 					break;
-				case "Q3":
+				case "Q2":
 					months.addAll(getMonthsForQuarter(7, monthFormat));
 					break;
-				case "Q4":
+				case "Q3":
 					months.addAll(getMonthsForQuarter(10, monthFormat));
 					break;
+				case "Q4":
+					months.addAll(getMonthsForQuarter(1, monthFormat));
+					break;
 				default:
-					// Handle invalid quarter input
+				System.out.println("Enter Valid Data!");
 					break;
 			}
 		}
