@@ -1,5 +1,6 @@
 package com.sonata.portfoliomanagement.controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.sonata.portfoliomanagement.model.*;
@@ -392,7 +393,7 @@ public class RevenueBudgetSummaryController {
 	}
 
 
-	@PostMapping("/projectbypm1")
+	@PostMapping("/projectbypm")
 	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
 		List<String> pmNames = pmList.getMyList();
 		Set<String> project = new HashSet<>();
@@ -459,6 +460,7 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
+	//this method is to find dms using vertical only-->
 	@PostMapping("/dmbyvertical")
 	public ResponseEntity<Set<String>> getDMByVertical(@RequestBody RevenueDTO verticalList) {
 		List<String> verticals = verticalList.getMyList();
@@ -471,6 +473,91 @@ public class RevenueBudgetSummaryController {
 
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
+
+
+
+
+
+
+
+
+
+
+
+	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
+	@PostMapping("/monthsByQuarter")
+	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
+		List<String> quarters = quarterList.getMyList();
+		Set<String> months = new HashSet<>();
+
+		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
+
+		for (String quarter : quarters) {
+			switch (quarter) {
+				case "Q1":
+					months.addAll(getMonthsForQuarter(1, monthFormat));
+					break;
+				case "Q2":
+					months.addAll(getMonthsForQuarter(4, monthFormat));
+					break;
+				case "Q3":
+					months.addAll(getMonthsForQuarter(7, monthFormat));
+					break;
+				case "Q4":
+					months.addAll(getMonthsForQuarter(10, monthFormat));
+					break;
+				default:
+					// Handle invalid quarter input
+					break;
+			}
+		}
+
+		return ResponseEntity.ok(months);
+	}
+
+	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
+		List<String> months = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
+
+		for (int i = 0; i < 3; i++) {
+			months.add(monthFormat.format(calendar.getTime()));
+			calendar.add(Calendar.MONTH, 1);
+		}
+
+		return months;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
 	@PostMapping("/financialYearByCriteria")
@@ -539,21 +626,6 @@ public class RevenueBudgetSummaryController {
 				criteria1.getPmList() != null &&
 				criteria1.getQuarterList() != null;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	private List<RevenueBudgetSummary> fetchData(RevenueDTO criteria) {
 		// Fetch data from the repository based on the provided criteria
