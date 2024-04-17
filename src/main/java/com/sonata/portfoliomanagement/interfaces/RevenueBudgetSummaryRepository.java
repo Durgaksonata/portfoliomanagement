@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBudgetSummary,Integer> {
@@ -55,4 +56,9 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByQuarter(String quarter);
 
 
+    List<RevenueBudgetSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
+
+    List<RevenueBudgetSummary> findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerInAndQuarterIn(List<Integer> financialYear, List<String> projectList, List<String> verticalList, List<String> classificationList, List<String> dmList, List<String> accountList, List<String> pmList, List<String> quarterList);
+
+    List<RevenueBudgetSummary> findByMonthIn(List<LocalDate> months);
 }
