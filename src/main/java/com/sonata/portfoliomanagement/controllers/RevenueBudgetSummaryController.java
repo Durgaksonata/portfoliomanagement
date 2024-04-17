@@ -12,6 +12,7 @@ import com.sonata.portfoliomanagement.interfaces.DataEntryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
 import org.springframework.web.client.RestTemplate;
 
+@CrossOrigin(origins = "http://localhost:5173" )
 @RestController
 @RequestMapping("revenuebudgets")
 public class RevenueBudgetSummaryController {
