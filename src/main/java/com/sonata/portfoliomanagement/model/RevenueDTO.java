@@ -74,8 +74,18 @@ public class RevenueDTO {
 	private List<Integer> financialYear;
     private List<String> verticalList;
     private List<String> classificationList;
+    private List<String> quarterList;
 
-    public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList) {
+
+    public List<String> getQuarterList() {
+		return quarterList;
+	}
+
+	public void setQuarterList(List<String> quarterList) {
+		this.quarterList = quarterList;
+	}
+
+	public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList,List<String> quarterList) {
         this.projectList = projectList;
         this.dmList = dmList;
         this.accountList = accountList;
@@ -83,6 +93,7 @@ public class RevenueDTO {
         this.financialYear = financialYear;
         this.verticalList = verticalList;
         this.classificationList = classificationList;
+        this.quarterList = quarterList;
     }
 
     public RevenueDTO() {
@@ -106,13 +117,20 @@ public class RevenueDTO {
         return getanotherList;
     }
 
-    public void setGetanotherList(List<Integer> getanotherList) {
-        this.getanotherList = getanotherList;
-    }
-
     // Method to check if the DTO is empty
     public boolean isEmpty() {
         return projectList == null && dmList == null && accountList == null && pmList == null && financialYear == null && verticalList == null && classificationList == null;
+    }
+
+    public boolean areAllCriteriaMatched() {
+        // Check if all criteria are provided and match
+        return this.getFinancialYear() != null &&
+                this.getProjectList() != null &&
+                this.getVerticalList() != null &&
+                this.getClassificationList() != null &&
+                this.getDmList() != null &&
+                this.getAccountList() != null &&
+                this.getPmList() != null;
     }
 }
 
