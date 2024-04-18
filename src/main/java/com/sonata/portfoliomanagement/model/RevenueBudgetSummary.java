@@ -2,6 +2,7 @@ package com.sonata.portfoliomanagement.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,6 +49,7 @@ public class RevenueBudgetSummary {
 	private String projectName;
 	@Column(name="Financial_Year")
 	private int financialYear;
+	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date month;
 	private String quarter;
 	private float budget;
@@ -101,6 +103,7 @@ public class RevenueBudgetSummary {
 	public void setFinancialYear(int financialYear) {
 		this.financialYear = financialYear;
 	}
+	@JsonFormat(pattern = "dd-MM-yyyy")
 	public Date getMonth() {
 		return month;
 	}

@@ -51,6 +51,7 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
 
     List<RevenueBudgetSummary> findByVertical(String getList);
 
+
     List<RevenueBudgetSummary> findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerIn(List<Integer> financialYear, List<String> projectList, List<String> verticalList, List<String> classificationList, List<String> dmList, List<String> accountList, List<String> pmList);
 
 
@@ -66,4 +67,5 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
 
 
  
+
 }

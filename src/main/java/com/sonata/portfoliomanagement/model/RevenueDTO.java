@@ -77,6 +77,7 @@ public class RevenueDTO {
     private List<String> quarterList;
 
 
+
     public List<String> getQuarterList() {
 		return quarterList;
 	}
@@ -86,6 +87,8 @@ public class RevenueDTO {
 	}
 
 	public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList,List<String> quarterList) {
+
+   
         this.projectList = projectList;
         this.dmList = dmList;
         this.accountList = accountList;
