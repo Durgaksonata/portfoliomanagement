@@ -398,23 +398,21 @@ public class RevenueBudgetSummaryController {
 
 
 	@PostMapping("/projectbypm")
-	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
+	public ResponseEntity<Set<String>> getProjectByPm(@RequestBody RevenueDTO pmList) {
 		List<String> pmNames = pmList.getMyList();
 		Set<String> project = new HashSet<>();
-
-			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
-			for (RevenueBudgetSummary revenue : revenues) {
-				project.add(revenue.getProjectName());
-			}
-
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
+		for (RevenueBudgetSummary revenue : revenues) {
+			project.add(revenue.getProjectName());
+		}
 
 		return ResponseEntity.ok(project);
 	}
 
 	//list all pms under multiple account
 	@PostMapping("/pmbyaccount")
-	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO pmList){
-		List<String>accountNames = pmList.getMyList();
+	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO accountList){
+		List<String>accountNames = accountList.getMyList();
 		Set<String>  projectManager= new HashSet<>();
 
 			List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountIn(accountNames);
@@ -493,13 +491,6 @@ public class RevenueBudgetSummaryController {
 
 
 
-
-
-
-
-
-
-
 	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
 	@PostMapping("/monthsByQuarter")
 	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
@@ -543,32 +534,6 @@ public class RevenueBudgetSummaryController {
 
 		return months;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -680,8 +645,7 @@ public class RevenueBudgetSummaryController {
 
 	@GetMapping("/quarter/{quarter}")
 	public List<RevenueBudgetSummary> getRevenuesByquarter(@PathVariable("quarter") String quarter) {
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByquarter(quarter);
-		return revenues;
+        return revenueRepo.findByquarter(quarter);
 	}
 
 	@GetMapping("/month/{month}")
