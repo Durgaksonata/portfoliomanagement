@@ -26,6 +26,10 @@ public class RevenueBudgetSummaryController {
 	DataEntryRepository dataEntryRepo;
 
 	RestTemplate restTemplate = new RestTemplate();
+	public RevenueBudgetSummaryController(RevenueBudgetSummaryRepository revenueRepo) {
+		this.revenueRepo = revenueRepo;
+	}
+
 
 	//method to add data into revenue table
 	@PostMapping("/save")
@@ -432,6 +436,18 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(dmNames);
 	}
 
+	//get classification from vertical-->
+	@PostMapping("/classificationbyvertical")
+	public ResponseEntity<Set<String>> getClassificationByVertical(@RequestBody RevenueDTO verticalList) {
+		List<String> VerticalNames = verticalList.getMyList();
+		Set<String> classificationNames = new HashSet<>();
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalIn(VerticalNames); // Change method name
+		for (RevenueBudgetSummary revenue : revenues) {
+			classificationNames.add(revenue.getClassification());
+		}
+		return ResponseEntity.ok(classificationNames);
+	}
+
 	@PostMapping("/financialYearByProject")
 	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {
 		List<String> projectNames = projectList.getMyList();
@@ -589,9 +605,9 @@ public class RevenueBudgetSummaryController {
 				criteria.getClassificationList() != null &&
 				criteria.getDmList() != null &&
 				criteria.getAccountList() != null &&
-				criteria.getPmList() != null;
+				criteria.getPmList() != null &&
+		        criteria.getQuarterList() != null;
 	}
-
 
 	//creating a criteria for specifying by quarters as well as a filter-->
 	@PostMapping ("/quarterByCriteria")
