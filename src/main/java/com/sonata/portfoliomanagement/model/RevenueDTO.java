@@ -56,7 +56,6 @@ public class RevenueDTO {
         return projectList == null && dmList == null && accountList == null && pmList == null && financialYear == null && verticalList == null && classificationList == null;
     }
 
-
 }
 
 

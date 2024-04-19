@@ -488,52 +488,121 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
-
-
-
 	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
-	@PostMapping("/monthsByQuarter")
-	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
-		List<String> quarters = quarterList.getMyList();
-		Set<String> months = new HashSet<>();
+//	@PostMapping("/monthsByQuarter")
+//	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
+//		List<String> quarters = quarterList.getMyList();
+//		Set<String> months = new HashSet<>();
+//
+//		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
+//
+//		for (String quarter : quarters) {
+//			switch (quarter) {
+//				case "Q1":
+//					months.addAll(getMonthsForQuarter(4, monthFormat));
+//					break;
+//				case "Q2":
+//					months.addAll(getMonthsForQuarter(7, monthFormat));
+//					break;
+//				case "Q3":
+//					months.addAll(getMonthsForQuarter(10, monthFormat));
+//					break;
+//				case "Q4":
+//					months.addAll(getMonthsForQuarter(1, monthFormat));
+//					break;
+//				default:
+//				System.out.println("Enter Valid Data!");
+//					break;
+//			}
+//		}
+//
+//		return ResponseEntity.ok(months);
+//	}
+//
+//	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
+//		List<String> months = new ArrayList<>();
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
+//
+//		for (int i = 0; i < 3; i++) {
+//			months.add(monthFormat.format(calendar.getTime()));
+//			calendar.add(Calendar.MONTH, 1);
+//		}
+//
+//		return months;
+//	}
 
-		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
 
-		for (String quarter : quarters) {
-			switch (quarter) {
-				case "Q1":
-					months.addAll(getMonthsForQuarter(4, monthFormat));
-					break;
-				case "Q2":
-					months.addAll(getMonthsForQuarter(7, monthFormat));
-					break;
-				case "Q3":
-					months.addAll(getMonthsForQuarter(10, monthFormat));
-					break;
-				case "Q4":
-					months.addAll(getMonthsForQuarter(1, monthFormat));
-					break;
-				default:
-				System.out.println("Enter Valid Data!");
-					break;
-			}
+
+
+
+	@PostMapping("/accountbydmclassification")
+	public ResponseEntity<Set<String>> getAccountByDMAndClassification(@RequestBody RevenueDTO dmClassificationList) {
+		List<String> dmNames = dmClassificationList.getDmList();
+		List<String> classifications = dmClassificationList.getClassificationList();
+		Set<String> accounts = new HashSet<>();
+
+		// Retrieve revenues based on both DMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerInAndClassificationIn(dmNames, classifications);
+		// Extract account names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			accounts.add(revenue.getAccount());
 		}
 
-		return ResponseEntity.ok(months);
+		return ResponseEntity.ok(accounts);
 	}
 
-	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
-		List<String> months = new ArrayList<>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
 
-		for (int i = 0; i < 3; i++) {
-			months.add(monthFormat.format(calendar.getTime()));
-			calendar.add(Calendar.MONTH, 1);
+
+	@PostMapping("/projectbypmclassification")
+	public ResponseEntity<Set<String>> getProjectsByPMAndClassification(@RequestBody RevenueDTO pmClassificationList) {
+		List<String> pmNames = pmClassificationList.getPmList();
+		List<String> classifications = pmClassificationList.getClassificationList();
+		Set<String> projects = new HashSet<>();
+
+		// Retrieve revenues based on both PMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerInAndClassificationIn(pmNames, classifications);
+		// Extract project names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projects.add(revenue.getProjectName());
 		}
 
-		return months;
+		return ResponseEntity.ok(projects);
 	}
+
+
+	@PostMapping("/pmbyaccountclassification")
+	public ResponseEntity<Set<String>> getPMByAccountAndClassification(@RequestBody RevenueDTO pmAccountClassificationList) {
+		List<String> accountNames = pmAccountClassificationList.getMyList();
+		List<String> classifications = pmAccountClassificationList.getClassificationList();
+		Set<String> projectManagers = new HashSet<>();
+
+		// Retrieve revenues based on both account names and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountInAndClassificationIn(accountNames, classifications);
+
+		// Extract project managers from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projectManagers.add(revenue.getProjectManager());
+		}
+
+		return ResponseEntity.ok(projectManagers);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
