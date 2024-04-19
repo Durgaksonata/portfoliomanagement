@@ -393,18 +393,35 @@ public class RevenueBudgetSummaryController {
 	}
 
 
-	@PostMapping("/projectbypm")
-	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
-		List<String> pmNames = pmList.getMyList();
-		Set<String> project = new HashSet<>();
+//	@PostMapping("/projectbypm")
+//	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
+//		List<String> pmNames = pmList.getMyList();
+//		Set<String> project = new HashSet<>();
+//
+//		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
+//		for (RevenueBudgetSummary revenue : revenues) {
+//			project.add(revenue.getProjectName());
+//		}
+//
+//
+//		return ResponseEntity.ok(project);
+//	}
 
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
+
+	@PostMapping("/projectbypmclassification")
+	public ResponseEntity<Set<String>> getProjectsByPMAndClassification(@RequestBody RevenueDTO pmClassificationList) {
+		List<String> pmNames = pmClassificationList.getPmList();
+		List<String> classifications = pmClassificationList.getClassificationList();
+		Set<String> projects = new HashSet<>();
+
+		// Retrieve revenues based on both PMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerInAndClassificationIn(pmNames, classifications);
+		// Extract project names from the retrieved revenues
 		for (RevenueBudgetSummary revenue : revenues) {
-			project.add(revenue.getProjectName());
+			projects.add(revenue.getProjectName());
 		}
 
-
-		return ResponseEntity.ok(project);
+		return ResponseEntity.ok(projects);
 	}
 
 	//list all pms under multiple account
@@ -431,6 +448,21 @@ public class RevenueBudgetSummaryController {
 		}
 		return ResponseEntity.ok(dmNames);
 	}
+
+	//get classification from vertical-->
+	@PostMapping("/classificationbyvertical")
+	public ResponseEntity<Set<String>> getClassificationByVertical(@RequestBody RevenueDTO verticalList) {
+		List<String> VerticalNames = verticalList.getMyList();
+		Set<String> classificationNames = new HashSet<>();
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalIn(VerticalNames); // Change method name
+		for (RevenueBudgetSummary revenue : revenues) {
+			classificationNames.add(revenue.getClassification());
+		}
+		return ResponseEntity.ok(classificationNames);
+	}
+
+
+
 
 	@PostMapping("/financialYearByProject")
 	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {

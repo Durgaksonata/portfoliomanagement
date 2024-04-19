@@ -66,6 +66,8 @@ public class RevenueDTO {
                 this.getAccountList() != null &&
                 this.getPmList() != null;
     }
+
+
 }
 
 
