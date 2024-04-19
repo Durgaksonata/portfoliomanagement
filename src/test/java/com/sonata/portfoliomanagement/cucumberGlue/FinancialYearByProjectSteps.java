@@ -6,6 +6,7 @@ import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
+import lombok.Setter;
 import org.junit.Assert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -31,7 +32,8 @@ public class FinancialYearByProjectSteps {
     private ResponseEntity<Set<Integer>> financialYearResponseEntity;
     private ResponseEntity<Set<String>> accountResponseEntity;
     private ResponseEntity<Set<String>> projectResponseEntity;
-    private ResponseEntity<Set<String>> projectManagerResponseEntity;
+    private ResponseEntity<Set<String>> pmResponseEntity;
+
 
     private RevenueBudgetSummaryRepositoryMock revenueRepoMock;
     private ResponseEntity<Set<String>> responseEntity;
@@ -116,19 +118,134 @@ public class FinancialYearByProjectSteps {
     }
 
 
+
+    //get projectManagers from account-->
+    @Given("the client provides a list of accounts")
+    public void theClientProvidesAListOfAccountNames() {
+        accountList = new RevenueDTO();
+        accountList.setMyList(Arrays.asList("Account1", "Account2"));
+    }
+
+    @When("the project managers are retrieved by account names")
+    public void theProjectManagersAreRetrievedByAccountNames() {
+        // Create a mock repository
+        revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2")); // Mock data
+        revenueRepoMock.setPMsByAccount(expectedPMs);
+
+        // Call the controller method with the mock repository
+        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
+        pmResponseEntity = controller.getpmByacnt(accountList);
+    }
+
+    @Then("the project managers associated with the accounts are returned")
+    public void theProjectManagersForTheAccountsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, pmResponseEntity.getStatusCode());
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2"));
+        Assert.assertEquals(expectedPMs, pmResponseEntity.getBody());
+    }
+
+
+
     // Mock repository implementation for testing
     static class RevenueBudgetSummaryRepositoryMock implements RevenueBudgetSummaryRepository {
-        private Set<Integer> financialYearsByProject;
+
+        private Set<String> classificationByVertical;
+
+        private Set<String> deliveryManagerByClassification ;
+
         private Set<String> accountsByDeliveryManager;
 
+        private  Set<String> projectManagerByAccount;
+
         private  Set<String> projectsByProjectManager;
+
+        private Set<Integer> financialYearsByProject;
+
+        private  Set<String> quartersByFinancialYear;
+
+        public void setDeliveryManagerByClassification(Set<String> deliveryManagerByClassification){
+            this.deliveryManagerByClassification = deliveryManagerByClassification;
+        }
+
+        public void setAccountsByDeliveryManager(Set<String> accountsByDeliveryManager) {
+            this.accountsByDeliveryManager = accountsByDeliveryManager;
+        }
+
+        public void setPMsByAccount(Set<String> projectManagerByAccount) {
+            this.projectManagerByAccount = projectManagerByAccount;
+        }
+
+        public void setProjectsByProjectManager(Set<String> projectsByProjectManager) {
+            this.projectsByProjectManager = projectsByProjectManager;
+        }
 
         public void setFinancialYearsByProject(Set<Integer> financialYearsByProject) {
             this.financialYearsByProject = financialYearsByProject;
         }
 
-        public void setAccountsByDeliveryManager(Set<String> accountsByDeliveryManager) {
-            this.accountsByDeliveryManager = accountsByDeliveryManager;
+        public void setQuartersByFinancialYear(Set<String> quartersByFinancialYear) {
+            this.quartersByFinancialYear = quartersByFinancialYear;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByVerticalIn(List<String> verticals) {
+
+            // Mock implementation to return  classification by verticals-->
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String classification : classificationByVertical) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setAccount(classification);
+                revenues.add(revenue);
+            }
+            return revenues;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByClassificationIn(List<String> classifications) {
+            // Mock implementation to return deliveryManagers for classification
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String dms : deliveryManagerByClassification) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setAccount(dms);
+                revenues.add(revenue);
+            }
+            return revenues;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByDeliveryManagerIn(List<String> deliveryManagers) {
+            // Mock implementation to return accounts for delivery managers
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String account : accountsByDeliveryManager) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setAccount(account);
+                revenues.add(revenue);
+            }
+            return revenues;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByAccountIn(List<String> accounts) {
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String pms : projectManagerByAccount) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setProjectManager(pms);
+                revenues.add(revenue);
+            }
+            return revenues;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByProjectManagerIn(List<String> pmNames) {
+            // Mock implementation to return projects from project managers
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String project : projectsByProjectManager) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setProjectName(project);
+                revenues.add(revenue);
+            }
+            return revenues;
         }
 
         @Override
@@ -194,6 +311,26 @@ public class FinancialYearByProjectSteps {
         }
 
         @Override
+        public RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String verticals, String classifications, String deliverManagers, String accounts, String projectManagers, String projectNames, int financialYears, String quarters) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByDeliveryManagerInAndClassificationIn(List<String> dmNames, List<String> classifications) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByProjectManagerInAndClassificationIn(List<String> pmNames, List<String> classifications) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByAccountInAndClassificationIn(List<String> accountNames, List<String> classifications) {
+            return null;
+        }
+
+        @Override
         public List<RevenueBudgetSummary> findByFinancialYear(int financialYear) {
             return null;
         }
@@ -230,49 +367,6 @@ public class FinancialYearByProjectSteps {
 
         @Override
         public List<RevenueBudgetSummary> findByFinancialYearIn(List<Integer> financialYears) {
-            return null;
-        }
-
-        @Override
-        public List<RevenueBudgetSummary> findByAccountIn(List<String> accounts) {
-            return null;
-        }
-
-        @Override
-        public List<RevenueBudgetSummary> findByDeliveryManagerIn(List<String> deliveryManagers) {
-            // Mock implementation to return accounts for delivery managers
-            List<RevenueBudgetSummary> revenues = new ArrayList<>();
-            for (String account : accountsByDeliveryManager) {
-                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
-                revenue.setAccount(account);
-                revenues.add(revenue);
-            }
-            return revenues;
-        }
-
-        @Override
-        public List<RevenueBudgetSummary> findByProjectManagerIn(List<String> pmNames) {
-            // Mock implementation to return projects from project managers
-            List<RevenueBudgetSummary> revenues = new ArrayList<>();
-            for (String project : projectsByProjectManager) {
-                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
-                revenue.setProjectName(project);
-                revenues.add(revenue);
-            }
-            return revenues;
-        }
-
-        public void setProjectsByProjectManager(Set<String> projectsByProjectManager) {
-            this.projectsByProjectManager = projectsByProjectManager;
-        }
-
-        @Override
-        public List<RevenueBudgetSummary> findByVerticalIn(List<String> verticals) {
-            return null;
-        }
-
-        @Override
-        public List<RevenueBudgetSummary> findByClassificationIn(List<String> classifications) {
             return null;
         }
 
@@ -425,6 +519,7 @@ public class FinancialYearByProjectSteps {
         public Page<RevenueBudgetSummary> findAll(Pageable pageable) {
             return null;
         }
+
 
     }
 }

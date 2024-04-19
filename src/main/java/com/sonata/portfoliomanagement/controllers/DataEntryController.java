@@ -2,6 +2,9 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.List;
 
+import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
+import com.sonata.portfoliomanagement.model.AccountBudgets;
+import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,10 @@ public class DataEntryController {
 	
 	@Autowired
 	DataEntryRepository dataEntryRepo;
+    @Autowired
+    private RevenueBudgetSummaryRepository revenueBudgetSummaryRepository;
+
+
 	
     @GetMapping("/get")
     public ResponseEntity<List<DataEntry>> getAllData() {

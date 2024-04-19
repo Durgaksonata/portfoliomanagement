@@ -17,9 +17,9 @@ Feature: Retrieving Financial Years by Project
     When the projects are retrieved by project managers
     Then the projects associated with the project managers are returned
 
-    #get project managers by accounts
-#  Scenario: Retrieve project managers for a list of accounts
-#    Given the client provides a list of accounts
-#    When the project managers are retrieved by accounts
-#    Then the project managers associated with the accounts are returned
+   # get project managers by accounts
+  Scenario: Retrieve project managers for a list of accounts
+    Given the client provides a list of accounts
+    When the project managers are retrieved by account names
+    Then the project managers associated with the accounts are returned
 
