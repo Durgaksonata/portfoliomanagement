@@ -24,46 +24,74 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = TestConfig.class)
 public class FinancialYearByProjectSteps {
 
-    private RevenueDTO projectList;
-    private RevenueDTO accountList;
-    private RevenueDTO pmList;
-
+    private RevenueDTO verticalList;
+    private RevenueDTO classificationList;
     private RevenueDTO dmList;
-    private ResponseEntity<Set<Integer>> financialYearResponseEntity;
-    private ResponseEntity<Set<String>> accountResponseEntity;
-    private ResponseEntity<Set<String>> projectResponseEntity;
-    private ResponseEntity<Set<String>> pmResponseEntity;
+    private RevenueDTO accountList;
+    private RevenueDTO pmAccountClassificationList;
+    private RevenueDTO pmList;
+    private RevenueDTO projectList;
 
+    private ResponseEntity<Set<String>> classificationResponseEntity;
+    private ResponseEntity<Set<String>> dmResponseEntity;
+    private ResponseEntity<Set<String>> accountResponseEntity;
+    private ResponseEntity<Set<String>> pmResponseEntity;
+    private ResponseEntity<Set<String>> projectResponseEntity;
+    private ResponseEntity<Set<Integer>> financialYearResponseEntity;
 
     private RevenueBudgetSummaryRepositoryMock revenueRepoMock;
-    private ResponseEntity<Set<String>> responseEntity;
 
-
-    //feature to give me financialYear by projectList
-    @Given("the client provides a list of projects")
-    public void theClientProvidesAListOfProjects() {
-        projectList = new RevenueDTO();
-        projectList.setMyList(Arrays.asList("project1"));
+    //feature to give me classifications from verticals
+    @Given("the client provides a list of verticals")
+    public void theClientProvidesAListOfVerticals() {
+        verticalList = new RevenueDTO();
+        verticalList.setMyList(Arrays.asList("Vertical1", "Vertical2")); // Example vertical names
     }
 
-    @When("the financial year is retrieved by project")
-    public void theFinancialYearIsRetrievedByProject() {
+    @When("the classifications are retrieved by verticals")
+    public void theClassificationsAreRetrievedByVerticals() {
         // Create a mock repository
         revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
-        revenueRepoMock.setFinancialYearsByProject(Collections.singleton(2023)); // Mock data
+        Set<String> expectedClassifications = new HashSet<>(Arrays.asList("Classification1", "Classification2")); // Mock data
+        revenueRepoMock.setClassificationByVertical(expectedClassifications);
 
         // Call the controller method with the mock repository
         RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
-        financialYearResponseEntity = controller.getFinancialYearByProject(projectList);
+        classificationResponseEntity = controller.getClassificationByVertical(verticalList);
     }
 
-    @Then("the financial years for the projects are returned")
-    public void theFinancialYearsForTheProjectsAreReturned() {
-        Assert.assertEquals(HttpStatus.OK, financialYearResponseEntity.getStatusCode());
-        Set<Integer> expectedYears = new HashSet<>(Collections.singletonList(2023));
-        Assert.assertEquals(expectedYears, financialYearResponseEntity.getBody());
+    @Then("the classifications associated with the verticals are returned")
+    public void theClassificationsAssociatedWithTheVerticalsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, classificationResponseEntity.getStatusCode());
+        Set<String> expectedClassifications = new HashSet<>(Arrays.asList("Classification1", "Classification2"));
+        Assert.assertEquals(expectedClassifications, classificationResponseEntity.getBody());
     }
 
+    //feature to give me delivery managers from classification
+    @Given("the client provides a list of classifications")
+    public void theClientProvidesAListOfClassifications() {
+        classificationList = new RevenueDTO();
+        classificationList.setMyList(Arrays.asList("Classification1", "Classification2")); // Example classification names
+    }
+
+    @When("the delivery managers are retrieved by classifications")
+    public void theDeliveryManagersAreRetrievedByClassifications() {
+        // Create a mock repository
+        revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
+        Set<String> expectedDMs = new HashSet<>(Arrays.asList("DM1", "DM2")); // Mock data
+        revenueRepoMock.setDeliveryManagerByClassification(expectedDMs);
+
+        // Call the controller method with the mock repository
+        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
+        dmResponseEntity = controller.getDMByClassification(classificationList);
+    }
+
+    @Then("the delivery managers associated with the classifications are returned")
+    public void theDeliveryManagersAssociatedWithTheClassificationsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, dmResponseEntity.getStatusCode());
+        Set<String> expectedDMs = new HashSet<>(Arrays.asList("DM1", "DM2"));
+        Assert.assertEquals(expectedDMs, dmResponseEntity.getBody());
+    }
 
     //feature to give me accounts from delivery managers
     @Given("the client provides a list of delivery managers")
@@ -89,6 +117,59 @@ public class FinancialYearByProjectSteps {
         Assert.assertEquals(HttpStatus.OK, accountResponseEntity.getStatusCode());
         Set<String> expectedAccounts = new HashSet<>(Arrays.asList("Account1", "Account2"));
         Assert.assertEquals(expectedAccounts, accountResponseEntity.getBody());
+    }
+
+    //get projectManagers from account-->
+    @Given("the client provides a list of accounts")
+    public void theClientProvidesAListOfAccountNames() {
+        accountList = new RevenueDTO();
+        accountList.setMyList(Arrays.asList("Account1", "Account2"));
+    }
+
+    @When("the project managers are retrieved by account names")
+    public void theProjectManagersAreRetrievedByAccountNames() {
+        // Create a mock repository
+        revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2")); // Mock data
+        revenueRepoMock.setPMsByAccount(expectedPMs);
+
+        // Call the controller method with the mock repository
+        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
+        pmResponseEntity = controller.getpmByacnt(accountList);
+    }
+
+    @Then("the project managers associated with the accounts are returned")
+    public void theProjectManagersForTheAccountsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, pmResponseEntity.getStatusCode());
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2"));
+        Assert.assertEquals(expectedPMs, pmResponseEntity.getBody());
+    }
+
+    //feature to get project managers from account and classification-->
+    @Given("the client provides a list of accounts and classifications")
+    public void theClientProvidesAListOfAccountsAndClassifications() {
+        pmAccountClassificationList = new RevenueDTO();
+        pmAccountClassificationList.setMyList(Arrays.asList("Account1", "Account2")); // Example account names
+        pmAccountClassificationList.setClassificationList(Arrays.asList("Classification1", "Classification2")); // Example classification names
+    }
+
+    @When("the project managers are retrieved by accounts and classifications")
+    public void theProjectManagersAreRetrievedByAccountsAndClassifications() {
+        // Create a mock repository
+        revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2")); // Mock data
+        revenueRepoMock.setProjectManagerByAccountAndClassification(expectedPMs);
+
+        // Call the controller method with the mock repository
+        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
+        pmResponseEntity = controller.getPMByAccountAndClassification(pmAccountClassificationList);
+    }
+
+    @Then("the project managers associated with the accounts and classifications are returned")
+    public void theProjectManagersAssociatedWithTheAccountsAndClassificationsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, pmResponseEntity.getStatusCode());
+        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2"));
+        Assert.assertEquals(expectedPMs, pmResponseEntity.getBody());
     }
 
     //feature to give me projects from project managers-->
@@ -117,35 +198,30 @@ public class FinancialYearByProjectSteps {
         Assert.assertEquals(expectedProjects, projectResponseEntity.getBody());
     }
 
-
-
-    //get projectManagers from account-->
-    @Given("the client provides a list of accounts")
-    public void theClientProvidesAListOfAccountNames() {
-        accountList = new RevenueDTO();
-        accountList.setMyList(Arrays.asList("Account1", "Account2"));
+    //feature to give me financialYear by projectList-->
+    @Given("the client provides a list of projects")
+    public void theClientProvidesAListOfProjects() {
+        projectList = new RevenueDTO();
+        projectList.setMyList(Arrays.asList("project1"));
     }
 
-    @When("the project managers are retrieved by account names")
-    public void theProjectManagersAreRetrievedByAccountNames() {
+    @When("the financial year is retrieved by project")
+    public void theFinancialYearIsRetrievedByProject() {
         // Create a mock repository
         revenueRepoMock = new RevenueBudgetSummaryRepositoryMock();
-        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2")); // Mock data
-        revenueRepoMock.setPMsByAccount(expectedPMs);
+        revenueRepoMock.setFinancialYearsByProject(Collections.singleton(2023)); // Mock data
 
         // Call the controller method with the mock repository
         RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
-        pmResponseEntity = controller.getpmByacnt(accountList);
+        financialYearResponseEntity = controller.getFinancialYearByProject(projectList);
     }
 
-    @Then("the project managers associated with the accounts are returned")
-    public void theProjectManagersForTheAccountsAreReturned() {
-        Assert.assertEquals(HttpStatus.OK, pmResponseEntity.getStatusCode());
-        Set<String> expectedPMs = new HashSet<>(Arrays.asList("PM1", "PM2"));
-        Assert.assertEquals(expectedPMs, pmResponseEntity.getBody());
+    @Then("the financial years for the projects are returned")
+    public void theFinancialYearsForTheProjectsAreReturned() {
+        Assert.assertEquals(HttpStatus.OK, financialYearResponseEntity.getStatusCode());
+        Set<Integer> expectedYears = new HashSet<>(Collections.singletonList(2023));
+        Assert.assertEquals(expectedYears, financialYearResponseEntity.getBody());
     }
-
-
 
     // Mock repository implementation for testing
     static class RevenueBudgetSummaryRepositoryMock implements RevenueBudgetSummaryRepository {
@@ -157,12 +233,16 @@ public class FinancialYearByProjectSteps {
         private Set<String> accountsByDeliveryManager;
 
         private  Set<String> projectManagerByAccount;
+        private  Set<String> projectManagerByAccountAndClassification;
 
         private  Set<String> projectsByProjectManager;
 
         private Set<Integer> financialYearsByProject;
+        private Set<String> quartersByFinancialYear;
 
-        private  Set<String> quartersByFinancialYear;
+        public void setClassificationByVertical(Set<String> classificationByVertical){
+            this.classificationByVertical = classificationByVertical;
+        }
 
         public void setDeliveryManagerByClassification(Set<String> deliveryManagerByClassification){
             this.deliveryManagerByClassification = deliveryManagerByClassification;
@@ -174,6 +254,10 @@ public class FinancialYearByProjectSteps {
 
         public void setPMsByAccount(Set<String> projectManagerByAccount) {
             this.projectManagerByAccount = projectManagerByAccount;
+        }
+
+        public void setProjectManagerByAccountAndClassification(Set<String> projectManagerByAccountAndClassification) {
+            this.projectManagerByAccountAndClassification = projectManagerByAccountAndClassification;
         }
 
         public void setProjectsByProjectManager(Set<String> projectsByProjectManager) {
@@ -195,7 +279,7 @@ public class FinancialYearByProjectSteps {
             List<RevenueBudgetSummary> revenues = new ArrayList<>();
             for (String classification : classificationByVertical) {
                 RevenueBudgetSummary revenue = new RevenueBudgetSummary();
-                revenue.setAccount(classification);
+                revenue.setClassification(classification);
                 revenues.add(revenue);
             }
             return revenues;
@@ -207,7 +291,7 @@ public class FinancialYearByProjectSteps {
             List<RevenueBudgetSummary> revenues = new ArrayList<>();
             for (String dms : deliveryManagerByClassification) {
                 RevenueBudgetSummary revenue = new RevenueBudgetSummary();
-                revenue.setAccount(dms);
+                revenue.setDeliveryManager(dms);
                 revenues.add(revenue);
             }
             return revenues;
@@ -229,6 +313,17 @@ public class FinancialYearByProjectSteps {
         public List<RevenueBudgetSummary> findByAccountIn(List<String> accounts) {
             List<RevenueBudgetSummary> revenues = new ArrayList<>();
             for (String pms : projectManagerByAccount) {
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setProjectManager(pms);
+                revenues.add(revenue);
+            }
+            return revenues;
+        }
+
+        @Override
+        public List<RevenueBudgetSummary> findByAccountInAndClassificationIn(List<String> accountNames, List<String> classifications) {
+            List<RevenueBudgetSummary> revenues = new ArrayList<>();
+            for (String pms : projectManagerByAccountAndClassification) {
                 RevenueBudgetSummary revenue = new RevenueBudgetSummary();
                 revenue.setProjectManager(pms);
                 revenues.add(revenue);
@@ -325,10 +420,6 @@ public class FinancialYearByProjectSteps {
             return null;
         }
 
-        @Override
-        public List<RevenueBudgetSummary> findByAccountInAndClassificationIn(List<String> accountNames, List<String> classifications) {
-            return null;
-        }
 
         @Override
         public List<RevenueBudgetSummary> findByFinancialYear(int financialYear) {

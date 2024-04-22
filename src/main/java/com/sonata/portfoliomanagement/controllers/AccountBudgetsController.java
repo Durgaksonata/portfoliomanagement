@@ -41,34 +41,34 @@ public class AccountBudgetsController {
     private DataEntryRepository dataEntryRepository;
 
     //method to populate revenuebudgetsummary table from acbudgets-->
-    @PostMapping("/abcd")
-    public String populateRevenueBudgetSummaryFromAccountBudgets() {
-        try {
-            // Retrieve all AccountBudgets data
-            List<AccountBudgets> accountBudgetsList = accountBudgetsRepository.findAll();
-
-            for (AccountBudgets accountBudgets : accountBudgetsList) {
-                RevenueBudgetSummary revenueBudgetSummary = new RevenueBudgetSummary();
-                revenueBudgetSummary.setVertical(accountBudgets.getVertical());
-                revenueBudgetSummary.setClassification(accountBudgets.getClassification());
-                revenueBudgetSummary.setDeliveryManager(accountBudgets.getDeliveryManager());
-                revenueBudgetSummary.setAccount(accountBudgets.getAccount());
-                revenueBudgetSummary.setProjectManager(accountBudgets.getProjectManager());
-                revenueBudgetSummary.setProjectName(accountBudgets.getProjectName());
-                revenueBudgetSummary.setFinancialYear(accountBudgets.getFinancialYear());
-                revenueBudgetSummary.setQuarter(accountBudgets.getQuarter());
-                revenueBudgetSummary.setMonth(accountBudgets.getMonth());
-                revenueBudgetSummary.setBudget(accountBudgets.getBudget()); // Populate the budget field
-
-                revenueBudgetSummaryRepository.save(revenueBudgetSummary); // Save the populated RevenueBudgetSummary object
-            }
-
-            return "Data populated successfully in RevenueBudgetSummary";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to populate data in RevenueBudgetSummary";
-        }
-    }
+//    @PostMapping("/abcd")
+//    public String populateRevenueBudgetSummaryFromAccountBudgets() {
+//        try {
+//            // Retrieve all AccountBudgets data
+//            List<AccountBudgets> accountBudgetsList = accountBudgetsRepository.findAll();
+//
+//            for (AccountBudgets accountBudgets : accountBudgetsList) {
+//                RevenueBudgetSummary revenueBudgetSummary = new RevenueBudgetSummary();
+//                revenueBudgetSummary.setVertical(accountBudgets.getVertical());
+//                revenueBudgetSummary.setClassification(accountBudgets.getClassification());
+//                revenueBudgetSummary.setDeliveryManager(accountBudgets.getDeliveryManager());
+//                revenueBudgetSummary.setAccount(accountBudgets.getAccount());
+//                revenueBudgetSummary.setProjectManager(accountBudgets.getProjectManager());
+//                revenueBudgetSummary.setProjectName(accountBudgets.getProjectName());
+//                revenueBudgetSummary.setFinancialYear(accountBudgets.getFinancialYear());
+//                revenueBudgetSummary.setQuarter(accountBudgets.getQuarter());
+//                revenueBudgetSummary.setMonth(accountBudgets.getMonth());
+//                revenueBudgetSummary.setBudget(accountBudgets.getBudget()); // Populate the budget field
+//
+//                revenueBudgetSummaryRepository.save(revenueBudgetSummary); // Save the populated RevenueBudgetSummary object
+//            }
+//
+//            return "Data populated successfully in RevenueBudgetSummary";
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "Failed to populate data in RevenueBudgetSummary";
+//        }
+//    }
 
     @PostMapping("/populate")
     private String fetchData() {
@@ -136,35 +136,4 @@ public class AccountBudgetsController {
         revenueBudgetSummary.setBudget(accountBudgets.getBudget()); // Populate the budget field
         return revenueBudgetSummary;
     }
-
-    //populates the data into revenue table one by one-->
-//    @PostMapping("/SinglePop")
-// public String getDataEntryData(@RequestBody DataEntryDTO criteria) {
-//        AccountBudgets accountBudgets = new AccountBudgets();
-//     List<DataEntry> data = dataEntryRepository.findAllByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//             criteria.getVertical(),
-//             criteria.getClassification(),
-//             criteria.getDeliveryManager(),
-//             criteria.getAccount(),
-//             criteria.getProjectManager(),
-//             criteria.getProjectName(),
-//             criteria.getFinancialYear(),
-//             criteria.getQuarter());
-//     float total = (float) data.stream().mapToDouble(DataEntry::getLikely).sum();
-//     total = total / 1000000;
-//     RevenueBudgetSummary revenue = revenueBudgetSummaryRepository.findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//             criteria.getVertical(),
-//             criteria.getClassification(),
-//             criteria.getDeliveryManager(),
-//             criteria.getAccount(),
-//             criteria.getProjectManager(),
-//             criteria.getProjectName(),
-//             criteria.getFinancialYear(),
-//             criteria.getQuarter());
-//     revenue.setForecast(total);
-//        float temp = accountBudgets.getBudget()-revenue.getForecast();
-//        revenue.setGap(temp);
-//     revenueBudgetSummaryRepository.save(revenue);
-//     return "Data populated Successfully!";
-// }
 }

@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 @Table(name = "revenue_budget_summary")
 public class RevenueBudgetSummary {
 	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryManager, String account,
-			String projectManager, String projectName, int financialYear, Date month, String quarter, float budget,
+			String projectManager, String projectName, int financialYear,String quarter, Date month, float budget,
 			float forecast, float gap) {
 		super();
 		this.id = id;
@@ -25,8 +25,8 @@ public class RevenueBudgetSummary {
 		this.projectManager = projectManager;
 		this.projectName = projectName;
 		this.financialYear = financialYear;
-		this.month = month;
 		this.quarter = quarter;
+		this.month = month;
 		this.budget = budget;
 		this.forecast = forecast;
 		this.gap = gap;
@@ -34,7 +34,6 @@ public class RevenueBudgetSummary {
 	public RevenueBudgetSummary() {
 		super();
 	}
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -49,9 +48,9 @@ public class RevenueBudgetSummary {
 	private String projectName;
 	@Column(name="Financial_Year")
 	private int financialYear;
+	private String quarter;
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private Date month;
-	private String quarter;
 	private float budget;
 	private float forecast;
 	private float gap;
@@ -103,18 +102,18 @@ public class RevenueBudgetSummary {
 	public void setFinancialYear(int financialYear) {
 		this.financialYear = financialYear;
 	}
+	public String getQuarter() {
+		return quarter;
+	}
+	public void setQuarter(String quarter) {
+		this.quarter = quarter;
+	}
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	public Date getMonth() {
 		return month;
 	}
 	public void setMonth(Date month) {
 		this.month = month;
-	}
-	public String getQuarter() {
-		return quarter;
-	}
-	public void setQuarter(String quarter) {
-		this.quarter = quarter;
 	}
 	public float getBudget() {
 		return budget;

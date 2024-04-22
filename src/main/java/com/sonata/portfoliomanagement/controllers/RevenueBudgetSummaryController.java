@@ -589,26 +589,6 @@ public class RevenueBudgetSummaryController {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
 	@PostMapping("/financialYearByCriteria")
 	public ResponseEntity<List<RevenueBudgetSummary>> getFinancialDataByCriteria(@RequestBody RevenueDTO criteria) {
@@ -704,7 +684,6 @@ public class RevenueBudgetSummaryController {
 				criteria1.getQuarterList()
 		);
 	}
-
 
 	@GetMapping("/dm/{deliveryManager}")
 	public List<RevenueBudgetSummary> getRevenuesByDM(@PathVariable("deliveryManager") String deliveryManager) {
