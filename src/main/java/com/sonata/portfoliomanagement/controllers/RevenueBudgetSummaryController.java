@@ -392,20 +392,42 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(account);
 	}
 
+	@PostMapping("/accountbydmclassification")
+	public ResponseEntity<Set<String>> getAccountByDMAndClassification(@RequestBody RevenueDTO dmClassificationList) {
+		List<String> dmNames = dmClassificationList.getDMList();
+		List<String> classifications = dmClassificationList.getClassificationList();
+		Set<String> accounts = new HashSet<>();
 
-//	@PostMapping("/projectbypm")
-//	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
-//		List<String> pmNames = pmList.getMyList();
-//		Set<String> project = new HashSet<>();
-//
-//		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
-//		for (RevenueBudgetSummary revenue : revenues) {
-//			project.add(revenue.getProjectName());
-//		}
-//
-//
-//		return ResponseEntity.ok(project);
-//	}
+		// Retrieve revenues based on both DMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerInAndClassificationIn(dmNames, classifications);
+		// Extract account names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			accounts.add(revenue.getAccount());
+		}
+
+		return ResponseEntity.ok(accounts);
+	}
+
+
+
+
+
+
+
+
+	@PostMapping("/projectbypm")
+	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
+		List<String> pmNames = pmList.getMyList();
+		Set<String> project = new HashSet<>();
+
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
+		for (RevenueBudgetSummary revenue : revenues) {
+			project.add(revenue.getProjectName());
+		}
+
+
+		return ResponseEntity.ok(project);
+	}
 
 	@PostMapping("/projectbypmclassification")
 	public ResponseEntity<Set<String>> getProjectsByPMAndClassification(@RequestBody RevenueDTO pmClassificationList) {
@@ -436,6 +458,26 @@ public class RevenueBudgetSummaryController {
 
 		return ResponseEntity.ok(projectManager);
 	}
+
+	@PostMapping("/pmbyaccountclassification")
+	public ResponseEntity<Set<String>> getPMByAccountAndClassification(@RequestBody RevenueDTO pmAccountClassificationList) {
+		List<String> accountNames = pmAccountClassificationList.getMyList();
+		List<String> classifications = pmAccountClassificationList.getClassificationList();
+		Set<String> projectManagers = new HashSet<>();
+
+		// Retrieve revenues based on both account names and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountInAndClassificationIn(accountNames, classifications);
+
+		// Extract project managers from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projectManagers.add(revenue.getProjectManager());
+		}
+
+		return ResponseEntity.ok(projectManagers);
+	}
+
+
+
 
 	@PostMapping("/dmbyclassification")
 	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
