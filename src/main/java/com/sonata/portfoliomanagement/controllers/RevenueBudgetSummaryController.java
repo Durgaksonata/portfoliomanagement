@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("revenuebudgets")
 public class RevenueBudgetSummaryController {
-
+	
 	@Autowired
 	RevenueBudgetSummaryRepository revenueRepo;
 	@Autowired
@@ -26,21 +26,18 @@ public class RevenueBudgetSummaryController {
 	DataEntryRepository dataEntryRepo;
 
 	RestTemplate restTemplate = new RestTemplate();
-
-
 	public RevenueBudgetSummaryController(RevenueBudgetSummaryRepository revenueRepo) {
 		this.revenueRepo = revenueRepo;
 	}
 
 
-
 	//method to add data into revenue table
 	@PostMapping("/save")
 	public ResponseEntity<RevenueBudgetSummary> createRevenueBudgetSummary(@RequestBody RevenueBudgetSummary revenue) {
-
-		RevenueBudgetSummary createdRevenue = revenueRepo.save(revenue);
-
-		return new ResponseEntity<>(createdRevenue, HttpStatus.CREATED);
+	   
+	    RevenueBudgetSummary createdRevenue = revenueRepo.save(revenue);
+	    
+	    return new ResponseEntity<>(createdRevenue, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/get")
@@ -103,7 +100,7 @@ public class RevenueBudgetSummaryController {
 
 		return resultList;
 	}
-
+	
 	//getting list for all accounts only-->
 	@GetMapping("/getaccountlist")
 	public List<String> getAccounts ()
@@ -141,7 +138,7 @@ public class RevenueBudgetSummaryController {
 
 		return resultList;
 	}
-
+	
 	//getting list for all project Managers only-->
 	@GetMapping("/getpmlist")
 	public List<String> getProjectManager ()
@@ -155,31 +152,31 @@ public class RevenueBudgetSummaryController {
 	}
 
 	//This POST method puts the specific DMS required to get data from.Multiple DMs sent through the GET method below
-	@PostMapping("/pm/post")
-	public List<String> pmstringList(@RequestBody RevenueDTO pmlist) {
-		// Extract the list of strings from the RevenueDTO object
-		List<String> pmstringList = pmlist.getMyList();
-		return pmstringList;
-	}
+	    @PostMapping("/pm/post")
+	    public List<String> pmstringList(@RequestBody RevenueDTO pmlist) {
+	        // Extract the list of strings from the RevenueDTO object
+	        List<String> pmstringList = pmlist.getMyList();
+	        return pmstringList;
+	    }
 
-	//The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple DMS
-	@GetMapping("/pms")
-	public List<RevenueBudgetSummary> getRevenuebyPM(@RequestBody RevenueDTO pmlist) {
-		// Call the POST endpoint to get the list of strings
-		String postUrl = "http://localhost:8081/revenuebudgets/pm/post";
-		List<String> postResponse = restTemplate.postForObject(postUrl, pmlist, List.class);
+	    //The GET method calls the POST method above and need to send the request body for this get method to obtain for Multiple DMS
+	    @GetMapping("/pms")
+	    public List<RevenueBudgetSummary> getRevenuebyPM(@RequestBody RevenueDTO pmlist) {
+	        // Call the POST endpoint to get the list of strings
+	        String postUrl = "http://localhost:8081/revenuebudgets/pm/post";
+	        List<String> postResponse = restTemplate.postForObject(postUrl, pmlist, List.class);
 
-		// Create a list to store Revenue objects
-		List<RevenueBudgetSummary> resultList = new ArrayList<>();
+	        // Create a list to store Revenue objects
+	        List<RevenueBudgetSummary> resultList = new ArrayList<>();
 
-		// Iterate over the response strings and filter Revenue objects accordingly
-		for (String getList : postResponse) {
-			List<RevenueBudgetSummary> filteredList =revenueRepo.findByprojectManager(getList);
-			resultList.addAll(filteredList);
-		}
+	        // Iterate over the response strings and filter Revenue objects accordingly
+	        for (String getList : postResponse) {
+	           List<RevenueBudgetSummary> filteredList =revenueRepo.findByprojectManager(getList);
+	           resultList.addAll(filteredList);
+	        }
 
-		return resultList;
-	}
+	        return resultList;
+	    }
 
 	//getting list for all vertical only-->
 	@GetMapping("/getverticallist")
@@ -297,12 +294,12 @@ public class RevenueBudgetSummaryController {
 	//getting list for all years only-->
 	@GetMapping("/getfinancialyearlist")
 	public List<Integer> getFinancialYearList() {
-		List<Integer> fyList = new ArrayList<>();
-		List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
-		for (RevenueBudgetSummary request : revenueData) {
-			fyList.add(request.getFinancialYear());
-		}
-		return fyList.stream().distinct().collect(Collectors.toList());
+	    List<Integer> fyList = new ArrayList<>();
+	    List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
+	    for (RevenueBudgetSummary request : revenueData) {
+	        fyList.add(request.getFinancialYear());
+	    }
+	    return fyList.stream().distinct().collect(Collectors.toList());
 	}
 
 	//This POST method puts the specific FYs required to get data from.Multiple Fys sent through the GET method below
@@ -323,7 +320,7 @@ public class RevenueBudgetSummaryController {
 		}
 		return resultList;
 	}
-
+	
 	//get all quarters-->
 	@GetMapping("/getquarterlist")
 	public List<String> getQuarterList()
@@ -362,16 +359,16 @@ public class RevenueBudgetSummaryController {
 
 		return resultList;
 	}
-
+	
 	//get all Months-->
 	@GetMapping("/getmonthlist")
 	public List<Date> getMonth() {
-		List<Date> monthList = new ArrayList<>();
-		List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
-		for (RevenueBudgetSummary request : revenueData) {
-			monthList.add(request.getMonth());
-		}
-		return monthList.stream().distinct().collect(Collectors.toList());
+	    List<Date> monthList = new ArrayList<>();
+	    List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
+	    for (RevenueBudgetSummary request : revenueData) {
+	        monthList.add(request.getMonth());
+	    }
+	    return monthList.stream().distinct().collect(Collectors.toList());
 	}
 
 	//this method is going to add multiple years,accounts for a dm into a single array object instead of adding each account as a seperate object within the list-->
@@ -392,9 +389,7 @@ public class RevenueBudgetSummaryController {
 	public ResponseEntity<Set<String>> getAccountByDM(@RequestBody RevenueDTO dmList) {
 		List<String> dmNames = dmList.getMyList();
 		Set<String> account = new HashSet<>();
-
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerIn(dmNames);
-
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerIn(dmNames);
 		for (RevenueBudgetSummary revenue : revenues) {
 			account.add(revenue.getAccount());
 		}
@@ -403,34 +398,27 @@ public class RevenueBudgetSummaryController {
 
 
 	@PostMapping("/projectbypm")
-	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
+	public ResponseEntity<Set<String>> getProjectByPm(@RequestBody RevenueDTO pmList) {
 		List<String> pmNames = pmList.getMyList();
 		Set<String> project = new HashSet<>();
-
-
 		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
 		for (RevenueBudgetSummary revenue : revenues) {
 			project.add(revenue.getProjectName());
 		}
-
-
 
 		return ResponseEntity.ok(project);
 	}
 
 	//list all pms under multiple account
 	@PostMapping("/pmbyaccount")
-	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO pmList){
-		List<String>accountNames = pmList.getMyList();
+	public ResponseEntity<Set<String>> getpmByacnt(@RequestBody RevenueDTO accountList){
+		List<String>accountNames = accountList.getMyList();
 		Set<String>  projectManager= new HashSet<>();
 
-
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountIn(accountNames);
-		for (RevenueBudgetSummary revenue : revenues) {
-			projectManager.add(revenue.getProjectManager());
-		}
-
-			
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountIn(accountNames);
+			for (RevenueBudgetSummary revenue : revenues) {
+				projectManager.add(revenue.getProjectManager());
+			}
 
 		return ResponseEntity.ok(projectManager);
 	}
@@ -439,16 +427,11 @@ public class RevenueBudgetSummaryController {
 	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
 		List<String> classificationNames = classificationList.getMyList();
 		Set<String> dmNames = new HashSet<>();
-		
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByClassificationIn(classificationNames); // Change method name
-		for (RevenueBudgetSummary revenue : revenues) {
-			dmNames.add(revenue.getDeliveryManager());
-		}
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByClassificationIn(classificationNames); // Change method name
+			for (RevenueBudgetSummary revenue : revenues) {
+				dmNames.add(revenue.getDeliveryManager());
+			}
 		return ResponseEntity.ok(dmNames);
-	
-
-
-		
 	}
 
 	//get classification from vertical-->
@@ -463,38 +446,30 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(classificationNames);
 	}
 
-
 	@PostMapping("/financialYearByProject")
 	public ResponseEntity<Set<Integer>> getFinancialYearByProject(@RequestBody RevenueDTO projectList) {
 		List<String> projectNames = projectList.getMyList();
 		Set<Integer> financialYears = new HashSet<>();
 
-
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectNameIn(projectNames);
-		for (RevenueBudgetSummary revenue : revenues) {
-			financialYears.add(revenue.getFinancialYear());
-		}
-
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectNameIn(projectNames);
+			for (RevenueBudgetSummary revenue : revenues) {
+				financialYears.add(revenue.getFinancialYear());
+			}
 		return ResponseEntity.ok(financialYears);
 	}
 
 
-
-	//In th request body for this method. we enter two things. vertical and classification and this will give the dm list under these specifics-->
-
-
+//In th request body for this method. we enter two things. vertical and classification and this will give the dm list under these specifics-->
 	@PostMapping("/dmbyvertical&classification")
 	public ResponseEntity<Set<String>> getDMByVerticalAndClassification(@RequestBody RevenueDTO dmList) {
 		List<String> verticals = dmList.getVerticalList();
 		List<String> classifications = dmList.getClassificationList();
 		Set<String> deliveryManagerNames = new HashSet<>();
 
-
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalInAndClassificationIn(verticals, classifications);
-		for (RevenueBudgetSummary revenue : revenues) {
-			deliveryManagerNames.add(revenue.getDeliveryManager());
-		}
-
+				List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalInAndClassificationIn(verticals, classifications);
+				for (RevenueBudgetSummary revenue : revenues) {
+					deliveryManagerNames.add(revenue.getDeliveryManager());
+				}
 
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
@@ -505,90 +480,113 @@ public class RevenueBudgetSummaryController {
 		List<String> verticals = verticalList.getMyList();
 		Set<String> deliveryManagerNames = new HashSet<>();
 
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalIn(verticals);
-		for (RevenueBudgetSummary revenue : revenues) {
-			deliveryManagerNames.add(revenue.getDeliveryManager());
-		}
-
+			List<RevenueBudgetSummary> revenues = revenueRepo.findByVerticalIn(verticals);
+			for (RevenueBudgetSummary revenue : revenues) {
+				deliveryManagerNames.add(revenue.getDeliveryManager());
+			}
 
 		return ResponseEntity.ok(deliveryManagerNames);
 	}
 
+	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
+//	@PostMapping("/monthsByQuarter")
+//	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
+//		List<String> quarters = quarterList.getMyList();
+//		Set<String> months = new HashSet<>();
+//
+//		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
+//
+//		for (String quarter : quarters) {
+//			switch (quarter) {
+//				case "Q1":
+//					months.addAll(getMonthsForQuarter(4, monthFormat));
+//					break;
+//				case "Q2":
+//					months.addAll(getMonthsForQuarter(7, monthFormat));
+//					break;
+//				case "Q3":
+//					months.addAll(getMonthsForQuarter(10, monthFormat));
+//					break;
+//				case "Q4":
+//					months.addAll(getMonthsForQuarter(1, monthFormat));
+//					break;
+//				default:
+//				System.out.println("Enter Valid Data!");
+//					break;
+//			}
+//		}
+//
+//		return ResponseEntity.ok(months);
+//	}
+//
+//	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
+//		List<String> months = new ArrayList<>();
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
+//
+//		for (int i = 0; i < 3; i++) {
+//			months.add(monthFormat.format(calendar.getTime()));
+//			calendar.add(Calendar.MONTH, 1);
+//		}
+//
+//		return months;
+//	}
 
-//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
-	@PostMapping("/monthsByQuarter")
-	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
-		List<String> quarters = quarterList.getMyList();
-		Set<String> months = new HashSet<>();
 
-		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
 
-		for (String quarter : quarters) {
-			switch (quarter) {
-				case "Q1":
-					months.addAll(getMonthsForQuarter(4, monthFormat));
-					break;
-				case "Q2":
-					months.addAll(getMonthsForQuarter(7, monthFormat));
-					break;
-				case "Q3":
-					months.addAll(getMonthsForQuarter(10, monthFormat));
-					break;
-				case "Q4":
-					months.addAll(getMonthsForQuarter(1, monthFormat));
-					break;
-				default:
-				System.out.println("Enter Valid Data!");
-					break;
-			}
+
+
+	@PostMapping("/accountbydmclassification")
+	public ResponseEntity<Set<String>> getAccountByDMAndClassification(@RequestBody RevenueDTO dmClassificationList) {
+		List<String> dmNames = dmClassificationList.getDmList();
+		List<String> classifications = dmClassificationList.getClassificationList();
+		Set<String> accounts = new HashSet<>();
+
+		// Retrieve revenues based on both DMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerInAndClassificationIn(dmNames, classifications);
+		// Extract account names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			accounts.add(revenue.getAccount());
 		}
 
-		return ResponseEntity.ok(months);
+		return ResponseEntity.ok(accounts);
 	}
 
-	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
-		List<String> months = new ArrayList<>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
 
-		for (int i = 0; i < 3; i++) {
-			months.add(monthFormat.format(calendar.getTime()));
-			calendar.add(Calendar.MONTH, 1);
+
+	@PostMapping("/projectbypmclassification")
+	public ResponseEntity<Set<String>> getProjectsByPMAndClassification(@RequestBody RevenueDTO pmClassificationList) {
+		List<String> pmNames = pmClassificationList.getPmList();
+		List<String> classifications = pmClassificationList.getClassificationList();
+		Set<String> projects = new HashSet<>();
+
+		// Retrieve revenues based on both PMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerInAndClassificationIn(pmNames, classifications);
+		// Extract project names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projects.add(revenue.getProjectName());
 		}
 
-		return months;
+		return ResponseEntity.ok(projects);
 	}
 
 
+	@PostMapping("/pmbyaccountclassification")
+	public ResponseEntity<Set<String>> getPMByAccountAndClassification(@RequestBody RevenueDTO pmAccountClassificationList) {
+		List<String> accountNames = pmAccountClassificationList.getMyList();
+		List<String> classifications = pmAccountClassificationList.getClassificationList();
+		Set<String> projectManagers = new HashSet<>();
 
+		// Retrieve revenues based on both account names and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountInAndClassificationIn(accountNames, classifications);
 
+		// Extract project managers from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projectManagers.add(revenue.getProjectManager());
+		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		return ResponseEntity.ok(projectManagers);
+	}
 
 
 	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
@@ -624,7 +622,6 @@ public class RevenueBudgetSummaryController {
 				criteria.getPmList() != null &&
 		        criteria.getQuarterList() != null;
 	}
-
 
 	//creating a criteria for specifying by quarters as well as a filter-->
 	@PostMapping ("/quarterByCriteria")
@@ -688,7 +685,6 @@ public class RevenueBudgetSummaryController {
 		);
 	}
 
-	
 	@GetMapping("/dm/{deliveryManager}")
 	public List<RevenueBudgetSummary> getRevenuesByDM(@PathVariable("deliveryManager") String deliveryManager) {
 		List<RevenueBudgetSummary> revenues = revenueRepo.findBydeliveryManager(deliveryManager);
@@ -697,8 +693,7 @@ public class RevenueBudgetSummaryController {
 
 	@GetMapping("/quarter/{quarter}")
 	public List<RevenueBudgetSummary> getRevenuesByquarter(@PathVariable("quarter") String quarter) {
-		List<RevenueBudgetSummary> revenues = revenueRepo.findByquarter(quarter);
-		return revenues;
+        return revenueRepo.findByquarter(quarter);
 	}
 
 	@GetMapping("/month/{month}")
@@ -738,7 +733,4 @@ public class RevenueBudgetSummaryController {
 		return revenueRepo.findByProjectName(projectName);
 	}
 
-
 }
-
-
