@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBudgetSummary,Integer> {
 
+    List<RevenueBudgetSummary> findByVertical(String getList);
     List<RevenueBudgetSummary> findByFinancialYear(int financialYear);
     List<RevenueBudgetSummary> findByAccount(String account);
     List<RevenueBudgetSummary> findByDeliveryManager(String deliveryManager);
@@ -49,7 +50,7 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
 
     List<RevenueBudgetSummary> findByclassification(String getList);
 
-    List<RevenueBudgetSummary> findByVertical(String getList);
+
 
     List<RevenueBudgetSummary> findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerIn(List<Integer> financialYear, List<String> projectList, List<String> verticalList, List<String> classificationList, List<String> dmList, List<String> accountList, List<String> pmList);
 
@@ -69,4 +70,9 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByDeliveryManagerInAndClassificationIn(List<String> deliveryManagers, List<String> classifications);
 
     RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
+
+    List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameIn(List<Integer> years, List<String> projectNames);
+
+    List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameInAndQuarter(List<Integer> integers, List<String> projectNames, String quarter);
 }

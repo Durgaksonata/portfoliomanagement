@@ -26,6 +26,10 @@ public class RevenueBudgetSummaryController {
 	DataEntryRepository dataEntryRepo;
 
 	RestTemplate restTemplate = new RestTemplate();
+	public RevenueBudgetSummaryController(RevenueBudgetSummaryRepository revenueRepo) {
+		this.revenueRepo = revenueRepo;
+	}
+
 
 	//method to add data into revenue table
 	@PostMapping("/save")
@@ -411,10 +415,6 @@ public class RevenueBudgetSummaryController {
 
 
 
-
-
-
-
 	@PostMapping("/projectbypm")
 	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
 		List<String> pmNames = pmList.getMyList();
@@ -424,7 +424,6 @@ public class RevenueBudgetSummaryController {
 		for (RevenueBudgetSummary revenue : revenues) {
 			project.add(revenue.getProjectName());
 		}
-
 
 		return ResponseEntity.ok(project);
 	}
@@ -741,5 +740,84 @@ public class RevenueBudgetSummaryController {
 		return revenueRepo.findByProjectName(projectName);
 	}
 
-}
 
+
+
+	@PostMapping("/gapByFinancialYearAndProject")
+	public ResponseEntity<Set<Float>> getGapByFinancialYearAndProject(@RequestBody RevenueDTO financialYearProject) {
+		// Initialize an empty set to store the gap values
+		Set<Float> gap = new HashSet<>();
+
+		try {
+			// Extract the first year from the list assuming only one year is provided
+			Integer year = financialYearProject.getFinancialYear().get(0);
+
+			// Extract the project names list
+			List<String> projectNames = financialYearProject.getProjectNames();
+
+			// Check if the project names list is empty or null
+			if (projectNames == null || projectNames.isEmpty()) {
+				// Return a bad request response indicating missing project names
+				return ResponseEntity.badRequest().body(null);
+			}
+
+			// Retrieve GAP data based on financial year and project names
+			List<RevenueBudgetSummary> revenues = revenueRepo.findGapByFinancialYearInAndProjectNameIn(Collections.singletonList(year), projectNames);
+
+			// Extract gap values from the retrieved revenues and add them to the set
+			for (RevenueBudgetSummary revenue : revenues) {
+				gap.add(revenue.getGap());
+			}
+
+			// Return a success response with the set of gap values
+			return ResponseEntity.ok(gap);
+		} catch (Exception e) {
+			// Handle any unexpected errors and return a server error response
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+
+	}
+
+	@PostMapping("/gapByFinancialYearProjectAndQuarter")
+	public ResponseEntity<Set<Float>> getGapByFinancialYearProjectAndQuarter(@RequestBody RevenueDTO financialYearProjectQuarter) {
+		// Initialize an empty set to store the gap values
+		Set<Float> gap = new HashSet<>();
+
+		try {
+			// Extract the first year from the list assuming only one year is provided
+			Integer year = financialYearProjectQuarter.getFinancialYear().get(0);
+
+			// Extract the project names list
+			List<String> projectNames = financialYearProjectQuarter.getProjectNames();
+
+			// Extract the quarter from the DTO
+			String quarter = financialYearProjectQuarter.getQuarterList().get(0); // Assuming only one quarter is provided
+
+			// Check if the project names list is empty or null
+			if (projectNames == null || projectNames.isEmpty()) {
+				// Return a bad request response indicating missing project names
+				return ResponseEntity.badRequest().body(null);
+			}
+
+			// Retrieve GAP data based on financial year, project names, and quarter
+			List<RevenueBudgetSummary> revenues = revenueRepo.findGapByFinancialYearInAndProjectNameInAndQuarter(Collections.singletonList(year), projectNames, quarter);
+
+			// Extract gap values from the retrieved revenues and add them to the set
+			for (RevenueBudgetSummary revenue : revenues) {
+				gap.add(revenue.getGap());
+			}
+
+			// Return a success response with the set of gap values
+			return ResponseEntity.ok(gap);
+		} catch (Exception e) {
+			// Handle any unexpected errors and return a server error response
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+
+
+
+
+
+}

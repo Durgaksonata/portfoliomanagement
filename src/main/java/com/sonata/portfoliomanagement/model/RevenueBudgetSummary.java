@@ -55,6 +55,11 @@ public class RevenueBudgetSummary {
 	private float budget;
 	private float forecast;
 	private float gap;
+
+	public RevenueBudgetSummary(String vertical1) {
+	}
+
+
 	public int getId() {
 		return id;
 	}
@@ -128,6 +133,8 @@ public class RevenueBudgetSummary {
 	public void setForecast(float forecast) {
 		this.forecast = forecast;
 	}
+
+
 	public float getGap() {
 		return gap;
 	}

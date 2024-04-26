@@ -9,6 +9,8 @@ import java.util.List;
 @Setter
 public class RevenueDTO {
 
+
+
     private List<String> projectList;
     private List<String> dmList;
     private List<String> accountList;
@@ -30,11 +32,15 @@ public class RevenueDTO {
         this.quarterList = quarterList;
     }
 
-    public RevenueDTO() {
-    }
+
 
     // Getter and setter methods for myList
     private List<String> myList;
+
+    public RevenueDTO() {
+
+    }
+
 
     public List<String> getMyList() {
         return myList;
@@ -83,6 +89,15 @@ public class RevenueDTO {
 
     public List<String> getDMList() {return dmList;
     }
+
+    private List<String> projectNames;
+    public List<String> getProjectNames() {
+        return projectNames;
+    }
+
+
+
+
 }
 
 
