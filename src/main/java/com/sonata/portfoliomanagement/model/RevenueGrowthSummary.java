@@ -11,7 +11,7 @@ public class RevenueGrowthSummary {
         super();
     }
 
-    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float accountExpected, float forecast, float gap) {
+    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float q4Act, float accountExpected, float forecast, float gap) {
         this.id = id;
         this.vertical = vertical;
         this.classification = classification;
@@ -22,6 +22,7 @@ public class RevenueGrowthSummary {
         this.financialYear = financialYear;
         this.quarter = quarter;
         this.month = month;
+        this.Q4Act = q4Act;
         this.AccountExpected = accountExpected;
         this.forecast = forecast;
         this.gap = gap;
@@ -32,19 +33,22 @@ public class RevenueGrowthSummary {
     private int id;
     private String vertical;
     private String classification;
-    @Column(name="Delivery_Manager")
+    @Column(name = "Delivery_Manager")
     private String deliveryManager;
     private String account;
-    @Column(name="Project_Manager")
+    @Column(name = "Project_Manager")
     private String projectManager;
-    @Column(name="Project_Name")
+    @Column(name = "Project_Name")
     private String projectName;
-    @Column(name="Financial_Year")
+    @Column(name = "Financial_Year")
     private int financialYear;
     private String quarter;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date month;
-    @Column(name="Account_Expected")
+    @Column(name = "Q4_Act")
+    private float Q4Act;
+
+    @Column(name = "Account_Expected")
     private float AccountExpected;
     private float forecast;
     private float gap;
@@ -129,6 +133,7 @@ public class RevenueGrowthSummary {
         this.month = month;
     }
 
+
     public float getAccountExpected() {
         return AccountExpected;
     }
@@ -151,5 +156,13 @@ public class RevenueGrowthSummary {
 
     public void setGap(float gap) {
         this.gap = gap;
+    }
+
+    public float getQ4Act() {
+        return Q4Act;
+    }
+
+    public void setQ4Act(float q4Act) {
+        Q4Act = q4Act;
     }
 }

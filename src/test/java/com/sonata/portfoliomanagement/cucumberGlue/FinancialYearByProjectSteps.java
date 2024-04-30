@@ -428,9 +428,19 @@ public class FinancialYearByProjectSteps {
         }
 
         @Override
-        public void setFinancialYearsByYear(List<Integer> expectedFinancialYears) {
-
+        public List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameIn(List<Integer> years, List<String> projectNames) {
+            return null;
         }
+
+        @Override
+        public List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameInAndQuarter(List<Integer> integers, List<String> projectNames, String quarter) {
+            return null;
+        }
+
+//        @Override
+//        public void setFinancialYearsByYear(List<Integer> expectedFinancialYears) {
+//
+//        }
 
         @Override
         public List<RevenueBudgetSummary> findByDeliveryManagerInAndClassificationIn(List<String> dmNames, List<String> classifications) {

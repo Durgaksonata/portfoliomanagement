@@ -2,6 +2,7 @@ package com.sonata.portfoliomanagement.controllers;
 
 import com.sonata.portfoliomanagement.interfaces.DataEntryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
+import com.sonata.portfoliomanagement.interfaces.RevenueGrowthSummaryRepository;
 import com.sonata.portfoliomanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ public class AccountBudgetsController {
 
     @Autowired
     AccountBudgetsRepository acBudgetsRepo;
+
+
+
 
     @PostMapping("/save")
     public ResponseEntity<AccountBudgets> createAcBudgets(@RequestBody AccountBudgets acBudgets) {
@@ -36,6 +40,8 @@ public class AccountBudgetsController {
 
     @Autowired
     private RevenueBudgetSummaryRepository revenueBudgetSummaryRepository;
+    @Autowired
+    private RevenueGrowthSummaryRepository revenueGrowthSummaryRepository;
 
     @Autowired
     private DataEntryRepository dataEntryRepository;
@@ -108,6 +114,9 @@ public class AccountBudgetsController {
         revenueBudgetSummary.setBudget(accountBudgets.getBudget()); // Populate the budget field
         return revenueBudgetSummary;
     }
+
+
+
 
 
 }

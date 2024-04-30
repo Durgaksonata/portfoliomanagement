@@ -626,6 +626,4 @@ public class RevenueGrowthSummaryController {
         return months;
     }
 
-
-
 }
