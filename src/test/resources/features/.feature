@@ -17,11 +17,23 @@ Feature: Retrieving Financial Years by Project
     When the delivery managers are retrieved by classifications
     Then the delivery managers associated with the classifications are returned
 
+    #get delivery managers from vertical and classification
+  Scenario: Retrieving Delivery Managers by Verticals and Classification
+    Given the client provides a list of verticals and classifications
+    When the delivery managers are retrieved by verticals and classifications
+    Then the delivery managers associated with the verticals and classifications are returned
+
      #get accounts by delivery managers
   Scenario: Retrieve accounts for a list of delivery managers
     Given the client provides a list of delivery managers
     When the accounts are retrieved by delivery managers
     Then the accounts associated with the delivery managers are returned
+
+    #get accounts by delivery managers and classification
+  Scenario: Retrieving Accounts by Delivery Managers and Classification
+    Given the client provides a list of delivery managers and classifications
+    When the accounts are retrieved by delivery managers and classifications
+    Then the accounts associated with the delivery managers and classifications are returned
 
     # get project managers by accounts
   Scenario: Retrieve project managers for a list of accounts
@@ -40,3 +52,15 @@ Feature: Retrieving Financial Years by Project
     Given the client provides a list of project managers
     When the projects are retrieved by project managers
     Then the projects associated with the project managers are returned
+
+    #get projects by project managers and classification
+  Scenario: Retrieving Projects by Project Managers and Classification
+    Given the client provides a list of project managers and classifications
+    When the projects are retrieved by project managers and classifications
+    Then the projects associated with the project managers and classifications are returned
+#
+#    #get all data by criteria
+#  Scenario: Retrieving Financial Data by Criteria
+#    Given the client provides criteria for financial data retrieval
+#    When the financial data is retrieved based on the provided criteria
+#    Then the financial data matching the criteria is returned
