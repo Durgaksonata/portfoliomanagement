@@ -2,6 +2,9 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.List;
 
+import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
+import com.sonata.portfoliomanagement.model.AccountBudgets;
+import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +21,14 @@ import com.sonata.portfoliomanagement.model.DataEntry;
 @RestController
 @RequestMapping("/dataentry")
 public class DataEntryController {
-	
-	@Autowired
-	DataEntryRepository dataEntryRepo;
-	
+
+    @Autowired
+    DataEntryRepository dataEntryRepo;
+    @Autowired
+    private RevenueBudgetSummaryRepository revenueBudgetSummaryRepository;
+
+
+
     @GetMapping("/get")
     public ResponseEntity<List<DataEntry>> getAllData() {
         List<DataEntry> dataentry = dataEntryRepo.findAll();
@@ -29,7 +36,7 @@ public class DataEntryController {
     }
     @PostMapping("/save")
     public ResponseEntity<DataEntry> createAcBudgets(@RequestBody DataEntry dataEntry) {
-    	DataEntry createdDataEntry = dataEntryRepo.save(dataEntry);
+        DataEntry createdDataEntry = dataEntryRepo.save(dataEntry);
         return new ResponseEntity<>(createdDataEntry, HttpStatus.CREATED);
     }
 }

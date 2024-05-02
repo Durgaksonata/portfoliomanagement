@@ -27,6 +27,22 @@ public class RevenueBudgetSummaryController {
 
 	RestTemplate restTemplate = new RestTemplate();
 
+	public RevenueBudgetSummaryController(RevenueBudgetSummaryRepository revenueRepo) {
+		this.revenueRepo = revenueRepo;
+	}
+
+	List<String> stringList = new ArrayList<>();
+	private List<RevenueBudgetSummary> verticalList;
+	private List<RevenueBudgetSummary> accountList;
+	private List<RevenueBudgetSummary> pmlist;
+	private List<RevenueBudgetSummary> classificationlist;
+	private List<RevenueBudgetSummary>projectlist;
+	private List<RevenueBudgetSummary>FYlist;
+	private List<RevenueBudgetSummary>quarterlist;
+
+	private List<RevenueBudgetSummary>dmlist;
+
+
 	//method to add data into revenue table
 	@PostMapping("/save")
 	public ResponseEntity<RevenueBudgetSummary> createRevenueBudgetSummary(@RequestBody RevenueBudgetSummary revenue) {
@@ -357,15 +373,15 @@ public class RevenueBudgetSummaryController {
 	}
 
 	//get all Months-->
-	@GetMapping("/getmonthlist")
-	public List<Date> getMonth() {
-		List<Date> monthList = new ArrayList<>();
-		List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
-		for (RevenueBudgetSummary request : revenueData) {
-			monthList.add(request.getMonth());
-		}
-		return monthList.stream().distinct().collect(Collectors.toList());
-	}
+//	@GetMapping("/getmonthlist")
+//	public List<Date> getMonth() {
+//		List<Date> monthList = new ArrayList<>();
+//		List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
+//		for (RevenueBudgetSummary request : revenueData) {
+//			monthList.add(request.getMonth());
+//		}
+//		return monthList.stream().distinct().collect(Collectors.toList());
+//	}
 
 	//this method is going to add multiple years,accounts for a dm into a single array object instead of adding each account as a seperate object within the list-->
 	@GetMapping("/ultraFilter")
@@ -392,20 +408,42 @@ public class RevenueBudgetSummaryController {
 		return ResponseEntity.ok(account);
 	}
 
+	@PostMapping("/accountbydmclassification")
+	public ResponseEntity<Set<String>> getAccountByDMAndClassification(@RequestBody RevenueDTO dmClassificationList) {
+		List<String> dmNames = dmClassificationList.getDMList();
+		List<String> classifications = dmClassificationList.getClassificationList();
+		Set<String> accounts = new HashSet<>();
 
-//	@PostMapping("/projectbypm")
-//	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
-//		List<String> pmNames = pmList.getMyList();
-//		Set<String> project = new HashSet<>();
-//
-//		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
-//		for (RevenueBudgetSummary revenue : revenues) {
-//			project.add(revenue.getProjectName());
-//		}
-//
-//
-//		return ResponseEntity.ok(project);
-//	}
+		// Retrieve revenues based on both DMs and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByDeliveryManagerInAndClassificationIn(dmNames, classifications);
+		// Extract account names from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			accounts.add(revenue.getAccount());
+		}
+
+		return ResponseEntity.ok(accounts);
+	}
+
+
+
+
+
+
+
+
+	@PostMapping("/projectbypm")
+	public ResponseEntity<Set<String>> getprojectBypM(@RequestBody RevenueDTO pmList) {
+		List<String> pmNames = pmList.getMyList();
+		Set<String> project = new HashSet<>();
+
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByProjectManagerIn(pmNames);
+		for (RevenueBudgetSummary revenue : revenues) {
+			project.add(revenue.getProjectName());
+		}
+
+
+		return ResponseEntity.ok(project);
+	}
 
 	@PostMapping("/projectbypmclassification")
 	public ResponseEntity<Set<String>> getProjectsByPMAndClassification(@RequestBody RevenueDTO pmClassificationList) {
@@ -436,6 +474,26 @@ public class RevenueBudgetSummaryController {
 
 		return ResponseEntity.ok(projectManager);
 	}
+
+	@PostMapping("/pmbyaccountclassification")
+	public ResponseEntity<Set<String>> getPMByAccountAndClassification(@RequestBody RevenueDTO pmAccountClassificationList) {
+		List<String> accountNames = pmAccountClassificationList.getAccountList();
+		List<String> classifications = pmAccountClassificationList.getClassificationList();
+		Set<String> projectManagers = new HashSet<>();
+
+		// Retrieve revenues based on both account names and classifications
+		List<RevenueBudgetSummary> revenues = revenueRepo.findByAccountInAndClassificationIn(accountNames, classifications);
+
+		// Extract project managers from the retrieved revenues
+		for (RevenueBudgetSummary revenue : revenues) {
+			projectManagers.add(revenue.getProjectManager());
+		}
+
+		return ResponseEntity.ok(projectManagers);
+	}
+
+
+
 
 	@PostMapping("/dmbyclassification")
 	public ResponseEntity<Set<String>> getDMByClassification(@RequestBody RevenueDTO classificationList) {
@@ -698,6 +756,90 @@ public class RevenueBudgetSummaryController {
 	public List<RevenueBudgetSummary> getRevenueByProjectName(@PathVariable("projectName") String projectName) {
 		return revenueRepo.findByProjectName(projectName);
 	}
+	public void setverticalList(List<RevenueBudgetSummary> verticalList) {
+		this.verticalList = verticalList;
+
+	}
+	public  Set<String> getUniqueVerticals() {
+		return (verticalList == null) ? new HashSet<>() :
+				verticalList.stream()
+						.map(RevenueBudgetSummary::getVertical)
+						.collect(Collectors.toSet());
+	}
+	public void setaccountList(List<RevenueBudgetSummary> accountList) {
+		this.accountList = accountList;
+
+	}
+	public  Set<String> getUniqueAccounts() {
+		return (accountList == null) ? new HashSet<>() :
+				accountList.stream()
+						.map(RevenueBudgetSummary::getAccount)
+						.collect(Collectors.toSet());
+
+	}
+	public void setpmlist(List<RevenueBudgetSummary> pmlist) {
+		this.pmlist = pmlist;
+
+	}
+	public  Set<String> getUniquePms() {
+		return (pmlist == null) ? new HashSet<>() :
+				pmlist.stream()
+						.map(RevenueBudgetSummary::getProjectManager)
+						.collect(Collectors.toSet());
+	}
+	public void setclassificationlist(List<RevenueBudgetSummary> classificationlist) {
+		this.classificationlist = classificationlist;
+
+	}
+	public  Set<String> getUniqueclassification() {
+		return (classificationlist == null) ? new HashSet<>() :
+				classificationlist.stream()
+						.map(RevenueBudgetSummary::getClassification)
+						.collect(Collectors.toSet());
+	}
+	public void setprojectlist(List<RevenueBudgetSummary> projectlist) {
+		this.projectlist = projectlist;
+
+	}
+	public  Set<String> getUniqueproject() {
+		return (projectlist == null) ? new HashSet<>() :
+				projectlist.stream()
+						.map(RevenueBudgetSummary::getProjectName)
+						.collect(Collectors.toSet());
+	}
+	public void setFYlist(List<RevenueBudgetSummary> FYlist) {
+		this.FYlist = FYlist;
+
+	}
+	public  Set<Integer> getUniqueFY() {
+		return (FYlist == null) ? new HashSet<>() :
+				FYlist.stream()
+						.map(RevenueBudgetSummary::getFinancialYear)
+						.collect(Collectors.toSet());
+	}
+	public void setquarterlist(List<RevenueBudgetSummary> quarterlist) {
+		this.quarterlist = quarterlist;
+
+	}
+	public  Set<String> getUniqueQuarter() {
+		return (quarterlist == null) ? new HashSet<>() :
+				quarterlist.stream()
+						.map(RevenueBudgetSummary::getQuarter)
+						.collect(Collectors.toSet());
+	}
+	public void setdmlist(List<RevenueBudgetSummary> dmlist) {
+		this.dmlist = dmlist;
+
+	}
+	public  Set<String> getUniquedm() {
+		return (dmlist == null) ? new HashSet<>() :
+				dmlist.stream()
+						.map(RevenueBudgetSummary::getDeliveryManager)
+						.collect(Collectors.toSet());
+	}
+
+
+
 
 }
 

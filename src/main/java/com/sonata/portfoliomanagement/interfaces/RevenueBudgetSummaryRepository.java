@@ -63,4 +63,10 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByMonthIn(List<LocalDate> months);
 
     List<RevenueBudgetSummary> findByProjectManagerInAndClassificationIn(List<String> pmNames, List<String> classifications);
+
+    List<RevenueBudgetSummary> findByAccountInAndClassificationIn(List<String> accounts, List<String> classifications);
+
+    List<RevenueBudgetSummary> findByDeliveryManagerInAndClassificationIn(List<String> deliveryManagers, List<String> classifications);
+
+    RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 }

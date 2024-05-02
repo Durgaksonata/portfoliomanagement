@@ -67,7 +67,22 @@ public class RevenueDTO {
                 this.getPmList() != null;
     }
 
+    // Getter and setter methods for dmList
+    public List<String> getDmList() {
+        return dmList;
+    }
 
+    public void setDmList(List<String> dmList) {
+        this.dmList = dmList;
+    }
+
+
+    public List<String> getDeliveryManagerList() {
+        return dmList;
+    }
+
+    public List<String> getDMList() {return dmList;
+    }
 }
 
 
