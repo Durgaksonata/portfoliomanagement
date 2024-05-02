@@ -569,11 +569,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniqueVerticals() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getVertical()).thenReturn("Apple");
+		Mockito.when(mockItem1.getVertical()).thenReturn("Vertical1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getVertical()).thenReturn("Apple");
+		Mockito.when(mockItem2.getVertical()).thenReturn("Vertical1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getVertical()).thenReturn("Banana");
+		Mockito.when(mockItem3.getVertical()).thenReturn("Vertical2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> vertical = new ArrayList<>();
@@ -589,8 +589,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("Vertical1");
+		expectedUniqueNames.add("Vertical2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -617,11 +617,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniqueaccounts() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getAccount()).thenReturn("Apple");
+		Mockito.when(mockItem1.getAccount()).thenReturn("Accounts1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getAccount()).thenReturn("Apple");
+		Mockito.when(mockItem2.getAccount()).thenReturn("Accounts1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getAccount()).thenReturn("Banana");
+		Mockito.when(mockItem3.getAccount()).thenReturn("Accounts2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> account = new ArrayList<>();
@@ -637,8 +637,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("Accounts1");
+		expectedUniqueNames.add("Accounts2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -648,11 +648,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniquepms() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getProjectManager()).thenReturn("orange");
+		Mockito.when(mockItem1.getProjectManager()).thenReturn("pm1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getProjectManager()).thenReturn("orange");
+		Mockito.when(mockItem2.getProjectManager()).thenReturn("pm1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getProjectManager()).thenReturn("guava");
+		Mockito.when(mockItem3.getProjectManager()).thenReturn("pm2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> pm = new ArrayList<>();
@@ -668,8 +668,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("orange");
-		expectedUniqueNames.add("guava");
+		expectedUniqueNames.add("pm1");
+		expectedUniqueNames.add("pm2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -679,11 +679,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniqueclassification() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getClassification()).thenReturn("Apple");
+		Mockito.when(mockItem1.getClassification()).thenReturn("Classification1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getClassification()).thenReturn("Apple");
+		Mockito.when(mockItem2.getClassification()).thenReturn("Classification1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getClassification()).thenReturn("Banana");
+		Mockito.when(mockItem3.getClassification()).thenReturn("Classification2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> classification = new ArrayList<>();
@@ -699,8 +699,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("Classification1");
+		expectedUniqueNames.add("Classification2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -710,11 +710,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniqueproject() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getProjectName()).thenReturn("Apple");
+		Mockito.when(mockItem1.getProjectName()).thenReturn("Project1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getProjectName()).thenReturn("Apple");
+		Mockito.when(mockItem2.getProjectName()).thenReturn("Project1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getProjectName()).thenReturn("Banana");
+		Mockito.when(mockItem3.getProjectName()).thenReturn("Project2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> projectname = new ArrayList<>();
@@ -730,8 +730,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("Project1");
+		expectedUniqueNames.add("Project2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -772,11 +772,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniquequarter() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getQuarter()).thenReturn("Apple");
+		Mockito.when(mockItem1.getQuarter()).thenReturn("Quarter1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getQuarter()).thenReturn("Apple");
+		Mockito.when(mockItem2.getQuarter()).thenReturn("Quarter1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getQuarter()).thenReturn("Banana");
+		Mockito.when(mockItem3.getQuarter()).thenReturn("Quarter2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> quarter = new ArrayList<>();
@@ -792,8 +792,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("Quarter1");
+		expectedUniqueNames.add("Quarter2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
@@ -803,11 +803,11 @@ class PorfolioManagementApplicationTests {
 	public void testGetUniqueDMs() {
 		// Mock data
 		RevenueBudgetSummary mockItem1 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem1.getDeliveryManager()).thenReturn("Apple");
+		Mockito.when(mockItem1.getDeliveryManager()).thenReturn("DM1");
 		RevenueBudgetSummary mockItem2 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem2.getDeliveryManager()).thenReturn("Apple");
+		Mockito.when(mockItem2.getDeliveryManager()).thenReturn("DM1");
 		RevenueBudgetSummary mockItem3 = Mockito.mock(RevenueBudgetSummary.class);
-		Mockito.when(mockItem3.getDeliveryManager()).thenReturn("Banana");
+		Mockito.when(mockItem3.getDeliveryManager()).thenReturn("DM2");
 
 		// Populate itemList with mock items
 		List<RevenueBudgetSummary> dm = new ArrayList<>();
@@ -823,8 +823,8 @@ class PorfolioManagementApplicationTests {
 
 		// Expected set of unique names
 		Set<String> expectedUniqueNames = new HashSet<>();
-		expectedUniqueNames.add("Apple");
-		expectedUniqueNames.add("Banana");
+		expectedUniqueNames.add("DM1");
+		expectedUniqueNames.add("DM2");
 
 		// Asserting that the method returns the expected unique names
 		assertEquals(expectedUniqueNames, uniqueNames);
