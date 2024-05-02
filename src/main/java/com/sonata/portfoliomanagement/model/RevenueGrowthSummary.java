@@ -11,10 +11,11 @@ public class RevenueGrowthSummary {
         super();
     }
 
-    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float q4Act, float accountExpected, float forecast, float gap) {
+    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float accountExpected, float forecast, float gap) {
         this.id = id;
         this.vertical = vertical;
         this.classification = classification;
+        this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.projectManager = projectManager;
@@ -22,7 +23,6 @@ public class RevenueGrowthSummary {
         this.financialYear = financialYear;
         this.quarter = quarter;
         this.month = month;
-        this.Q4Act = q4Act;
         this.AccountExpected = accountExpected;
         this.forecast = forecast;
         this.gap = gap;
@@ -33,6 +33,9 @@ public class RevenueGrowthSummary {
     private int id;
     private String vertical;
     private String classification;
+
+    @Column(name="Delivery_Director")
+    private String deliveryDirector;
     @Column(name = "Delivery_Manager")
     private String deliveryManager;
     private String account;
@@ -45,8 +48,6 @@ public class RevenueGrowthSummary {
     private String quarter;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date month;
-    @Column(name = "Q4_Act")
-    private float Q4Act;
 
     @Column(name = "Account_Expected")
     private float AccountExpected;
@@ -71,6 +72,14 @@ public class RevenueGrowthSummary {
 
     public String getClassification() {
         return classification;
+    }
+
+    public String getDeliveryDirector() {
+        return deliveryDirector;
+    }
+
+    public void setDeliveryDirector(String deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
     }
 
     public void setClassification(String classification) {
@@ -158,11 +167,5 @@ public class RevenueGrowthSummary {
         this.gap = gap;
     }
 
-    public float getQ4Act() {
-        return Q4Act;
-    }
 
-    public void setQ4Act(float q4Act) {
-        Q4Act = q4Act;
-    }
 }

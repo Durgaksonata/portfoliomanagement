@@ -15,8 +15,9 @@ public interface DataEntryRepository extends JpaRepository<DataEntry, Integer>{
     DataEntry findByFinancialYear(int financialYear);
     DataEntry findByQuarter(String quarter);
 
-    List<DataEntry> findAllByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String verticals, String classifications, String deliverManagers, String accounts, String projectManagers, String projectNames, int financialYears, String quarters);
 
 
+    List<DataEntry> findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
+    List<DataEntry> findAllByVerticalAndClassificationAndDeliveryManagerAndDeliveryDirectorAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 }

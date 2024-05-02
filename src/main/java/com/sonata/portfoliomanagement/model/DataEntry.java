@@ -11,17 +11,12 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Data_Entry")
 public class DataEntry {
-	public DataEntry(Integer id, Date month, String vertical, String classification, String deliveryManager,
-			String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity,
-			float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage,
-			float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue,
-			float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager,
-			float onsiteProjectManager, float billableProjectManager) {
-		super();
+	public DataEntry(Integer id, Date month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
 		this.id = id;
 		this.month = month;
 		this.vertical = vertical;
 		this.classification = classification;
+		this.deliveryDirector = deliveryDirector;
 		this.deliveryManager = deliveryManager;
 		this.account = account;
 		this.projectManager = projectManager;
@@ -46,6 +41,7 @@ public class DataEntry {
 		this.onsiteProjectManager = onsiteProjectManager;
 		this.billableProjectManager = billableProjectManager;
 	}
+
 	public DataEntry() {
 		super();
 	}
@@ -56,6 +52,9 @@ public class DataEntry {
 	private Date month;
 	private String vertical;
 	private String classification;
+
+	@Column(name="Delivery_Director")
+	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
 	private String deliveryManager;
 	private String account;
@@ -146,6 +145,15 @@ public class DataEntry {
 	public String getCategory() {
 		return category;
 	}
+
+	public String getDeliveryDirector() {
+		return deliveryDirector;
+	}
+
+	public void setDeliveryDirector(String deliveryDirector) {
+		this.deliveryDirector = deliveryDirector;
+	}
+
 	public void setCategory(String category) {
 		this.category = category;
 	}

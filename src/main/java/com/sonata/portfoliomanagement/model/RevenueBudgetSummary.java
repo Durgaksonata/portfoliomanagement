@@ -13,13 +13,11 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "revenue_budget_summary")
 public class RevenueBudgetSummary {
-	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryManager, String account,
-								String projectManager, String projectName, int financialYear, Date month, String quarter, float budget,
-								float forecast, float gap) {
-		super();
+	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float budget, float forecast, float gap) {
 		this.id = id;
 		this.vertical = vertical;
 		this.classification = classification;
+		this.deliveryDirector = deliveryDirector;
 		this.deliveryManager = deliveryManager;
 		this.account = account;
 		this.projectManager = projectManager;
@@ -31,6 +29,7 @@ public class RevenueBudgetSummary {
 		this.forecast = forecast;
 		this.gap = gap;
 	}
+
 	public RevenueBudgetSummary() {
 		super();
 	}
@@ -40,6 +39,8 @@ public class RevenueBudgetSummary {
 	private int id;
 	private String vertical;
 	private String classification;
+	@Column(name="Delivery_Director")
+	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
 	private String deliveryManager;
 	private String account;
@@ -112,6 +113,15 @@ public class RevenueBudgetSummary {
 	public Date getMonth() {
 		return month;
 	}
+
+	public String getDeliveryDirector() {
+		return deliveryDirector;
+	}
+
+	public void setDeliveryDirector(String deliveryDirector) {
+		this.deliveryDirector = deliveryDirector;
+	}
+
 	public void setMonth(Date month) {
 		this.month = month;
 	}

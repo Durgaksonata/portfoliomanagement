@@ -816,5 +816,58 @@ public class RevenueBudgetSummaryController {
 
 
 
+	@PostMapping("/databyverticalandclassification")
+	public ResponseEntity<Set<Map<String, Object>>> getDataByVerticalAndClassification(@RequestBody RevenueDTO requestDTO) {
+		// Check if all criteria are provided
+		if (!areAllCriteriaProvided(requestDTO)) {
+			// If any criteria are missing, return bad request
+			return ResponseEntity.badRequest().build();
+		}
+
+		List<String> verticals = requestDTO.getVerticalList();
+		List<String> classifications = requestDTO.getClassificationList();
+		Set<Map<String, Object>> data = new HashSet<>();
+
+		// Retrieve data based on both verticals and classifications
+		List<RevenueBudgetSummary> dataList = revenueRepo.findByVerticalInAndClassificationIn(verticals, classifications);
+
+		// Check if data is retrieved correctly
+		System.out.println("Data Retrieved: " + dataList);
+
+		// Extract data fields from the retrieved data
+		for (RevenueBudgetSummary dataItem : dataList) {
+			Map<String, Object> dataMap = new HashMap<>();
+			dataMap.put("id", dataItem.getId());
+			dataMap.put("vertical", dataItem.getVertical());
+			dataMap.put("classification", dataItem.getClassification());
+			dataMap.put("deliveryDirector", dataItem.getDeliveryDirector());
+			dataMap.put("deliveryManager", dataItem.getDeliveryManager());
+			dataMap.put("account", dataItem.getAccount());
+			dataMap.put("projectManager", dataItem.getProjectManager());
+			dataMap.put("projectName", dataItem.getProjectName());
+			dataMap.put("financialYear", dataItem.getFinancialYear());
+			dataMap.put("quarter", dataItem.getQuarter());
+			dataMap.put("month", dataItem.getMonth());
+			dataMap.put("budget", dataItem.getBudget());
+			dataMap.put("forecast", dataItem.getForecast());
+			dataMap.put("gap", dataItem.getGap());
+
+			data.add(dataMap);
+		}
+
+		return ResponseEntity.ok(data);
+	}
+
+	private boolean areAllCriteriaProvided(RevenueDTO requestDTO) {
+		// Check if all criteria are provided
+		return requestDTO.getVerticalList() != null && !requestDTO.getVerticalList().isEmpty()
+				&& requestDTO.getClassificationList() != null && !requestDTO.getClassificationList().isEmpty();
+	}
+
+
+
+
+
+
 
 }

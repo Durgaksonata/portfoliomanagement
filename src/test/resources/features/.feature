@@ -1,5 +1,7 @@
+#Revenue Budget Summary Features
+
 #get financial year by projects
-Feature: Retrieving Financial Years by Project
+Feature: RevenueBudgetSummaryCucumber Testing
   Scenario: Retrieve financial years for a list of projects
     Given the client provides a list of projects
     When the financial year is retrieved by project
@@ -40,3 +42,12 @@ Feature: Retrieving Financial Years by Project
     Given the client provides a list of project managers
     When the projects are retrieved by project managers
     Then the projects associated with the project managers are returned
+
+
+  Scenario: Retrieving Classifications by Verticals
+    Given the user provides a list of verticals
+    When classifications are retrieved by verticals
+    Then classifications associated with the verticals are returned
+
+
+

@@ -14,12 +14,12 @@ public class AccountBudgets {
 	public AccountBudgets() {
 		super();
 	}
-	public AccountBudgets(int id, String vertical, String classification, String deliveryManager, String account,
-			String projectManager, String projectName, int financialYear, Date month, String quarter, float budget) {
-		super();
+
+	public AccountBudgets(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, Date month, String quarter, float budget) {
 		this.id = id;
 		this.vertical = vertical;
 		this.classification = classification;
+		this.deliveryDirector = deliveryDirector;
 		this.deliveryManager = deliveryManager;
 		this.account = account;
 		this.projectManager = projectManager;
@@ -29,11 +29,14 @@ public class AccountBudgets {
 		this.quarter = quarter;
 		this.budget = budget;
 	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 	private String vertical;
 	private String classification;
+	@Column(name="Delivery_Director")
+	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
 	private String deliveryManager;
 	private String account;
@@ -76,6 +79,15 @@ public class AccountBudgets {
 	public void setAccount(String account) {
 		this.account = account;
 	}
+
+	public String getDeliveryDirector() {
+		return deliveryDirector;
+	}
+
+	public void setDeliveryDirector(String deliveryDirector) {
+		this.deliveryDirector = deliveryDirector;
+	}
+
 	public String getProjectManager() {
 		return projectManager;
 	}

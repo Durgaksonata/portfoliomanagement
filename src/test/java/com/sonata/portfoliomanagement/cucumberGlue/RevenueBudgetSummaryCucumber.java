@@ -6,7 +6,6 @@ import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
-import lombok.Setter;
 import org.junit.Assert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = TestConfig.class)
-public class FinancialYearByProjectSteps {
+public class RevenueBudgetSummaryCucumber {
 
     private RevenueDTO verticalList;
     private RevenueDTO classificationList;
