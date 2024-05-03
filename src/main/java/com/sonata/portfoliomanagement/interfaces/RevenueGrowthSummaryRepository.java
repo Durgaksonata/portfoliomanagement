@@ -56,7 +56,6 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     List<RevenueGrowthSummary> findByClassificationIn(List<String> classificationNames);
 
 
-    RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryManagerAndDeliveryDirectorAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 }

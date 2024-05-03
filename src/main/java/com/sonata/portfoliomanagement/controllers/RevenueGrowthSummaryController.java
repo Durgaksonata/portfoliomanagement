@@ -666,7 +666,7 @@ public class RevenueGrowthSummaryController {
             dataMap.put("financialYear", dataItem.getFinancialYear());
             dataMap.put("quarter", dataItem.getQuarter());
             dataMap.put("month", dataItem.getMonth());
-            dataMap.put("AccountExpected", dataItem.getAccountExpected());
+            dataMap.put("accountExpected", dataItem.getAccountExpected());
             dataMap.put("forecast", dataItem.getForecast());
             dataMap.put("gap", dataItem.getGap());
 
@@ -682,6 +682,5 @@ public class RevenueGrowthSummaryController {
         return requestDTO.getVerticalList() != null && !requestDTO.getVerticalList().isEmpty()
                 && requestDTO.getClassificationList() != null && !requestDTO.getClassificationList().isEmpty();
     }
-
 
 }

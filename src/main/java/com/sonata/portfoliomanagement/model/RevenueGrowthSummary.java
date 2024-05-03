@@ -23,7 +23,7 @@ public class RevenueGrowthSummary {
         this.financialYear = financialYear;
         this.quarter = quarter;
         this.month = month;
-        this.AccountExpected = accountExpected;
+        this.accountExpected = accountExpected;
         this.forecast = forecast;
         this.gap = gap;
     }
@@ -50,7 +50,7 @@ public class RevenueGrowthSummary {
     private Date month;
 
     @Column(name = "Account_Expected")
-    private float AccountExpected;
+    private float accountExpected;
     private float forecast;
     private float gap;
 
@@ -144,11 +144,11 @@ public class RevenueGrowthSummary {
 
 
     public float getAccountExpected() {
-        return AccountExpected;
+        return accountExpected;
     }
 
     public void setAccountExpected(float accountExpected) {
-        AccountExpected = accountExpected;
+        this.accountExpected = accountExpected;
     }
 
     public float getForecast() {
