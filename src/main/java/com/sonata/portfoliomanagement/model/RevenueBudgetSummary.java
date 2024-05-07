@@ -13,13 +13,14 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "revenue_budget_summary")
 public class RevenueBudgetSummary {
-	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryManager, String account,
+	public RevenueBudgetSummary(int id, String vertical, String classification,String deliveryDirector, String deliveryManager, String account,
 								String projectManager, String projectName, int financialYear, LocalDate month, String quarter, float budget,
 								float forecast, float gap) {
 		super();
 		this.id = id;
 		this.vertical = vertical;
 		this.classification = classification;
+		this.deliveryDirector = deliveryDirector;
 		this.deliveryManager = deliveryManager;
 		this.account = account;
 		this.projectManager = projectManager;
@@ -40,6 +41,8 @@ public class RevenueBudgetSummary {
 	private int id;
 	private String vertical;
 	private String classification;
+	@Column(name="Delivery_Director")
+	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
 	private String deliveryManager;
 	private String account;

@@ -242,7 +242,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		int fianancialYear = 2023;
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Girish","Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -259,7 +259,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String deliveryManager = "Sudhakar S";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU","Girish", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -276,7 +276,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String quarter = "Q3";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Girish","Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -293,7 +293,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String vertical = "Retail";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU","Girish", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -310,7 +310,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String projectManager = "Abhishek Raj";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU","Girish", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -327,7 +327,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String classification = "Non_MDU";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU","Girish", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -344,7 +344,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String projectName = "AZ_Braindata_feed_QA";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU","Girish", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -361,7 +361,7 @@ class PorfolioManagementApplicationTests {
 		// Given
 		String account = "Astra Zeneca";
 		//LocalDate date = LocalDate.of(2023, 8, 9);
-		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
+		RevenueBudgetSummary revenue1 = new RevenueBudgetSummary(21, "Retail", "Non_MDU", "Sudhakar S","Girish", "Astra Zeneca", "Abhishek Raj", "AZ_Braindata_feed_QA", 2023, LocalDate.of(2023, 8, 9), "Q3", 3, 3, 3); // Initialize with sample data
 		revenueRepo.save(revenue1);
 
 
@@ -387,8 +387,8 @@ class PorfolioManagementApplicationTests {
 
 		// Create sample revenues
 		List<RevenueBudgetSummary> revenues = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
-				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
+				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DD1","DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
+				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DD2","DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
 		);
 
 		// Simulate repository behavior
@@ -420,8 +420,8 @@ class PorfolioManagementApplicationTests {
 
 		// Create sample revenues
 		List<RevenueBudgetSummary> revenues = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
-				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
+				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DD1","DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
+				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DD2","DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
 		);
 
 		// Simulate repository behavior
@@ -456,8 +456,8 @@ class PorfolioManagementApplicationTests {
 
 		// Create sample revenues
 		List<RevenueBudgetSummary> revenues = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
-				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
+				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DM1","DD1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
+				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DM2","DD2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
 		);
 
 		// Simulate repository behavior
@@ -489,8 +489,8 @@ class PorfolioManagementApplicationTests {
 
 		// Create sample revenues
 		List<RevenueBudgetSummary> revenues = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Class1", "DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
-				new RevenueBudgetSummary(2, "Vertical2", "Class2", "DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
+				new RevenueBudgetSummary(1, "Vertical1", "Class1","DD1", "DM1", "Account1", "ProjectManager1", "Project1", 2024, LocalDate.now(), "Q1", 1000, 800, 200),
+				new RevenueBudgetSummary(2, "Vertical2", "Class2","DD2","DM2", "Account2", "ProjectManager2", "Project2", 2024, LocalDate.now(), "Q2", 1500, 1200, 300)
 		);
 
 		// Simulate repository behavior
@@ -516,11 +516,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DM2", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification2","DD2","DM2", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DM3", "Account3", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification1","DD3", "DM3", "Account3", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -545,7 +545,7 @@ class PorfolioManagementApplicationTests {
 	public void testCreateRevenueBudgetSummary() {
 		// Mocking
 		RevenueBudgetSummary revenue = new RevenueBudgetSummary(
-				1, "Vertical", "Classification", "Delivery Manager", "Account",
+				1, "Vertical", "Classification","Delivery Director", "Delivery Manager", "Account",
 				"Project Manager", "Project Name", 2024, LocalDate.now(), "Quarter",
 				10000, 9000, 1000
 		);
@@ -837,11 +837,11 @@ class PorfolioManagementApplicationTests {
 		verticalList.setMyList(Arrays.asList("Vertical1", "Vertical2"));
 // Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DM2", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DD1","DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DD2","DM2", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DM1", "Account3", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DD1","DM1", "Account3", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 // Mock repository behavior
 		when(revenuerepo.findByVerticalIn(Arrays.asList("Vertical1", "Vertical2"))).thenReturn(mockRevenues1);
@@ -866,11 +866,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DM1", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification2","DD1", "DM1", "Account2", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DM2", "Account1", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DD2","DM2", "Account1", "PM3", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -899,11 +899,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DM1", "Account2", "PM1", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification2","DD1","DM1", "Account2", "PM1", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DM2", "Account1", "PM2", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification1","DD2", "DM2", "Account1", "PM2", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -932,11 +932,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DM2", "Account1", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification2", "DD2","DM2", "Account1", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DM3", "Account2", "PM1", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification1", "DD3","DM3", "Account2", "PM1", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -965,11 +965,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification1", "DM2", "Account1", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2024, LocalDate.of(2024, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification1","DD2", "DM2", "Account1", "PM2", "Project2", 2024, LocalDate.of(2024, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification2", "DM1", "Account2", "PM1", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification2", "DD1","DM1", "Account2", "PM1", "Project3", 2024, LocalDate.of(2024, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -998,11 +998,11 @@ class PorfolioManagementApplicationTests {
 
 		// Mock data for revenue budget summaries
 		List<RevenueBudgetSummary> mockRevenues1 = Arrays.asList(
-				new RevenueBudgetSummary(1, "Vertical1", "Classification1", "DM1", "Account1", "PM1", "Project1", 2021, LocalDate.of(2021, 4, 1), "Q1", 1000, 900, 100),
-				new RevenueBudgetSummary(2, "Vertical1", "Classification1", "DM2", "Account1", "PM2", "Project1", 2022, LocalDate.of(2022, 4, 1), "Q1", 1500, 1300, 200)
+				new RevenueBudgetSummary(1, "Vertical1", "Classification1","DD1", "DM1", "Account1", "PM1", "Project1", 2021, LocalDate.of(2021, 4, 1), "Q1", 1000, 900, 100),
+				new RevenueBudgetSummary(2, "Vertical1", "Classification1", "DD2","DM2", "Account1", "PM2", "Project1", 2022, LocalDate.of(2022, 4, 1), "Q1", 1500, 1300, 200)
 		);
 		List<RevenueBudgetSummary> mockRevenues2 = Arrays.asList(
-				new RevenueBudgetSummary(3, "Vertical2", "Classification2", "DM2", "Account2", "PM1", "Project2", 2021, LocalDate.of(2021, 4, 1), "Q1", 1200, 1100, 100)
+				new RevenueBudgetSummary(3, "Vertical2", "Classification2", "DD2","DM2", "Account2", "PM1", "Project2", 2021, LocalDate.of(2021, 4, 1), "Q1", 1200, 1100, 100)
 		);
 
 		// Mock repository behavior
@@ -1027,7 +1027,3 @@ class PorfolioManagementApplicationTests {
 //	}
 	}
 }
-
-
-
-
