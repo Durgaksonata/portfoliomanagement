@@ -2,11 +2,13 @@ package com.sonata.portfoliomanagement.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Getter
 @Setter
+@Component
 public class RevenueDTO {
 
 
@@ -20,7 +22,10 @@ public class RevenueDTO {
     private List<String> classificationList;
     private List<String> quarterList;
 
-
+    public RevenueDTO(List<String> verticalList, List<String> classificationList) {
+        this.verticalList = verticalList;
+        this.classificationList = classificationList;
+    }
     public RevenueDTO(List<String> projectList, List<String> dmList, List<String> accountList, List<String> pmList, List<Integer> financialYear, List<String> verticalList, List<String> classificationList,List<String> quarterList) {
         this.projectList = projectList;
         this.dmList = dmList;
@@ -96,9 +101,26 @@ public class RevenueDTO {
     }
 
 
+    // Getter and setter methods for verticalList and classificationList
+    public List<String> getVerticalList() {
+        return verticalList;
+    }
 
+    public void setVerticalList(List<String> verticalList) {
+        this.verticalList = verticalList;
+    }
 
+    public List<String> getClassificationList() {
+        return classificationList;
+    }
+
+    public void setClassificationList(List<String> classificationList) {
+        this.classificationList = classificationList;
+    }
 }
+
+
+
 
 
 

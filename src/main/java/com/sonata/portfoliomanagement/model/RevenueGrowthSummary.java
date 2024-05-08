@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
+
 @Entity
 @Table(name = "revenue_growth_summary")
 public class RevenueGrowthSummary {
@@ -53,6 +55,8 @@ public class RevenueGrowthSummary {
     private float accountExpected;
     private float forecast;
     private float gap;
+
+
 
     public int getId() {
         return id;

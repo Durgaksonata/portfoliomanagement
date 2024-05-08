@@ -20,15 +20,19 @@ import java.util.stream.Collectors;
 @RequestMapping("revenuegrowths")
 public class RevenueGrowthSummaryController {
 
+    @Autowired
+    private RevenueGrowthSummaryRepository revenuegrowthRepo;
+    @Autowired
     public RevenueGrowthSummaryController(RevenueGrowthSummaryRepository revenuegrowthRepo) {
         this.revenuegrowthRepo = revenuegrowthRepo;
     }
 
     RestTemplate restTemplate = new RestTemplate();
 
-    @Autowired
-    RevenueGrowthSummaryRepository revenuegrowthRepo;
 
+    public RevenueGrowthSummaryController() {
+
+    }
 
 
     @PostMapping("/save")
@@ -464,14 +468,13 @@ public class RevenueGrowthSummaryController {
         return ResponseEntity.ok(classificationNames);
     }
 
-
     @PostMapping("/dmbyvertical&classification")
     public ResponseEntity<Set<String>> getDMByVerticalAndClassification(@RequestBody RevenueDTO dmList) {
         List<String> verticals = dmList.getVerticalList();
         List<String> classifications = dmList.getClassificationList();
         Set<String> deliveryManagerNames = new HashSet<>();
 
-        List<RevenueGrowthSummary> revenues = revenuegrowthRepo.findByVerticalInAndClassificationIn(verticals, classifications);
+        List<RevenueGrowthSummary> revenues = revenuegrowthRepo.findDmByVerticalInAndClassificationIn(verticals, classifications);
         for (RevenueGrowthSummary revenue : revenues) {
             deliveryManagerNames.add(revenue.getDeliveryManager());
         }
@@ -681,6 +684,42 @@ public class RevenueGrowthSummaryController {
         // Check if all criteria are provided
         return requestDTO.getVerticalList() != null && !requestDTO.getVerticalList().isEmpty()
                 && requestDTO.getClassificationList() != null && !requestDTO.getClassificationList().isEmpty();
+    }
+
+
+    //gets me all the data for the latest available financial year for RevenueGrowthSummary-->
+    @GetMapping("/latestFinancialYearData")
+    public List<RevenueGrowthSummary> getLatestGrowthFinancialYearData() {
+        // Retrieve all data
+        List<RevenueGrowthSummary> allData = revenuegrowthRepo.findAll();
+
+        // Get all distinct financial years that have data first-->
+        List<Integer> distinctYearsWithData = allData.stream()
+                .map(RevenueGrowthSummary::getFinancialYear)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Sort distinct years with data in descending order to get the most recent year first
+        distinctYearsWithData.sort((year1, year2) -> Integer.compare(year2, year1));
+
+        // Find the latest financial year with data
+        int latestFinancialYearWithData = distinctYearsWithData.stream()
+                .filter(year -> hasDataForYear(allData, year))
+                .findFirst()
+                .orElse(0); // Default value if no data year found
+
+        // Filter data for the latest financial year with data
+        List<RevenueGrowthSummary> latestYearData = allData.stream()
+                .filter(summary -> summary.getFinancialYear() == latestFinancialYearWithData)
+                .collect(Collectors.toList());
+
+        return latestYearData;
+    }
+
+    // this method checks if data exists for a specific financial year because we need fy which has data available-->
+    private boolean hasDataForYear(List<RevenueGrowthSummary> allData, int year) {
+        return allData.stream()
+                .anyMatch(summary -> summary.getFinancialYear() == year);
     }
 
 }

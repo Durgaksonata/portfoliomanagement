@@ -2,15 +2,17 @@ package com.sonata.portfoliomanagement.interfaces;
 
 
 import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
+import com.sonata.portfoliomanagement.model.RevenueDTO;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGrowthSummary,Integer> {
+    RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
     List<RevenueGrowthSummary> findByVerticalIn(List<String> verticalNames);
 
-    List<RevenueGrowthSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
 
     List<RevenueGrowthSummary> findByDeliveryManagerInAndClassificationIn(List<String> dmNames, List<String> classifications);
 
@@ -56,6 +58,11 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     List<RevenueGrowthSummary> findByClassificationIn(List<String> classificationNames);
 
 
-
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
+    List<RevenueGrowthSummary> findByFinancialYear(Integer year);
+
+    List<RevenueGrowthSummary> findDmByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
+
+    List<RevenueGrowthSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
 }
