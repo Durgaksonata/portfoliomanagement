@@ -19,4 +19,8 @@ public interface UserService {
     boolean verifyPassword(String email, String password);
 
     boolean userExistsByEmail(String email);
+    void updateFirstLogin(String email, String password, boolean isFirstLogin);
+
+
+
 }

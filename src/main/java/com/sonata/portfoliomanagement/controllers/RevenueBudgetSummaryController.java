@@ -555,51 +555,6 @@ public class RevenueBudgetSummaryController {
 
 
 
-	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
-	@PostMapping("/monthsByQuarter")
-	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
-		List<String> quarters = quarterList.getMyList();
-		Set<String> months = new HashSet<>();
-
-		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
-
-		for (String quarter : quarters) {
-			switch (quarter) {
-				case "Q1":
-					months.addAll(getMonthsForQuarter(4, monthFormat));
-					break;
-				case "Q2":
-					months.addAll(getMonthsForQuarter(7, monthFormat));
-					break;
-				case "Q3":
-					months.addAll(getMonthsForQuarter(10, monthFormat));
-					break;
-				case "Q4":
-					months.addAll(getMonthsForQuarter(1, monthFormat));
-					break;
-				default:
-					System.out.println("Enter Valid Data!");
-					break;
-			}
-		}
-
-		return ResponseEntity.ok(months);
-	}
-
-	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
-		List<String> months = new ArrayList<>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
-
-		for (int i = 0; i < 3; i++) {
-			months.add(monthFormat.format(calendar.getTime()));
-			calendar.add(Calendar.MONTH, 1);
-		}
-
-		return months;
-	}
-
-
 
 	//using this get method to get the data by using six filters.Only if a matching data for the specified request body exists in the database, it'll fetch that data or else it provides null
 	@PostMapping("/financialYearByCriteria")
@@ -907,6 +862,53 @@ public class RevenueBudgetSummaryController {
 		return allData.stream()
 				.anyMatch(summary -> summary.getFinancialYear() == year);
 	}
+
+
+
+	//This method takes quarter(Q1,Q2,Q3,Q4) and gives me their respective financial year's months-->
+	@PostMapping("/monthsByQuarter")
+	public ResponseEntity<Set<String>> getMonthsByQuarter(@RequestBody RevenueDTO quarterList) {
+		List<String> quarters = quarterList.getMyList();
+		Set<String> months = new HashSet<>();
+
+		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
+
+		for (String quarter : quarters) {
+			switch (quarter) {
+				case "Q1":
+					months.addAll(getMonthsForQuarter(4, monthFormat));
+					break;
+				case "Q2":
+					months.addAll(getMonthsForQuarter(7, monthFormat));
+					break;
+				case "Q3":
+					months.addAll(getMonthsForQuarter(10, monthFormat));
+					break;
+				case "Q4":
+					months.addAll(getMonthsForQuarter(1, monthFormat));
+					break;
+				default:
+				System.out.println("Enter Valid Data!");
+					break;
+			}
+		}
+
+		return ResponseEntity.ok(months);
+	}
+
+	private List<String> getMonthsForQuarter(int startMonth, SimpleDateFormat monthFormat) {
+		List<String> months = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.MONTH, startMonth - 1); // Month in Java Calendar starts from 0
+
+		for (int i = 0; i < 3; i++) {
+			months.add(monthFormat.format(calendar.getTime()));
+			calendar.add(Calendar.MONTH, 1);
+		}
+
+		return months;
+	}
+
 
 
 

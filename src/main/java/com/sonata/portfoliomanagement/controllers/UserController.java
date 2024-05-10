@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class UserController {
@@ -22,6 +26,21 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<String> createUser(@RequestBody User user) {
         try {
+            // Check if a user with the same email already exists
+            if (userService.userExistsByEmail(user.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists with email: " + user.getEmail());
+            }
+
+            // Set isFirstLogin based on the provided value or default it to true
+            boolean isFirstLogin = user.isFirstLogin();
+            if (!user.isFirstLogin()) {
+                isFirstLogin = true; // Defaulting isFirstLogin to true if not provided
+            }
+
+            // Set the isFirstLogin value in the user object
+            user.setFirstLogin(isFirstLogin);
+
+            // Save the user
             userService.saveUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
         } catch (Exception e) {
@@ -29,23 +48,6 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/checkUser")
-//    public ResponseEntity<String> checkUser(@RequestBody User user) {
-//        try {
-//            String email = user.getEmail();
-//            String password = user.getPassword();
-//            // Check if user with provided email and password exists in the database
-//            boolean userExists = userService.userExistsByEmailAndPassword(email, password);
-//            if (userExists) {
-//                return ResponseEntity.ok("User Logged in Successfully");
-//            }
-//            else {
-//                return ResponseEntity.ok("Data does not exist, Create New Account");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to check user: " + e.getMessage());
-//        }
-//    }
 
 
     @PostMapping("/checkUser")
@@ -57,17 +59,105 @@ public class UserController {
             // Check if user with provided email exists in the database
             boolean emailExists = userService.userExistsByEmail(email);
             if (!emailExists) {
-                return ResponseEntity.ok("email provided is incorrect");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email provided is incorrect");
             }
             // Check if the provided password matches the one associated with the email
             boolean passwordCorrect = userService.verifyPassword(email, password);
             if (passwordCorrect) {
-                return ResponseEntity.ok("User logged in successfully");
+                return ResponseEntity.status(HttpStatus.OK).body("User logged in successfully");
             } else {
-                return ResponseEntity.ok("Password provided is incorrect");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password provided is incorrect");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to check user: " + e.getMessage());
+        }
+    }
+
+
+
+//    @PostMapping("/updateFirstLogin")
+//    public ResponseEntity<Map<String, Object>> updateFirstLogin(@RequestBody User user) {
+//        try {
+//            String email = user.getEmail();
+//            String password = user.getPassword();
+//
+//            // Check if user with provided email exists in the database
+//            boolean emailExists = userService.userExistsByEmail(email);
+//            if (!emailExists) {
+//                // User with the provided email does not exist
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Email provided is incorrect"));
+//            }
+//
+//            // Check if the provided password matches the one associated with the email
+//            boolean passwordCorrect = userService.verifyPassword(email, password);
+//            if (passwordCorrect) {
+//                // Get the existing user
+//                User existingUser = userService.getUserByEmail(email);
+//
+//                // Set isFirstLogin to false
+//                existingUser.setFirstLogin(false);
+//
+//                // Update the user with the new isFirstLogin value
+//                userService.saveUser(existingUser);
+//
+//                // Prepare the response JSON
+//                Map<String, Object> response = new HashMap<>();
+//                response.put("response", "Email provided is correct");
+//                response.put("isFirstLogin", false);
+//
+//                // Return the response
+//                return ResponseEntity.status(HttpStatus.OK).body(response);
+//            } else {
+//                // Password provided is incorrect
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Password provided is incorrect"));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", "Failed to update isFirstLogin: " + e.getMessage()));
+//        }
+//    }
+
+
+
+    @PostMapping("/checkUserAndReturnResponse")
+    public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody User user) {
+        try {
+            String email = user.getEmail();
+            String password = user.getPassword();
+
+            // Check if user with provided email exists in the database
+            boolean emailExists = userService.userExistsByEmail(email);
+            if (!emailExists) {
+                // User with the provided email does not exist
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Email provided is incorrect"));
+            }
+
+            // Check if the provided password matches the one associated with the email
+            boolean passwordCorrect = userService.verifyPassword(email, password);
+            if (passwordCorrect) {
+                // Get the existing user
+                User existingUser = userService.getUserByEmail(email);
+
+                // Check if isFirstLogin is true
+                boolean isFirstLogin = existingUser.isFirstLogin();
+                if (isFirstLogin) {
+                    // If isFirstLogin is true, set it to false and update the user
+                    existingUser.setFirstLogin(false);
+                    userService.updateFirstLogin(email, password, false); // Update isFirstLogin in the database
+                }
+
+                // Prepare the response JSON
+                Map<String, Object> response = new HashMap<>();
+                response.put("response", "Email provided is correct");
+                response.put("isFirstLogin", isFirstLogin);
+
+                // Return the response
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                // Password provided is incorrect
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Password provided is incorrect"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
         }
     }
 
