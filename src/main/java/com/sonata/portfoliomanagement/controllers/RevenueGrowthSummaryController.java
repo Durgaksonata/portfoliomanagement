@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@CrossOrigin(origins = "http://localhost:5173" )
 @RestController
 @RequestMapping("revenuegrowths")
 public class RevenueGrowthSummaryController {

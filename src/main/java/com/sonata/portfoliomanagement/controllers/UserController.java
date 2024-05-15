@@ -122,7 +122,6 @@ public class UserController {
     }
 
 
-
     @PutMapping("/users/{email}")
     public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
         try {
