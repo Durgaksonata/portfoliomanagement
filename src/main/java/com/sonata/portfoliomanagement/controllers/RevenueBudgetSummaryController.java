@@ -369,8 +369,8 @@ public class RevenueBudgetSummaryController {
 
 	//get all Months-->
 	@GetMapping("/getmonthlist")
-	public List<Date> getMonth() {
-		List<Date> monthList = new ArrayList<>();
+	public List<String> getMonth() {
+		List<String> monthList = new ArrayList<>();
 		List<RevenueBudgetSummary> revenueData = revenueRepo.findAll();
 		for (RevenueBudgetSummary request : revenueData) {
 			monthList.add(request.getMonth());

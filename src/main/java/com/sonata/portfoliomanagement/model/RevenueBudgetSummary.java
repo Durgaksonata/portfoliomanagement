@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "revenue_budget_summary")
 public class RevenueBudgetSummary {
-	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float budget, float forecast, float gap) {
+	public RevenueBudgetSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, float budget, float forecast, float gap) {
 		this.id = id;
 		this.vertical = vertical;
 		this.classification = classification;
@@ -52,7 +52,7 @@ public class RevenueBudgetSummary {
 	private int financialYear;
 	private String quarter;
 	@JsonFormat(pattern = "dd-MM-yyyy")
-	private Date month;
+	private String month;
 	private float budget;
 	private float forecast;
 	private float gap;
@@ -110,7 +110,7 @@ public class RevenueBudgetSummary {
 		this.financialYear = financialYear;
 	}
 	@JsonFormat(pattern = "dd-MM-yyyy")
-	public Date getMonth() {
+	public String getMonth() {
 		return month;
 	}
 
@@ -122,7 +122,7 @@ public class RevenueBudgetSummary {
 		this.deliveryDirector = deliveryDirector;
 	}
 
-	public void setMonth(Date month) {
+	public void setMonth(String month) {
 		this.month = month;
 	}
 	public String getQuarter() {

@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Data_Entry")
 public class DataEntry {
-	public DataEntry(Integer id, Date month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
+	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
 		this.id = id;
 		this.month = month;
 		this.vertical = vertical;
@@ -49,7 +49,7 @@ public class DataEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-	private Date month;
+	private String month;
 	private String vertical;
 	private String classification;
 
@@ -100,10 +100,10 @@ public class DataEntry {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Date getMonth() {
+	public String getMonth() {
 		return month;
 	}
-	public void setMonth(Date month) {
+	public void setMonth(String month) {
 		this.month = month;
 	}
 	public String getVertical() {

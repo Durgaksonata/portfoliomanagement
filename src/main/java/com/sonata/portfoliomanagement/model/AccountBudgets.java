@@ -15,7 +15,7 @@ public class AccountBudgets {
 		super();
 	}
 
-	public AccountBudgets(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, Date month, String quarter, float budget) {
+	public AccountBudgets(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String month, String quarter, float budget) {
 		this.id = id;
 		this.vertical = vertical;
 		this.classification = classification;
@@ -46,7 +46,7 @@ public class AccountBudgets {
 	private String projectName;
 	@Column(name="Financial_Year")
 	private int financialYear;
-	private Date month;
+	private String month;
 	private String quarter;
 	private float budget;
 	public int getId() {
@@ -106,10 +106,10 @@ public class AccountBudgets {
 	public void setFinancialYear(int financialYear) {
 		this.financialYear = financialYear;
 	}
-	public Date getMonth() {
+	public String getMonth() {
 		return month;
 	}
-	public void setMonth(Date month) {
+	public void setMonth(String month) {
 		this.month = month;
 	}
 	public String getQuarter() {

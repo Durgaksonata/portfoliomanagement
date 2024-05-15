@@ -379,8 +379,8 @@ public class RevenueGrowthSummaryController {
     }
 
     @GetMapping("/getmonthlist")
-    public List<Date> getMonth() {
-        List<Date> monthList = new ArrayList<>();
+    public List<String> getMonth() {
+        List<String> monthList = new ArrayList<>();
         List<RevenueGrowthSummary> revenueData = revenuegrowthRepo.findAll();
         for (RevenueGrowthSummary request : revenueData) {
             monthList.add(request.getMonth());

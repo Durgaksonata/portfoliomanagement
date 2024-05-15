@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "revenue_growth_summary")
@@ -13,7 +12,7 @@ public class RevenueGrowthSummary {
         super();
     }
 
-    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float accountExpected, float forecast, float gap) {
+    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, float accountExpected, float forecast, float gap) {
         this.id = id;
         this.vertical = vertical;
         this.classification = classification;
@@ -49,7 +48,7 @@ public class RevenueGrowthSummary {
     private int financialYear;
     private String quarter;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date month;
+    private String month;
 
     @Column(name = "Account_Expected")
     private float accountExpected;
@@ -138,11 +137,11 @@ public class RevenueGrowthSummary {
         this.quarter = quarter;
     }
 
-    public Date getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(Date month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 
