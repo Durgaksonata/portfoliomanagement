@@ -14,11 +14,17 @@ public class DataEntryDTO {
     private String projectName;
     private int financialYear;
     private String quarter;
+    private String Month;
+    private String DeliveryDirector;
+    private String Category;
+    private String AnnuityOrNonAnnuity;
+    private Float Value;
+
 
     public DataEntryDTO() {
     }
 
-    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter) {
+    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityOrNonAnnuity, Float value) {
         this.vertical = vertical;
         this.classification = classification;
         this.deliveryManager = deliveryManager;
@@ -27,5 +33,10 @@ public class DataEntryDTO {
         this.projectName = projectName;
         this.financialYear = financialYear;
         this.quarter = quarter;
+        this.Month = month;
+        this.DeliveryDirector = deliveryDirector;
+        this.Category = category;
+        this.AnnuityOrNonAnnuity = annuityOrNonAnnuity;
+        this.Value = value;
     }
 }
