@@ -68,6 +68,16 @@ public class DataEntryController {
         calculateUpside(dataEntry);
         // Calculate Likely
         calculateLikely(dataEntry);
+        // Calculate Offshore PM
+        calculateOffshorePM(dataEntry);
+        // Calculate Onsite PM
+        calculateOnsitePM(dataEntry);
+        // Calculate Annuity Revenue
+        calculateAnnuityRevenue(dataEntry);
+        // Calculate Non-Annuity Revenue
+        calculateNonAnnuityRevenue(dataEntry);
+
+
         // Logic to calculate remaining fields
 
         dataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
@@ -155,6 +165,52 @@ public class DataEntryController {
         float upside = dataEntry.getUpside();
         float likely = confirmed + (probability * upside);
         dataEntry.setLikely(likely);
+    }
+
+    // Calculate Offshore PM
+    private void calculateOffshorePM(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Offshore PM")) {
+            dataEntry.setOffshoreProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOffshoreProjectManager(0);
+        }
+    }
+
+
+    // Calculate Onsite PM
+    private void calculateOnsitePM(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Onsite PM")) {
+            dataEntry.setOnsiteProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOnsiteProjectManager(0);
+        }
+    }
+
+
+    // Calculate Annuity Revenue
+    private void calculateAnnuityRevenue(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
+        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
+                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
+                annuityOrNonAnnuity.equals("Annuity")) {
+            dataEntry.setAnnuityRevenue(dataEntry.getLikely());
+        } else {
+            dataEntry.setAnnuityRevenue(0);
+        }
+    }
+
+    // Calculate Non-Annuity Revenue
+    private void calculateNonAnnuityRevenue(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
+        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
+                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
+                annuityOrNonAnnuity.equals("Annuity")) {
+            dataEntry.setNonAnnuityRevenue(0);
+        } else {
+            dataEntry.setNonAnnuityRevenue(dataEntry.getLikely());
+        }
     }
 
 
