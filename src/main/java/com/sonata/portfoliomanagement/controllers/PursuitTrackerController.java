@@ -1,6 +1,8 @@
 package com.sonata.portfoliomanagement.controllers;
 
+import com.sonata.portfoliomanagement.interfaces.MD_PursuitProbabilityRepository;
 import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
+import com.sonata.portfoliomanagement.model.MD_PursuitProbability;
 import com.sonata.portfoliomanagement.model.PursuitTracker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,45 @@ public class PursuitTrackerController {
     @Autowired
     private PursuitTrackerRepository pursuitTrackerRepository;
 
+    @Autowired
+    private MD_PursuitProbabilityRepository mdPursuitProbabilityRepository;
+
+
     @PostMapping("/save")
-    public PursuitTracker addPursuitTracker(@RequestBody PursuitTracker pursuitTracker) {
-        return pursuitTrackerRepository.save(pursuitTracker);
+    public ResponseEntity<PursuitTracker> addPursuitTracker(@RequestBody PursuitTracker pursuitTracker) {
+        // Calculate stage based on PursuitStatus and Type
+        String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
+        pursuitTracker.setStage(stage);
+
+        // Calculate pursuitProbability based on PursuitStatus and Type
+        int pursuitProbability = calculatePursuitProbability(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
+        pursuitTracker.setPursuitProbability(pursuitProbability);
+
+        PursuitTracker savedPursuitTracker = pursuitTrackerRepository.save(pursuitTracker);
+        return ResponseEntity.ok(savedPursuitTracker);
     }
+
+    // Method to calculate stage based on PursuitStatus and Type
+    private String calculateStage(String pursuitStatus, String type) {
+        if (pursuitStatus == null || pursuitStatus.isEmpty() || type == null || type.isEmpty()) {
+            return "";
+        }
+
+        Optional<MD_PursuitProbability> result = mdPursuitProbabilityRepository.findByPursuitStatusAndType(pursuitStatus, type);
+        return result.map(MD_PursuitProbability::getStage).orElse("");
+    }
+
+    // Method to calculate pursuitProbability based on PursuitStatus and Type
+    private int calculatePursuitProbability(String pursuitStatus, String type) {
+        if (pursuitStatus == null || pursuitStatus.isEmpty() || type == null || type.isEmpty()) {
+            return 0;
+        }
+
+        Optional<MD_PursuitProbability> result = mdPursuitProbabilityRepository.findByPursuitStatusAndType(pursuitStatus, type);
+        return result.map(MD_PursuitProbability::getProbability).orElse(0);
+    }
+
+
 
 
     @GetMapping("/get")
@@ -53,7 +90,7 @@ public class PursuitTrackerController {
             existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
             existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
             existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
-            existingPursuitTracker.setStatusorRemarks(pursuitTrackerDetails.getStatusorRemarks());
+            existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
             existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
 
             PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
@@ -79,7 +116,7 @@ public class PursuitTrackerController {
             existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
             existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
             existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
-            existingPursuitTracker.setStatusorRemarks(pursuitTrackerDetails.getStatusorRemarks());
+            existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
             existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
 
             PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);

@@ -11,22 +11,22 @@ public class PursuitActions {
     public PursuitActions() {
     }
 
-    public PursuitActions(int id, String deliveryManager, String account, String pursuit, String sl,
+    public PursuitActions(int id, String deliveryManager, String account, String pursuit, String ActionItemNumber,
                          String actionDescription, String actionType, String status, String actionOwner, Date dueDate,
-                         String dependencyItem, String updates) {
+                         String DependentActionItem, String Remarks) {
         super();
         this.id = id;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.pursuit = pursuit;
-        this.sl = sl;
+        this.ActionItemNumber = ActionItemNumber;
         this.actionDescription = actionDescription;
         this.actionType = actionType;
         this.status = status;
         this.actionOwner = actionOwner;
         this.dueDate = dueDate;
-        this.dependencyItem = dependencyItem;
-        this.updates = updates;
+        this.DependentActionItem = DependentActionItem;
+        this.Remarks = Remarks;
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,8 @@ public class PursuitActions {
     private String account;
     @Column(name="Pursuit")
     private String pursuit;
-    @Column(name="SL#")
-    private String sl;
+    @Column(name="Action_Item_Number")
+    private String ActionItemNumber;
     @Column(name="Action_Description")
     private String actionDescription;
     @Column(name="Action_Type")
@@ -49,10 +49,10 @@ public class PursuitActions {
     private String actionOwner;
     @Column(name="Due_Date")
     private Date dueDate;
-    @Column(name="Dependency_Item")
-    private String dependencyItem;
-    @Column(name="Updates")
-    private String updates;
+    @Column(name="Dependent_Action_Item")
+    private String DependentActionItem;
+    @Column(name="Remarks")
+    private String Remarks;
     public int getId() {
         return id;
     }
@@ -77,12 +77,15 @@ public class PursuitActions {
     public void setPursuit(String pursuit) {
         this.pursuit = pursuit;
     }
-    public String getSl() {
-        return sl;
+
+    public String getActionItemNumber() {
+        return ActionItemNumber;
     }
-    public void setSl(String sl) {
-        this.sl = sl;
+
+    public void setActionItemNumber(String actionItemNumber) {
+        ActionItemNumber = actionItemNumber;
     }
+
     public String getActionDescription() {
         return actionDescription;
     }
@@ -113,18 +116,20 @@ public class PursuitActions {
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
-    public String getDependencyItem() {
-        return dependencyItem;
-    }
-    public void setDependencyItem(String dependencyItem) {
-        this.dependencyItem = dependencyItem;
-    }
-    public String getUpdates() {
-        return updates;
-    }
-    public void setUpdates(String updates) {
-        this.updates = updates;
+
+    public String getDependentActionItem() {
+        return DependentActionItem;
     }
 
+    public void setDependentActionItem(String dependentActionItem) {
+        DependentActionItem = dependentActionItem;
+    }
 
+    public String getRemarks() {
+        return Remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        Remarks = remarks;
+    }
 }

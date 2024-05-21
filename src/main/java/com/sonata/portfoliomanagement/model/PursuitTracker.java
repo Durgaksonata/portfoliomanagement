@@ -1,6 +1,9 @@
 package com.sonata.portfoliomanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "pursuit_tracker")
@@ -16,12 +19,13 @@ public class PursuitTracker {
     private String deliveryManager;
     @Column(name="Account")
     private String account;
-    @Column(name="Type")
+    @Column(name = "type")
     private String type;
     @Column(name="TCV")
     private float tcv;
     @Column(name="Identified_Month")
-    private String identifiedmonth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+    private Date identifiedmonth;
     @Column(name="Pursuit_Status")
     private String pursuitstatus;
     @Column(name="Stage")
@@ -33,13 +37,14 @@ public class PursuitTracker {
     @Column(name="pursuit_or_potential")
     private String pursuitorpotential;
     @Column(name="likely_Closure_Or_Actual_Closure")
-    private String likelyClosureorActualClosure;
-    @Column(name="status_or_remarks")
-    private String statusorRemarks;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+    private Date likelyClosureorActualClosure;
+    @Column(name="Remarks")
+    private String Remarks;
     @Column(name="Year")
     private int year;
 
-    public PursuitTracker(int id, String deliveryManager, String account, String type, float tcv, String identifiedmonth, String pursuitstatus, String stage, int pursuitprobability, String projectOrPursuit, String pursuitOrpotential, String likelyClosureOrActualClosure, String statusOrRemarks, int year) {
+    public PursuitTracker(int id, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, int year) {
         this.id = id;
         this.deliveryManager = deliveryManager;
         this.account = account;
@@ -48,11 +53,11 @@ public class PursuitTracker {
         this.identifiedmonth = identifiedmonth;
         this.pursuitstatus = pursuitstatus;
         this.stage = stage;
-        this.pursuitProbability = pursuitprobability;
-        this.projectorPursuit = projectOrPursuit;
-        this.pursuitorpotential = pursuitOrpotential;
-        this.likelyClosureorActualClosure = likelyClosureOrActualClosure;
-        this.statusorRemarks = statusOrRemarks;
+        this.pursuitProbability = pursuitProbability;
+        this.projectorPursuit = projectorPursuit;
+        this.pursuitorpotential = pursuitorpotential;
+        this.likelyClosureorActualClosure = likelyClosureorActualClosure;
+        this.Remarks = remarks;
         this.year = year;
     }
 
@@ -96,11 +101,11 @@ public class PursuitTracker {
         this.tcv = tcv;
     }
 
-    public String getIdentifiedmonth() {
+    public Date getIdentifiedmonth() {
         return identifiedmonth;
     }
 
-    public void setIdentifiedmonth(String identifiedmonth) {
+    public void setIdentifiedmonth(Date identifiedmonth) {
         this.identifiedmonth = identifiedmonth;
     }
 
@@ -144,20 +149,20 @@ public class PursuitTracker {
         this.pursuitorpotential = pursuitorpotential;
     }
 
-    public String getLikelyClosureorActualClosure() {
+    public Date getLikelyClosureorActualClosure() {
         return likelyClosureorActualClosure;
     }
 
-    public void setLikelyClosureorActualClosure(String likelyClosureorActualClosure) {
+    public void setLikelyClosureorActualClosure(Date likelyClosureorActualClosure) {
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
     }
 
-    public String getStatusorRemarks() {
-        return statusorRemarks;
+    public String getRemarks() {
+        return Remarks;
     }
 
-    public void setStatusorRemarks(String statusorRemarks) {
-        this.statusorRemarks = statusorRemarks;
+    public void setRemarks(String remarks) {
+        Remarks = remarks;
     }
 
     public int getYear() {
