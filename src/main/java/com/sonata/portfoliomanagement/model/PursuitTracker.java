@@ -21,41 +21,40 @@ public class PursuitTracker {
     @Column(name="TCV")
     private float tcv;
     @Column(name="Identified_Month")
-    private String identified_month;
+    private String identifiedmonth;
     @Column(name="Pursuit_Status")
-    private String pursuit_status;
+    private String pursuitstatus;
     @Column(name="Stage")
     private String stage;
     @Column(name="Pursuit_Probability(%)")
-    private int pursuit_probability;
-    @Column(name="project/pursuit")
-    private String project_or_pursuit;
-    @Column(name="Pursuit/Potential")
-    private String pursuit_or_potential;
-    @Column(name="Likely Closure/Actual Closure")
-    private String likely_closure_or_actual_closure;
-    @Column(name="Status/Remarks")
-    private String status_or_remarks;
+    private int pursuitProbability;
+    @Column(name="Project_or_Pursuit")
+    private String projectorPursuit;
+    @Column(name="pursuit_or_potential")
+    private String pursuitorpotential;
+    @Column(name="likely_Closure_Or_Actual_Closure")
+    private String likelyClosureorActualClosure;
+    @Column(name="status_or_remarks")
+    private String statusorRemarks;
     @Column(name="Year")
     private int year;
 
-    public PursuitTracker(int id, String deliveryManager, String account, String type, float tcv, String identified_month, String pursuit_status, String stage, int pursuit_probability, String project_or_pursuit, String pursuit_or_potential, String likely_closure_or_actual_closure, String status_or_remarks, int year) {
+    public PursuitTracker(int id, String deliveryManager, String account, String type, float tcv, String identifiedmonth, String pursuitstatus, String stage, int pursuitprobability, String projectOrPursuit, String pursuitOrpotential, String likelyClosureOrActualClosure, String statusOrRemarks, int year) {
         this.id = id;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.type = type;
         this.tcv = tcv;
-        this.identified_month = identified_month;
-        this.pursuit_status = pursuit_status;
+        this.identifiedmonth = identifiedmonth;
+        this.pursuitstatus = pursuitstatus;
         this.stage = stage;
-        this.pursuit_probability = pursuit_probability;
-        this.project_or_pursuit = project_or_pursuit;
-        this.pursuit_or_potential = pursuit_or_potential;
-        this.likely_closure_or_actual_closure = likely_closure_or_actual_closure;
-        this.status_or_remarks = status_or_remarks;
+        this.pursuitProbability = pursuitprobability;
+        this.projectorPursuit = projectOrPursuit;
+        this.pursuitorpotential = pursuitOrpotential;
+        this.likelyClosureorActualClosure = likelyClosureOrActualClosure;
+        this.statusorRemarks = statusOrRemarks;
         this.year = year;
     }
-
 
     public int getId() {
         return id;
@@ -97,20 +96,20 @@ public class PursuitTracker {
         this.tcv = tcv;
     }
 
-    public String getIdentified_month() {
-        return identified_month;
+    public String getIdentifiedmonth() {
+        return identifiedmonth;
     }
 
-    public void setIdentified_month(String identified_month) {
-        this.identified_month = identified_month;
+    public void setIdentifiedmonth(String identifiedmonth) {
+        this.identifiedmonth = identifiedmonth;
     }
 
-    public String getPursuit_status() {
-        return pursuit_status;
+    public String getPursuitstatus() {
+        return pursuitstatus;
     }
 
-    public void setPursuit_status(String pursuit_status) {
-        this.pursuit_status = pursuit_status;
+    public void setPursuitstatus(String pursuitstatus) {
+        this.pursuitstatus = pursuitstatus;
     }
 
     public String getStage() {
@@ -121,44 +120,44 @@ public class PursuitTracker {
         this.stage = stage;
     }
 
-    public int getPursuit_probability() {
-        return pursuit_probability;
+    public int getPursuitProbability() {
+        return pursuitProbability;
     }
 
-    public void setPursuit_probability(int pursuit_probability) {
-        this.pursuit_probability = pursuit_probability;
+    public void setPursuitProbability(int pursuitProbability) {
+        this.pursuitProbability = pursuitProbability;
     }
 
-    public String getProject_or_pursuit() {
-        return project_or_pursuit;
+    public String getProjectorPursuit() {
+        return projectorPursuit;
     }
 
-    public void setProject_or_pursuit(String project_or_pursuit) {
-        this.project_or_pursuit = project_or_pursuit;
+    public void setProjectorPursuit(String projectorPursuit) {
+        this.projectorPursuit = projectorPursuit;
     }
 
-    public String getPursuit_or_potential() {
-        return pursuit_or_potential;
+    public String getPursuitorpotential() {
+        return pursuitorpotential;
     }
 
-    public void setPursuit_or_potential(String pursuit_or_potential) {
-        this.pursuit_or_potential = pursuit_or_potential;
+    public void setPursuitorpotential(String pursuitorpotential) {
+        this.pursuitorpotential = pursuitorpotential;
     }
 
-    public String getLikely_closure_or_actual_closure() {
-        return likely_closure_or_actual_closure;
+    public String getLikelyClosureorActualClosure() {
+        return likelyClosureorActualClosure;
     }
 
-    public void setLikely_closure_or_actual_closure(String likely_closure_or_actual_closure) {
-        this.likely_closure_or_actual_closure = likely_closure_or_actual_closure;
+    public void setLikelyClosureorActualClosure(String likelyClosureorActualClosure) {
+        this.likelyClosureorActualClosure = likelyClosureorActualClosure;
     }
 
-    public String getStatus_or_remarks() {
-        return status_or_remarks;
+    public String getStatusorRemarks() {
+        return statusorRemarks;
     }
 
-    public void setStatus_or_remarks(String status_or_remarks) {
-        this.status_or_remarks = status_or_remarks;
+    public void setStatusorRemarks(String statusorRemarks) {
+        this.statusorRemarks = statusorRemarks;
     }
 
     public int getYear() {
@@ -168,4 +167,7 @@ public class PursuitTracker {
     public void setYear(int year) {
         this.year = year;
     }
+
+
+
 }

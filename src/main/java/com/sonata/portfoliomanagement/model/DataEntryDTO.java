@@ -18,13 +18,13 @@ public class DataEntryDTO {
     private String DeliveryDirector;
     private String Category;
     private String AnnuityOrNonAnnuity;
-    private Float Value;
+    private float Value;
 
 
     public DataEntryDTO() {
     }
 
-    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityOrNonAnnuity, Float value) {
+    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityOrNonAnnuity, float value) {
         this.vertical = vertical;
         this.classification = classification;
         this.deliveryManager = deliveryManager;

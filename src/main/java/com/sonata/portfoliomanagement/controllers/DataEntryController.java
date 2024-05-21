@@ -2,21 +2,16 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.List;
 
+import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
-import com.sonata.portfoliomanagement.model.AccountBudgets;
-import com.sonata.portfoliomanagement.model.DataEntryDTO;
-import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
+import com.sonata.portfoliomanagement.model.*;
+import com.sonata.portfoliomanagement.services.DataEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sonata.portfoliomanagement.interfaces.DataEntryRepository;
-import com.sonata.portfoliomanagement.model.DataEntry;
 
 
 @RestController
@@ -24,7 +19,11 @@ import com.sonata.portfoliomanagement.model.DataEntry;
 public class DataEntryController {
 
     @Autowired
-    DataEntryRepository dataEntryRepo;
+    private DataEntryRepository dataEntryRepo;
+    @Autowired
+    private DataEntryService dataEntryService;
+    @Autowired
+    private PursuitTrackerRepository pursuitTrackerRepository;
     @Autowired
     private RevenueBudgetSummaryRepository revenueBudgetSummaryRepository;
 
@@ -34,184 +33,38 @@ public class DataEntryController {
         return ResponseEntity.ok(dataentry);
     }
 
+
     @PostMapping("/save")
     public ResponseEntity<DataEntry> createDataEntry(@RequestBody DataEntryDTO dataEntryDTO) {
-        // Create a new DataEntry object
-        DataEntry dataEntry = new DataEntry();
-
-        // Set the values from the DTO
-        dataEntry.setMonth(dataEntryDTO.getMonth());
-        dataEntry.setVertical(dataEntryDTO.getVertical());
-        dataEntry.setClassification(dataEntryDTO.getClassification());
-        dataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
-        dataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
-        dataEntry.setAccount(dataEntryDTO.getAccount());
-        dataEntry.setProjectManager(dataEntryDTO.getProjectManager());
-        dataEntry.setProjectName(dataEntryDTO.getProjectName());
-        dataEntry.setCategory(dataEntryDTO.getCategory());
-        dataEntry.setAnnuityOrNonAnnuity(dataEntryDTO.getAnnuityOrNonAnnuity());
-        dataEntry.setValue(dataEntryDTO.getValue());
-
-        // Calculate OffshoreCost
-        calculateOffshoreCost(dataEntry);
-        // Calculate OnsiteCost
-        calculateOnsiteCost(dataEntry);
-        // Calculate Type
-        calculateType(dataEntry);
-        // Calculate TotalCost
-        calculateTotalCost(dataEntry);
-        // Calculate BillablePM
-        calculateBillablePM(dataEntry);
-        // Calculate Confirmed
-        calculateConfirmed(dataEntry);
-        // Calculate Upside
-        calculateUpside(dataEntry);
-        // Calculate Likely
-        calculateLikely(dataEntry);
-        // Calculate Offshore PM
-        calculateOffshorePM(dataEntry);
-        // Calculate Onsite PM
-        calculateOnsitePM(dataEntry);
-        // Calculate Annuity Revenue
-        calculateAnnuityRevenue(dataEntry);
-        // Calculate Non-Annuity Revenue
-        calculateNonAnnuityRevenue(dataEntry);
-
-
-        // Logic to calculate remaining fields
-
-        dataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
-        dataEntry.setQuarter(dataEntryDTO.getQuarter());
-        // Calculate and set other fields...
-
-        // Save the DataEntry entity
-        DataEntry createdDataEntry = dataEntryRepo.save(dataEntry);
+        DataEntry dataEntry = dataEntryService.createDataEntryFromDTO(dataEntryDTO);
+        DataEntry createdDataEntry = dataEntryService.saveDataEntry(dataEntry);
         return new ResponseEntity<>(createdDataEntry, HttpStatus.CREATED);
     }
 
-    // Calculate OffshoreCost
-    private void calculateOffshoreCost(DataEntry dataEntry) {
-        if (dataEntry.getCategory().equals("Offshore Cost")) {
-            dataEntry.setOffshoreCost(dataEntry.getValue() * dataEntry.getProbability());
-        } else {
-            dataEntry.setOffshoreCost(0);
-        }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<DataEntry> updateDataEntry(@PathVariable Integer id, @RequestBody DataEntryDTO dataEntryDTO) {
+        return dataEntryRepo.findById(id).map(existingDataEntry -> {
+            // Update the fields from DTO
+            existingDataEntry.setMonth(dataEntryDTO.getMonth());
+            existingDataEntry.setVertical(dataEntryDTO.getVertical());
+            existingDataEntry.setClassification(dataEntryDTO.getClassification());
+            existingDataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
+            existingDataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
+            existingDataEntry.setAccount(dataEntryDTO.getAccount());
+            existingDataEntry.setProjectManager(dataEntryDTO.getProjectManager());
+            existingDataEntry.setProjectName(dataEntryDTO.getProjectName());
+            existingDataEntry.setCategory(dataEntryDTO.getCategory());
+            existingDataEntry.setAnnuityOrNonAnnuity(dataEntryDTO.getAnnuityOrNonAnnuity());
+            existingDataEntry.setValue(dataEntryDTO.getValue());
+            existingDataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
+            existingDataEntry.setQuarter(dataEntryDTO.getQuarter());
+
+            // Recalculate fields and save the updated entry
+            DataEntry updatedDataEntry = dataEntryService.saveDataEntry(existingDataEntry);
+            return new ResponseEntity<>(updatedDataEntry, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Calculate OnsiteCost
-    private void calculateOnsiteCost(DataEntry dataEntry) {
-        if (dataEntry.getCategory().equals("Onsite Cost")) {
-            dataEntry.setOnsiteCost(dataEntry.getValue() * dataEntry.getProbability());
-        } else {
-            dataEntry.setOnsiteCost(0);
-        }
-    }
-
-    // Calculate Type
-    private void calculateType(DataEntry dataEntry) {
-        String category = dataEntry.getCategory().toLowerCase();
-        String type;
-        if (category.contains("confirmed") || category.contains("upside")) {
-            type = "Revenue";
-        } else if (category.contains("cost")) {
-            type = "Cost";
-        } else {
-            type = "Operations";
-        }
-        dataEntry.setType(type);
-    }
-
-    // Calculate TotalCost
-    private void calculateTotalCost(DataEntry dataEntry) {
-        float offshoreCost = dataEntry.getOffshoreCost();
-        float onsiteCost = dataEntry.getOnsiteCost();
-        float totalCost = offshoreCost + onsiteCost;
-        dataEntry.setTotalCost(totalCost);
-    }
-
-    // Calculate BillablePM
-    private void calculateBillablePM(DataEntry dataEntry) {
-        if (dataEntry.getCategory().equals("Billable PM")) {
-            dataEntry.setBillableProjectManager(dataEntry.getValue() * dataEntry.getProbability());
-        } else {
-            dataEntry.setBillableProjectManager(0);
-        }
-    }
-
-    // Calculate Confirmed
-    private void calculateConfirmed(DataEntry dataEntry) {
-        String category = dataEntry.getCategory();
-        if (category.equals("Offshore Confirmed") || category.equals("Onsite Confirmed")) {
-            dataEntry.setConfirmed(dataEntry.getValue() * dataEntry.getProbability());
-        } else {
-            dataEntry.setConfirmed(0);
-        }
-    }
-
-    // Calculate Upside
-    private void calculateUpside(DataEntry dataEntry) {
-        String category = dataEntry.getCategory();
-        if (category.equals("Offshore Upside") || category.equals("Onsite Upside")) {
-            dataEntry.setUpside(dataEntry.getValue());
-        } else {
-            dataEntry.setUpside(0);
-        }
-    }
-
-    // Calculate Likely
-    private void calculateLikely(DataEntry dataEntry) {
-        float confirmed = dataEntry.getConfirmed();
-        float probability = dataEntry.getProbability() / 100.0f; // Ensure probability is treated as a percentage
-        float upside = dataEntry.getUpside();
-        float likely = confirmed + (probability * upside);
-        dataEntry.setLikely(likely);
-    }
-
-    // Calculate Offshore PM
-    private void calculateOffshorePM(DataEntry dataEntry) {
-        if (dataEntry.getCategory().equals("Offshore PM")) {
-            dataEntry.setOffshoreProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
-        } else {
-            dataEntry.setOffshoreProjectManager(0);
-        }
-    }
-
-
-    // Calculate Onsite PM
-    private void calculateOnsitePM(DataEntry dataEntry) {
-        if (dataEntry.getCategory().equals("Onsite PM")) {
-            dataEntry.setOnsiteProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
-        } else {
-            dataEntry.setOnsiteProjectManager(0);
-        }
-    }
-
-
-    // Calculate Annuity Revenue
-    private void calculateAnnuityRevenue(DataEntry dataEntry) {
-        String category = dataEntry.getCategory();
-        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
-        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
-                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
-                annuityOrNonAnnuity.equals("Annuity")) {
-            dataEntry.setAnnuityRevenue(dataEntry.getLikely());
-        } else {
-            dataEntry.setAnnuityRevenue(0);
-        }
-    }
-
-    // Calculate Non-Annuity Revenue
-    private void calculateNonAnnuityRevenue(DataEntry dataEntry) {
-        String category = dataEntry.getCategory();
-        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
-        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
-                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
-                annuityOrNonAnnuity.equals("Annuity")) {
-            dataEntry.setNonAnnuityRevenue(0);
-        } else {
-            dataEntry.setNonAnnuityRevenue(dataEntry.getLikely());
-        }
-    }
 
 
 

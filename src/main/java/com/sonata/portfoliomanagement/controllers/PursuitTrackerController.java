@@ -2,6 +2,7 @@ package com.sonata.portfoliomanagement.controllers;
 
 import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
 import com.sonata.portfoliomanagement.model.PursuitTracker;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,20 +13,19 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/pursuittracker")
 public class PursuitTrackerController {
-
     @Autowired
     private PursuitTrackerRepository pursuitTrackerRepository;
 
-    @PostMapping("/add")
+    @PostMapping("/save")
     public PursuitTracker addPursuitTracker(@RequestBody PursuitTracker pursuitTracker) {
         return pursuitTrackerRepository.save(pursuitTracker);
     }
 
-    @GetMapping("/getAll")
+
+    @GetMapping("/get")
     public List<PursuitTracker> getAllPursuitTrackers() {
         return pursuitTrackerRepository.findAll();
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<PursuitTracker> getPursuitTrackerById(@PathVariable(value = "id") int pursuitTrackerId) {
         Optional<PursuitTracker> pursuitTracker = pursuitTrackerRepository.findById(pursuitTrackerId);
@@ -46,14 +46,14 @@ public class PursuitTrackerController {
             existingPursuitTracker.setAccount(pursuitTrackerDetails.getAccount());
             existingPursuitTracker.setType(pursuitTrackerDetails.getType());
             existingPursuitTracker.setTcv(pursuitTrackerDetails.getTcv());
-            existingPursuitTracker.setIdentified_month(pursuitTrackerDetails.getIdentified_month());
-            existingPursuitTracker.setPursuit_status(pursuitTrackerDetails.getPursuit_status());
+            existingPursuitTracker.setIdentifiedmonth(pursuitTrackerDetails.getIdentifiedmonth());
+            existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
             existingPursuitTracker.setStage(pursuitTrackerDetails.getStage());
-            existingPursuitTracker.setPursuit_probability(pursuitTrackerDetails.getPursuit_probability());
-            existingPursuitTracker.setProject_or_pursuit(pursuitTrackerDetails.getProject_or_pursuit());
-            existingPursuitTracker.setPursuit_or_potential(pursuitTrackerDetails.getPursuit_or_potential());
-            existingPursuitTracker.setLikely_closure_or_actual_closure(pursuitTrackerDetails.getLikely_closure_or_actual_closure());
-            existingPursuitTracker.setStatus_or_remarks(pursuitTrackerDetails.getStatus_or_remarks());
+            existingPursuitTracker.setPursuitProbability(pursuitTrackerDetails.getPursuitProbability());
+            existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
+            existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
+            existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
+            existingPursuitTracker.setStatusorRemarks(pursuitTrackerDetails.getStatusorRemarks());
             existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
 
             PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
@@ -62,8 +62,45 @@ public class PursuitTrackerController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PutMapping("/updateByProjectorPursuit/{projectorPursuit}")
+    public ResponseEntity<PursuitTracker> updatePursuitTrackerByProjectOrPursuit(@PathVariable(value = "projectorPursuit") String projectorPursuit,
+                                                                                 @RequestBody PursuitTracker pursuitTrackerDetails) {
+        Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findByProjectorPursuit(projectorPursuit);
+        if (optionalPursuitTracker.isPresent()) {
+            PursuitTracker existingPursuitTracker = optionalPursuitTracker.get();
+            existingPursuitTracker.setDeliveryManager(pursuitTrackerDetails.getDeliveryManager());
+            existingPursuitTracker.setAccount(pursuitTrackerDetails.getAccount());
+            existingPursuitTracker.setType(pursuitTrackerDetails.getType());
+            existingPursuitTracker.setTcv(pursuitTrackerDetails.getTcv());
+            existingPursuitTracker.setIdentifiedmonth(pursuitTrackerDetails.getIdentifiedmonth());
+            existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
+            existingPursuitTracker.setStage(pursuitTrackerDetails.getStage());
+            existingPursuitTracker.setPursuitProbability(pursuitTrackerDetails.getPursuitProbability());
+            existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
+            existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
+            existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
+            existingPursuitTracker.setStatusorRemarks(pursuitTrackerDetails.getStatusorRemarks());
+            existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
 
+            PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
+            return ResponseEntity.ok(updatedPursuitTracker);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+    @Transactional
+    @DeleteMapping("/deleteByProjectorPursuit/{projectorPursuit}")
+    public ResponseEntity<Void> deletePursuitTrackerByProjectorPursuit(@PathVariable(value = "projectorPursuit") String projectorPursuit) {
+        Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findByProjectorPursuit(projectorPursuit);
+        if (optionalPursuitTracker.isPresent()) {
+            pursuitTrackerRepository.deleteByProjectorPursuit(projectorPursuit);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+}
 
 
 
