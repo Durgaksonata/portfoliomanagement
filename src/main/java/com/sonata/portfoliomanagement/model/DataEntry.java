@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Data_Entry")
 public class DataEntry {
-	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
+	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityorNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
 		this.id = id;
 		this.month = month;
 		this.vertical = vertical;
@@ -22,7 +22,7 @@ public class DataEntry {
 		this.projectManager = projectManager;
 		this.projectName = projectName;
 		this.category = category;
-		this.annuityOrNonAnnuity = annuityOrNonAnnuity;
+		this.annuityorNonAnnuity = annuityorNonAnnuity;
 		this.value = value;
 		this.type = type;
 		this.financialYear = financialYear;
@@ -45,14 +45,13 @@ public class DataEntry {
 	public DataEntry() {
 		super();
 	}
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 	private String month;
 	private String vertical;
 	private String classification;
-
 	@Column(name="Delivery_Director")
 	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
@@ -64,7 +63,7 @@ public class DataEntry {
 	private  String projectName;
 	private  String category;
 	@Column(name="Annuity_or_Non-Annuity")
-	private  String annuityOrNonAnnuity;
+	private  String annuityorNonAnnuity;
 	private float value;
 	private String type;
 	@Column(name="Financial_Year")
@@ -93,7 +92,7 @@ public class DataEntry {
 	private float onsiteProjectManager;
 	@Column(name="Billable_Project_Manager")
 	private float billableProjectManager;
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -157,11 +156,11 @@ public class DataEntry {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getAnnuityOrNonAnnuity() {
-		return annuityOrNonAnnuity;
+	public String getAnnuityorNonAnnuity() {
+		return annuityorNonAnnuity;
 	}
-	public void setAnnuityOrNonAnnuity(String annuityOrNonAnnuity) {
-		this.annuityOrNonAnnuity = annuityOrNonAnnuity;
+	public void setAnnuityorNonAnnuity(String annuityorNonAnnuity) {
+		this.annuityorNonAnnuity = annuityorNonAnnuity;
 	}
 	public float getValue() {
 		return value;

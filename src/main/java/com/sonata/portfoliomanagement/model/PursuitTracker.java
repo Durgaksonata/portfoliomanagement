@@ -39,8 +39,8 @@ public class PursuitTracker {
     @Column(name="likely_Closure_Or_Actual_Closure")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
     private Date likelyClosureorActualClosure;
-    @Column(name="Remarks")
-    private String Remarks;
+    @Column(name="remarks")
+    private String remarks;
     @Column(name="Year")
     private int year;
 
@@ -57,7 +57,7 @@ public class PursuitTracker {
         this.projectorPursuit = projectorPursuit;
         this.pursuitorpotential = pursuitorpotential;
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
-        this.Remarks = remarks;
+        this.remarks = remarks;
         this.year = year;
     }
 
@@ -158,11 +158,11 @@ public class PursuitTracker {
     }
 
     public String getRemarks() {
-        return Remarks;
+        return remarks;
     }
 
     public void setRemarks(String remarks) {
-        Remarks = remarks;
+        this.remarks = remarks;
     }
 
     public int getYear() {

@@ -48,7 +48,7 @@ public class DataEntryService {
         dataEntry.setProjectManager(dataEntryDTO.getProjectManager());
         dataEntry.setProjectName(dataEntryDTO.getProjectName());
         dataEntry.setCategory(dataEntryDTO.getCategory());
-        dataEntry.setAnnuityOrNonAnnuity(dataEntryDTO.getAnnuityOrNonAnnuity());
+        dataEntry.setAnnuityorNonAnnuity(dataEntryDTO.getAnnuityorNonAnnuity());
         dataEntry.setValue(dataEntryDTO.getValue());
         dataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
         dataEntry.setQuarter(dataEntryDTO.getQuarter());
@@ -140,7 +140,7 @@ public class DataEntryService {
     }
     private void calculateAnnuityRevenue(DataEntry dataEntry) {
         String category = dataEntry.getCategory();
-        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityorNonAnnuity();
         if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
                 category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
                 annuityOrNonAnnuity.equals("Annuity")) {
@@ -151,7 +151,7 @@ public class DataEntryService {
     }
     private void calculateNonAnnuityRevenue(DataEntry dataEntry) {
         String category = dataEntry.getCategory();
-        String annuityOrNonAnnuity = dataEntry.getAnnuityOrNonAnnuity();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityorNonAnnuity();
         if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
                 category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
                 annuityOrNonAnnuity.equals("Annuity")) {

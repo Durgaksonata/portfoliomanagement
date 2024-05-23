@@ -14,17 +14,17 @@ public class DataEntryDTO {
     private String projectName;
     private int financialYear;
     private String quarter;
-    private String Month;
-    private String DeliveryDirector;
-    private String Category;
-    private String AnnuityOrNonAnnuity;
-    private float Value;
+    private String month;
+    private String deliveryDirector;
+    private String category;
+    private String annuityorNonAnnuity;
+    private float value;
 
 
     public DataEntryDTO() {
     }
 
-    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityOrNonAnnuity, float value) {
+    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, float value) {
         this.vertical = vertical;
         this.classification = classification;
         this.deliveryManager = deliveryManager;
@@ -33,10 +33,12 @@ public class DataEntryDTO {
         this.projectName = projectName;
         this.financialYear = financialYear;
         this.quarter = quarter;
-        this.Month = month;
-        this.DeliveryDirector = deliveryDirector;
-        this.Category = category;
-        this.AnnuityOrNonAnnuity = annuityOrNonAnnuity;
-        this.Value = value;
+        this.month = month;
+        this.deliveryDirector = deliveryDirector;
+        this.category = category;
+        this.annuityorNonAnnuity = annuityorNonAnnuity;
+        this.value = value;
     }
+
+
 }
