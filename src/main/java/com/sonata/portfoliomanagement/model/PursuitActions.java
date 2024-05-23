@@ -12,11 +12,10 @@ public class PursuitActions {
     public PursuitActions() {
     }
 
-    public PursuitActions(int id, String deliveryManager, String account, String pursuit, String actionItemNumber,
-                         String actionDescription, String actionType, String status, String actionOwner, Date dueDate,
-                         String dependentActionItem, String remarks) {
-        super();
+    public PursuitActions(int id, String deliveryDirector, String pursuitid, String deliveryManager, String account, String pursuit, String actionItemNumber, String actionDescription, String actionType, String status, String actionOwner, Date dueDate, String dependentActionItem, String remarks, PursuitTracker pursuitTracker) {
         this.id = id;
+        this.pursuitid = pursuitid;
+        this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.pursuit = pursuit;
@@ -28,10 +27,18 @@ public class PursuitActions {
         this.dueDate = dueDate;
         this.dependentActionItem = dependentActionItem;
         this.remarks = remarks;
+        this.pursuitTracker = pursuitTracker;
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "pursuit_id", nullable = false)
+    private String pursuitid;
+
+    @Column(name="Delivery_Director")
+    private String deliveryDirector;
     @Column(name="Delivery_Manager")
     private String deliveryManager;
     @Column(name="account")
@@ -56,12 +63,37 @@ public class PursuitActions {
     @Column(name="remarks")
     private String remarks;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pursuit_id", referencedColumnName = "pursuit_id", insertable = false, updatable = false)
+    private PursuitTracker pursuitTracker;
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    public String getPursuitid() {
+        return pursuitid;
+    }
+
+    public void setPursuitid(String pursuitid) {
+        this.pursuitid = pursuitid;
+    }
+
+    public String getDeliveryDirector() {
+        return deliveryDirector;
+    }
+
+    public void setDeliveryDirector(String deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
+    }
+
+    public void setPursuitTracker(PursuitTracker pursuitTracker) {
+        this.pursuitTracker = pursuitTracker;
     }
 
     public String getDeliveryManager() {

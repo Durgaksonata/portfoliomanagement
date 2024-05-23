@@ -3,7 +3,7 @@ package com.sonata.portfoliomanagement.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "md-pursuit_probability")
+@Table(name = "md_pursuit_probability")
 public class MD_PursuitProbability {
 
     public MD_PursuitProbability() {

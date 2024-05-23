@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "pursuit_tracker")
@@ -15,6 +16,11 @@ public class PursuitTracker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "pursuit_id", unique = true, nullable = false)
+    private int pursuitid;
+    @Column(name="Delivery_Director")
+    private String deliveryDirector;
     @Column(name="Delivery_Manager")
     private String deliveryManager;
     @Column(name="Account")
@@ -32,6 +38,7 @@ public class PursuitTracker {
     private String stage;
     @Column(name="Pursuit_Probability(%)")
     private int pursuitProbability;
+
     @Column(name="Project_or_Pursuit")
     private String projectorPursuit;
     @Column(name="pursuit_or_potential")
@@ -44,8 +51,13 @@ public class PursuitTracker {
     @Column(name="Year")
     private int year;
 
-    public PursuitTracker(int id, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, int year) {
+    @OneToMany(mappedBy = "pursuitTracker", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<PursuitActions> pursuitActions;
+
+    public PursuitTracker(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, int year, Set<PursuitActions> pursuitActions) {
         this.id = id;
+        this.pursuitid = pursuitid;
+        this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.type = type;
@@ -59,6 +71,7 @@ public class PursuitTracker {
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
         this.remarks = remarks;
         this.year = year;
+
     }
 
     public int getId() {
@@ -67,6 +80,23 @@ public class PursuitTracker {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getPursuitid() {
+        return pursuitid;
+    }
+
+    public void setPursuitid(int pursuitid) {
+        this.pursuitid = pursuitid;
+    }
+
+
+    public String getDeliveryDirector() {
+        return deliveryDirector;
+    }
+
+    public void setDeliveryDirector(String deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
     }
 
     public String getDeliveryManager() {

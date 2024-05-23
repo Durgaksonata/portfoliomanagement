@@ -1,16 +1,15 @@
 package com.sonata.portfoliomanagement.controllers;
 
 import com.sonata.portfoliomanagement.interfaces.PursuitActionsRepository;
+import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
 import com.sonata.portfoliomanagement.model.PursuitActions;
+import com.sonata.portfoliomanagement.model.PursuitTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,6 +17,8 @@ import java.util.stream.Collectors;
 public class PursuitActionsController {
     @Autowired
     PursuitActionsRepository pursuitActionRepo;
+    @Autowired
+    PursuitTrackerRepository PursuitTrackerRepo;
 
     @GetMapping("/get")
     public ResponseEntity<List<PursuitActions>> getAllData() {
@@ -26,9 +27,30 @@ public class PursuitActionsController {
     }
     @PostMapping("/save")
     public ResponseEntity<?> createPursuitAction(@RequestBody PursuitActions pursuitAction) {
-        // Query the database to check for existing entry with the same values for all fields
-        List<PursuitActions> existingEntries = pursuitActionRepo.findByDeliveryManagerAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(
+        // Check if the pursuit exists in the PursuitTracker table
+        PursuitTracker pursuitTracker = PursuitTrackerRepo.findByProjectorPursuit(pursuitAction.getPursuit())
+                .orElse(null);
+
+        // If no matching PursuitTracker entry is found, return an error response
+        if (pursuitTracker == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No matching PursuitTracker entry found.");
+        }
+
+        // Check if the project_or_pursuit matches the pursuit field in the PursuitTracker entry
+        if (!pursuitAction.getPursuit().equals(pursuitTracker.getProjectorPursuit())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("project_or_pursuit does not match the pursuit field in PursuitTracker.");
+        }
+
+        // Generate the pursuitid for PursuitActions
+        int basePursuitid = pursuitTracker.getPursuitid();
+        long subtaskCount = pursuitActionRepo.countByPursuit(pursuitAction.getPursuit()) + 1;
+        String pursuitid = basePursuitid + "." + subtaskCount;
+        pursuitAction.setPursuitid(pursuitid);
+
+        // Check for duplicate entry
+        List<PursuitActions> existingEntries = pursuitActionRepo.findByDeliveryManagerAndDeliveryDirectorAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(
                 pursuitAction.getDeliveryManager(),
+                pursuitAction.getDeliveryDirector(),
                 pursuitAction.getAccount(),
                 pursuitAction.getPursuit(),
                 pursuitAction.getActionItemNumber(),
@@ -41,9 +63,7 @@ public class PursuitActionsController {
                 pursuitAction.getRemarks()
         );
 
-        // Check if there are any existing entries
         if (!existingEntries.isEmpty()) {
-            // An entry with the same values for all fields already exists, don't save the data
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate entry exists.");
         }
 
@@ -51,6 +71,7 @@ public class PursuitActionsController {
         PursuitActions createdPursuit = pursuitActionRepo.save(pursuitAction);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPursuit);
     }
+
 
 
     @PutMapping("/update/{id}")
@@ -91,6 +112,7 @@ public class PursuitActionsController {
         for (PursuitActions dataItem : dataList) {
             Map<String, Object> dataMap = new HashMap<>();
             dataMap.put("id", dataItem.getId());
+            dataMap.put("deliveryDirector", dataItem.getDeliveryDirector());
             dataMap.put("deliveryManager", dataItem.getDeliveryManager());
             dataMap.put("account", dataItem.getAccount());
             dataMap.put("pursuit", dataItem.getPursuit());

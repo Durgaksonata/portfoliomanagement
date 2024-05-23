@@ -21,7 +21,13 @@ Optional<PursuitTracker> findByProjectorPursuit(String projectorPursuit);
     @Query("SELECT p FROM PursuitTracker p WHERE CONCAT(p.account, p.projectorPursuit) = :concatenatedName")
     PursuitTracker findByConcatenatedName(@Param("concatenatedName") String concatenatedName);
 
-    List<PursuitTracker> findByDeliveryManagerAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarksAndYear(String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String Remarks, int year);
-
     List<PursuitTracker> findByDeliveryManager(String deliveryManager);
+
+
+    // Custom query to find the maximum pursuitNo
+    @Query("SELECT COALESCE(MAX(p.pursuitid), 0) FROM PursuitTracker p")
+    int findMaxPursuitid();
+
+
+    List<PursuitTracker> findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarksAndYear(String deliveryManager, String deliveryDirector, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, int year);
 }
