@@ -27,61 +27,6 @@ public class PursuitTrackerController {
     private MD_PursuitProbabilityRepository mdPursuitProbabilityRepository;
 
 
-//    @PostMapping("/save")
-//    public ResponseEntity<?> addPursuitTracker(@RequestBody PursuitTracker pursuitTracker) {
-//        // Calculate stage based on PursuitStatus and Type
-//        String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
-//        pursuitTracker.setStage(stage);
-//
-//        // Calculate pursuitProbability based on PursuitStatus and Type
-//        int pursuitProbability = calculatePursuitProbability(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
-//        pursuitTracker.setPursuitProbability(pursuitProbability);
-//
-//        // Check for duplicate entry
-//        List<PursuitTracker> existingEntries = pursuitTrackerRepository.findByDeliveryManagerAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarksAndYear(
-//                pursuitTracker.getDeliveryManager(),
-//                pursuitTracker.getAccount(),
-//                pursuitTracker.getType(),
-//                pursuitTracker.getTcv(),
-//                pursuitTracker.getIdentifiedmonth(),
-//                pursuitTracker.getPursuitstatus(),
-//                pursuitTracker.getStage(),
-//                pursuitTracker.getPursuitProbability(),
-//                pursuitTracker.getProjectorPursuit(),
-//                pursuitTracker.getPursuitorpotential(),
-//                pursuitTracker.getLikelyClosureorActualClosure(),
-//                pursuitTracker.getRemarks(),
-//                pursuitTracker.getYear()
-//        );
-//
-//        if (!existingEntries.isEmpty()) {
-//            return new ResponseEntity<>("Duplicate entry exists", HttpStatus.CONFLICT);
-//        }
-//
-//        PursuitTracker savedPursuitTracker = pursuitTrackerRepository.save(pursuitTracker);
-//        return new ResponseEntity<>(savedPursuitTracker, HttpStatus.CREATED);
-//    }
-//
-//    // Method to calculate stage based on PursuitStatus and Type
-//    private String calculateStage(String pursuitStatus, String type) {
-//        if (pursuitStatus == null || pursuitStatus.isEmpty() || type == null || type.isEmpty()) {
-//            return "";
-//        }
-//
-//        Optional<MD_PursuitProbability> result = mdPursuitProbabilityRepository.findByPursuitStatusAndType(pursuitStatus, type);
-//        return result.map(MD_PursuitProbability::getStage).orElse("");
-//    }
-//
-//    // Method to calculate pursuitProbability based on PursuitStatus and Type
-//    private int calculatePursuitProbability(String pursuitStatus, String type) {
-//        if (pursuitStatus == null || pursuitStatus.isEmpty() || type == null || type.isEmpty()) {
-//            return 0;
-//        }
-//
-//        Optional<MD_PursuitProbability> result = mdPursuitProbabilityRepository.findByPursuitStatusAndType(pursuitStatus, type);
-//        return result.map(MD_PursuitProbability::getProbability).orElse(0);
-//    }
-
 
     @PostMapping("/save")
     public ResponseEntity<?> addPursuitTracker(@RequestBody PursuitTracker pursuitTracker) {
@@ -94,7 +39,7 @@ public class PursuitTrackerController {
         pursuitTracker.setPursuitProbability(pursuitProbability);
 
         // Check for duplicate entry
-        List<PursuitTracker> existingEntries = pursuitTrackerRepository.findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarksAndYear(
+        List<PursuitTracker> existingEntries = pursuitTrackerRepository.findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarks(
                 pursuitTracker.getDeliveryManager(),
                 pursuitTracker.getDeliveryDirector(),
                 pursuitTracker.getAccount(),
@@ -107,8 +52,7 @@ public class PursuitTrackerController {
                 pursuitTracker.getProjectorPursuit(),
                 pursuitTracker.getPursuitorpotential(),
                 pursuitTracker.getLikelyClosureorActualClosure(),
-                pursuitTracker.getRemarks(),
-                pursuitTracker.getYear()
+                pursuitTracker.getRemarks()
         );
 
         if (!existingEntries.isEmpty()) {
@@ -185,7 +129,7 @@ public class PursuitTrackerController {
             existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
             existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
             existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
-            existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
+
 
             PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
             return ResponseEntity.ok(updatedPursuitTracker);
@@ -193,7 +137,7 @@ public class PursuitTrackerController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PutMapping("/updateByProjectorPursuit/{projectorPursuit}")
+    @PutMapping("/update/{projectorPursuit}")
     public ResponseEntity<PursuitTracker> updatePursuitTrackerByProjectOrPursuit(@PathVariable(value = "projectorPursuit") String projectorPursuit,
                                                                                  @RequestBody PursuitTracker pursuitTrackerDetails) {
         Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findByProjectorPursuit(projectorPursuit);
@@ -212,7 +156,7 @@ public class PursuitTrackerController {
             existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
             existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
             existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
-            existingPursuitTracker.setYear(pursuitTrackerDetails.getYear());
+
 
             PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
             return ResponseEntity.ok(updatedPursuitTracker);
@@ -259,7 +203,6 @@ public class PursuitTrackerController {
             dataMap.put("pursuitPotential", dataItem.getPursuitorpotential());
             dataMap.put("likelyClosureOrActualClosure", dataItem.getLikelyClosureorActualClosure());
             dataMap.put("remarks", dataItem.getRemarks());
-            dataMap.put("year", dataItem.getYear());
             data.add(dataMap);
         }
 

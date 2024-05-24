@@ -4,6 +4,7 @@ import com.sonata.portfoliomanagement.interfaces.PursuitActionsRepository;
 import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
 import com.sonata.portfoliomanagement.model.PursuitActions;
 import com.sonata.portfoliomanagement.model.PursuitTracker;
+import com.sonata.portfoliomanagement.services.PursuitActionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ public class PursuitActionsController {
     @Autowired
     PursuitTrackerRepository PursuitTrackerRepo;
 
+    @Autowired
+    PursuitActionsService pursuitActionsService;
+
     @GetMapping("/get")
     public ResponseEntity<List<PursuitActions>> getAllData() {
         List<PursuitActions> pursuitAction = pursuitActionRepo.findAll();
@@ -33,7 +37,7 @@ public class PursuitActionsController {
 
         // If no matching PursuitTracker entry is found, return an error response
         if (pursuitTracker == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No matching PursuitTracker entry found.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No matching Pursuits entry found.");
         }
 
         // Check if the project_or_pursuit matches the pursuit field in the PursuitTracker entry
@@ -74,30 +78,37 @@ public class PursuitActionsController {
 
 
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PursuitActions> updatePursuitActions(@PathVariable int id, @RequestBody PursuitActions updatedPursuitActions) {
-        // Check if PursuitAction with given id exists
-        if (!pursuitActionRepo.existsById(id)) {
-            return ResponseEntity.notFound().build();
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<PursuitActions> updatePursuitActions(@PathVariable int id, @RequestBody PursuitActions updatedPursuitActions) {
+//        // Check if PursuitAction with given id exists
+//        if (!pursuitActionRepo.existsById(id)) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        // Set the id of updatedPursuitAction
+//        updatedPursuitActions.setId(id);
+//
+//        // Save the updated PursuitAction
+//        PursuitActions updatedActions = pursuitActionRepo.save(updatedPursuitActions);
+//
+//        return ResponseEntity.ok(updatedActions);
+//    }
+
+
+
+    @DeleteMapping("/delete/{pursuitid}")
+    public ResponseEntity<String> deletePursuitActionsByPursuitid(@PathVariable String pursuitid) {
+        List<PursuitActions> pursuitActions = pursuitActionsService.findByPursuitid(pursuitid);
+
+        if (pursuitActions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No PursuitActions found with pursuitid: " + pursuitid);
         }
 
-        // Set the id of updatedPursuitAction
-        updatedPursuitActions.setId(id);
-
-        // Save the updated PursuitAction
-        PursuitActions updatedActions = pursuitActionRepo.save(updatedPursuitActions);
-
-        return ResponseEntity.ok(updatedActions);
+        pursuitActionsService.deleteByPursuitid(pursuitid);
+        return ResponseEntity.status(HttpStatus.OK).body("PursuitActions with pursuitid: " + pursuitid + " have been deleted.");
     }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deletePursuitAction(@PathVariable int id) {
-        if (pursuitActionRepo.existsById(id)) {
-            pursuitActionRepo.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+
+
 
 
     @PostMapping("/databyDm")
@@ -140,6 +151,35 @@ public class PursuitActionsController {
         }
         return dmList.stream().distinct().collect(Collectors.toList());
     }
+
+
+    @PutMapping("/update/{pursuitid}")
+    public ResponseEntity<String> updatePursuitActionsByPursuitid(@PathVariable String pursuitid, @RequestBody PursuitActions updatedPursuitActions) {
+        List<PursuitActions> existingPursuitActions = pursuitActionsService.findByPursuitid(pursuitid);
+
+        if (existingPursuitActions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No PursuitActions found with pursuitid: " + pursuitid);
+        }
+
+        for (PursuitActions pursuitAction : existingPursuitActions) {
+            pursuitAction.setDeliveryDirector(updatedPursuitActions.getDeliveryDirector());
+            pursuitAction.setDeliveryManager(updatedPursuitActions.getDeliveryManager());
+            pursuitAction.setAccount(updatedPursuitActions.getAccount());
+            pursuitAction.setPursuit(updatedPursuitActions.getPursuit());
+            pursuitAction.setActionItemNumber(updatedPursuitActions.getActionItemNumber());
+            pursuitAction.setActionDescription(updatedPursuitActions.getActionDescription());
+            pursuitAction.setActionType(updatedPursuitActions.getActionType());
+            pursuitAction.setStatus(updatedPursuitActions.getStatus());
+            pursuitAction.setActionOwner(updatedPursuitActions.getActionOwner());
+            pursuitAction.setDueDate(updatedPursuitActions.getDueDate());
+            pursuitAction.setDependentActionItem(updatedPursuitActions.getDependentActionItem());
+            pursuitAction.setRemarks(updatedPursuitActions.getRemarks());
+            pursuitActionsService.save(pursuitAction);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("PursuitActions with pursuitid: " + pursuitid + " have been updated.");
+    }
+
 
 
 }

@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 public interface PursuitActionsRepository extends JpaRepository<PursuitActions, Integer> {
+    List<PursuitActions> findByPursuitid(String pursuitid);
 
-
+    void deleteByPursuitid(String pursuitid);
 
     List<PursuitActions> findByDeliveryManager(String deliveryManager);
     List<PursuitActions> findByPursuit(String pursuit);

@@ -30,7 +30,7 @@ public class PursuitTracker {
     @Column(name="TCV")
     private float tcv;
     @Column(name="Identified_Month")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
     private Date identifiedmonth;
     @Column(name="Pursuit_Status")
     private String pursuitstatus;
@@ -44,17 +44,16 @@ public class PursuitTracker {
     @Column(name="pursuit_or_potential")
     private String pursuitorpotential;
     @Column(name="likely_Closure_Or_Actual_Closure")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
     private Date likelyClosureorActualClosure;
     @Column(name="remarks")
     private String remarks;
-    @Column(name="Year")
-    private int year;
+
 
     @OneToMany(mappedBy = "pursuitTracker", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<PursuitActions> pursuitActions;
 
-    public PursuitTracker(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, int year, Set<PursuitActions> pursuitActions) {
+    public PursuitTracker(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, Set<PursuitActions> pursuitActions) {
         this.id = id;
         this.pursuitid = pursuitid;
         this.deliveryDirector = deliveryDirector;
@@ -70,7 +69,6 @@ public class PursuitTracker {
         this.pursuitorpotential = pursuitorpotential;
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
         this.remarks = remarks;
-        this.year = year;
 
     }
 
@@ -195,13 +193,7 @@ public class PursuitTracker {
         this.remarks = remarks;
     }
 
-    public int getYear() {
-        return year;
-    }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
 
 
 
