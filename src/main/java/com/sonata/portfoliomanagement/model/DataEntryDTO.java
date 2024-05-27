@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DataEntryDTO {
+    private Integer id;
     private String vertical;
     private String classification;
     private String deliveryManager;
@@ -19,12 +20,14 @@ public class DataEntryDTO {
     private String category;
     private String annuityorNonAnnuity;
     private float value;
+    private float budget;
 
 
     public DataEntryDTO() {
     }
 
-    public DataEntryDTO(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, float value) {
+    public DataEntryDTO(Integer id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, float value, float budget) {
+       this.id = id;
         this.vertical = vertical;
         this.classification = classification;
         this.deliveryManager = deliveryManager;
@@ -38,6 +41,7 @@ public class DataEntryDTO {
         this.category = category;
         this.annuityorNonAnnuity = annuityorNonAnnuity;
         this.value = value;
+        this.budget = budget;
     }
 
 

@@ -65,4 +65,6 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     List<RevenueGrowthSummary> findDmByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
 
     List<RevenueGrowthSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
+
+    void deleteByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 }

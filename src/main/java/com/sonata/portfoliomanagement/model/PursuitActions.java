@@ -47,7 +47,7 @@ public class PursuitActions {
     private String pursuit;
     @Column(name="action_Item_Number")
     private String actionItemNumber;
-    @Column(name="action_Description")
+    @Column(name="action_Description",length = 1000)
     private String actionDescription;
     @Column(name="action_Type")
     private String actionType;

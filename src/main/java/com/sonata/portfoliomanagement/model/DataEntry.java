@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Data_Entry")
 public class DataEntry {
-	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityorNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager) {
+	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityorNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager,float budget) {
 		this.id = id;
 		this.month = month;
 		this.vertical = vertical;
@@ -40,6 +40,7 @@ public class DataEntry {
 		this.offshoreProjectManager = offshoreProjectManager;
 		this.onsiteProjectManager = onsiteProjectManager;
 		this.billableProjectManager = billableProjectManager;
+		this.budget = budget;
 	}
 
 	public DataEntry() {
@@ -92,6 +93,7 @@ public class DataEntry {
 	private float onsiteProjectManager;
 	@Column(name="Billable_Project_Manager")
 	private float billableProjectManager;
+	private float budget;
 
 	public Integer getId() {
 		return id;
@@ -265,4 +267,11 @@ public class DataEntry {
 		this.billableProjectManager = billableProjectManager;
 	}
 
+	public float getBudget() {
+		return budget;
+	}
+
+	public void setBudget(float budget) {
+		this.budget = budget;
+	}
 }

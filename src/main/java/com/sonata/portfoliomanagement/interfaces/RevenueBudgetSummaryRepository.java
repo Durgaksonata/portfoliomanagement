@@ -16,9 +16,7 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByVerticalAndClassification(String vertical, String classification);
     List<RevenueBudgetSummary> findAllByVertical(String vertical);
     List<RevenueBudgetSummary> findByProjectName(String project);
-    List<RevenueBudgetSummary> findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYear(String vertical, String classification, String dm, String account, String pm, String project, Integer financialYear);
 
-    List<RevenueBudgetSummary> findByFinancialYearIn(List<Integer> financialYears);
 
     List<RevenueBudgetSummary> findByAccountIn(List<String> accounts);
 
@@ -42,19 +40,9 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByProjectManager(String projectManager);
 
 
-
-
     List<RevenueBudgetSummary> findAllByClassification(String classification);
 
-    List<RevenueBudgetSummary> findByClassification(String classificationName);
-
     List<RevenueBudgetSummary> findByclassification(String getList);
-
-
-
-    List<RevenueBudgetSummary> findByFinancialYearInAndProjectNameInAndVerticalInAndClassificationInAndDeliveryManagerInAndAccountInAndProjectManagerIn(List<Integer> financialYear, List<String> projectList, List<String> verticalList, List<String> classificationList, List<String> dmList, List<String> accountList, List<String> pmList);
-
-    List<RevenueBudgetSummary> findByQuarter(String quarter);
 
 
     List<RevenueBudgetSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
@@ -69,12 +57,12 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
 
     List<RevenueBudgetSummary> findByDeliveryManagerInAndClassificationIn(List<String> deliveryManagers, List<String> classifications);
 
-
-    RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String verticals, String classifications, String deliverManagers, String accounts, String projectManagers, String projectNames, int financialYears, String quarters);
-
     List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameIn(List<Integer> years, List<String> projectNames);
 
     List<RevenueBudgetSummary> findGapByFinancialYearInAndProjectNameInAndQuarter(List<Integer> integers, List<String> projectNames, String quarter);
 
-    RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
+    RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget);
+
+    void deleteByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 }

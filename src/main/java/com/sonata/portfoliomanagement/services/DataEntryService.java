@@ -8,6 +8,8 @@ import com.sonata.portfoliomanagement.model.PursuitTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DataEntryService {
     @Autowired
@@ -37,6 +39,21 @@ public class DataEntryService {
         return dataEntryRepo.save(dataEntry);
     }
 
+    public boolean isDuplicateEntry(DataEntryDTO dataEntryDTO) {
+        List<DataEntry> existingEntries = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
+                dataEntryDTO.getVertical(),
+                dataEntryDTO.getClassification(),
+                dataEntryDTO.getDeliveryDirector(),
+                dataEntryDTO.getDeliveryManager(),
+                dataEntryDTO.getAccount(),
+                dataEntryDTO.getProjectManager(),
+                dataEntryDTO.getProjectName(),
+                dataEntryDTO.getFinancialYear(),
+                dataEntryDTO.getQuarter()
+        );
+        return !existingEntries.isEmpty();
+    }
+
     public DataEntry createDataEntryFromDTO(DataEntryDTO dataEntryDTO) {
         DataEntry dataEntry = new DataEntry();
         dataEntry.setMonth(dataEntryDTO.getMonth());
@@ -52,6 +69,7 @@ public class DataEntryService {
         dataEntry.setValue(dataEntryDTO.getValue());
         dataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
         dataEntry.setQuarter(dataEntryDTO.getQuarter());
+        dataEntry.setBudget(dataEntryDTO.getBudget());
         return dataEntry;
     }
 

@@ -1,9 +1,7 @@
 package com.sonata.portfoliomanagement.controllers;
 
-import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueGrowthSummaryRepository;
 
-import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -96,7 +96,7 @@ public class PursuitTrackerController {
 
 
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public List<PursuitTracker> getAllPursuitTrackers() {
         return pursuitTrackerRepository.findAll();
     }

@@ -46,7 +46,7 @@ public class PursuitTracker {
     @Column(name="likely_Closure_Or_Actual_Closure")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
     private Date likelyClosureorActualClosure;
-    @Column(name="remarks")
+    @Column(name = "remarks", length = 5000)
     private String remarks;
 
 
