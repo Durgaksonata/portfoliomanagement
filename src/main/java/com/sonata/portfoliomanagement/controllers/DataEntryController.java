@@ -36,10 +36,9 @@ public class DataEntryController {
 
     @GetMapping("/get")
     public ResponseEntity<List<DataEntry>> getAllData() {
-        List<DataEntry> dataentry = dataEntryRepo.findAll();
-        return ResponseEntity.ok(dataentry);
+        List<DataEntry> dataEntries = dataEntryRepo.findAllByOrderByIdDesc();
+        return ResponseEntity.ok(dataEntries);
     }
-
 
 //    @PostMapping("/save")
 //    public ResponseEntity<DataEntry> createDataEntry(@RequestBody DataEntryDTO dataEntryDTO) {
@@ -455,5 +454,7 @@ public class DataEntryController {
 
         return new ResponseEntity<>("Data entry and related summaries deleted successfully", HttpStatus.OK);
     }
+
+
 
 }
