@@ -7,27 +7,32 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Data_Entry")
 public class DataEntry {
-	public DataEntry(Integer id, Date month, String vertical, String classification, String deliveryManager,
-			String account, String projectManager, String projectName, String category, String annuityOrNonAnnuity,
+	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager,
+			String account, String projectManager, String projectName, String category, String annuityorNonAnnuity,
 			float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage,
 			float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue,
 			float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager,
-			float onsiteProjectManager, float billableProjectManager) {
+			float onsiteProjectManager, float billableProjectManager,float budget) {
 		super();
 		this.id = id;
 		this.month = month;
 		this.vertical = vertical;
 		this.classification = classification;
+		this.deliveryDirector = deliveryDirector;
 		this.deliveryManager = deliveryManager;
 		this.account = account;
 		this.projectManager = projectManager;
 		this.projectName = projectName;
 		this.category = category;
-		this.annuityOrNonAnnuity = annuityOrNonAnnuity;
+		this.annuityorNonAnnuity = annuityorNonAnnuity;
 		this.value = value;
 		this.type = type;
 		this.financialYear = financialYear;
@@ -45,6 +50,7 @@ public class DataEntry {
 		this.offshoreProjectManager = offshoreProjectManager;
 		this.onsiteProjectManager = onsiteProjectManager;
 		this.billableProjectManager = billableProjectManager;
+		this.budget = budget;
 	}
 	public DataEntry() {
 		super();
@@ -53,9 +59,11 @@ public class DataEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-	private Date month;
+	private String month;
 	private String vertical;
 	private String classification;
+	@Column(name="Delivery_Director")
+	private String deliveryDirector;
 	@Column(name="Delivery_Manager")
 	private String deliveryManager;
 	private String account;
@@ -65,7 +73,7 @@ public class DataEntry {
 	private  String projectName;
 	private  String category;
 	@Column(name="Annuity_or_Non-Annuity")
-	private  String annuityOrNonAnnuity;
+	private  String annuityorNonAnnuity;
 	private float value;
 	private String type;
 	@Column(name="Financial_Year")
@@ -94,168 +102,5 @@ public class DataEntry {
 	private float onsiteProjectManager;
 	@Column(name="Billable_Project_Manager")
 	private float billableProjectManager;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public Date getMonth() {
-		return month;
-	}
-	public void setMonth(Date month) {
-		this.month = month;
-	}
-	public String getVertical() {
-		return vertical;
-	}
-	public void setVertical(String vertical) {
-		this.vertical = vertical;
-	}
-	public String getClassification() {
-		return classification;
-	}
-	public void setClassification(String classification) {
-		this.classification = classification;
-	}
-	public String getDeliveryManager() {
-		return deliveryManager;
-	}
-	public void setDeliveryManager(String deliveryManager) {
-		this.deliveryManager = deliveryManager;
-	}
-	public String getAccount() {
-		return account;
-	}
-	public void setAccount(String account) {
-		this.account = account;
-	}
-	public String getProjectManager() {
-		return projectManager;
-	}
-	public void setProjectManager(String projectManager) {
-		this.projectManager = projectManager;
-	}
-	public String getProjectName() {
-		return projectName;
-	}
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
-	public String getAnnuityOrNonAnnuity() {
-		return annuityOrNonAnnuity;
-	}
-	public void setAnnuityOrNonAnnuity(String annuityOrNonAnnuity) {
-		this.annuityOrNonAnnuity = annuityOrNonAnnuity;
-	}
-	public float getValue() {
-		return value;
-	}
-	public void setValue(float value) {
-		this.value = value;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public int getFinancialYear() {
-		return financialYear;
-	}
-	public void setFinancialYear(int financialYear) {
-		this.financialYear = financialYear;
-	}
-	public String getQuarter() {
-		return quarter;
-	}
-	public void setQuarter(String quarter) {
-		this.quarter = quarter;
-	}
-	public int getProbability() {
-		return probability;
-	}
-	public void setProbability(int probability) {
-		this.probability = probability;
-	}
-	public String getProjectsOrPursuitStage() {
-		return projectsOrPursuitStage;
-	}
-	public void setProjectsOrPursuitStage(String projectsOrPursuitStage) {
-		this.projectsOrPursuitStage = projectsOrPursuitStage;
-	}
-	public float getConfirmed() {
-		return confirmed;
-	}
-	public void setConfirmed(float confirmed) {
-		this.confirmed = confirmed;
-	}
-	public float getUpside() {
-		return upside;
-	}
-	public void setUpside(float upside) {
-		this.upside = upside;
-	}
-	public float getLikely() {
-		return likely;
-	}
-	public void setLikely(float likely) {
-		this.likely = likely;
-	}
-	public float getAnnuityRevenue() {
-		return annuityRevenue;
-	}
-	public void setAnnuityRevenue(float annuityRevenue) {
-		this.annuityRevenue = annuityRevenue;
-	}
-	public float getNonAnnuityRevenue() {
-		return nonAnnuityRevenue;
-	}
-	public void setNonAnnuityRevenue(float nonAnnuityRevenue) {
-		this.nonAnnuityRevenue = nonAnnuityRevenue;
-	}
-	public float getOffshoreCost() {
-		return offshoreCost;
-	}
-	public void setOffshoreCost(float offshoreCost) {
-		this.offshoreCost = offshoreCost;
-	}
-	public float getOnsiteCost() {
-		return onsiteCost;
-	}
-	public void setOnsiteCost(float onsiteCost) {
-		this.onsiteCost = onsiteCost;
-	}
-	public float getTotalCost() {
-		return totalCost;
-	}
-	public void setTotalCost(float totalCost) {
-		this.totalCost = totalCost;
-	}
-	public float getOffshoreProjectManager() {
-		return offshoreProjectManager;
-	}
-	public void setOffshoreProjectManager(float offshoreProjectManager) {
-		this.offshoreProjectManager = offshoreProjectManager;
-	}
-	public float getOnsiteProjectManager() {
-		return onsiteProjectManager;
-	}
-	public void setOnsiteProjectManager(float onsiteProjectManager) {
-		this.onsiteProjectManager = onsiteProjectManager;
-	}
-	public float getBillableProjectManager() {
-		return billableProjectManager;
-	}
-	public void setBillableProjectManager(float billableProjectManager) {
-		this.billableProjectManager = billableProjectManager;
-	}
-
+	private float budget;
 }

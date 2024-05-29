@@ -17,16 +17,15 @@ public interface DataEntryRepository extends JpaRepository<DataEntry, Integer>{
     DataEntry findByAccount(String account);
     DataEntry findByProjectManager(String projectManager);
     DataEntry findByProjectName(String project);
-    DataEntry findByFinancialYear(int financialYear);
+   List< DataEntry> findByFinancialYear(int financialYear);
     DataEntry findByQuarter(String quarter);
 
     List<DataEntry> findAllByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String verticals, String classifications, String deliverManagers, String accounts, String projectManagers, String projectNames, int financialYears, String quarters);
 
 
+    List<DataEntry> findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
+    List<DataEntry> findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget);
 
-
-
-
-
+    List<DataEntry> findAllByFinancialYear(int financialYear);
 }

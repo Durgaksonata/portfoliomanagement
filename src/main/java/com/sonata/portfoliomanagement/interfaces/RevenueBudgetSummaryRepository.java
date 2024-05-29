@@ -1,12 +1,10 @@
 package com.sonata.portfoliomanagement.interfaces;
 
-import com.sonata.portfoliomanagement.model.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 
 import java.util.List;
-import java.util.Set;
 
 public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBudgetSummary,Integer> {
 
@@ -65,4 +63,18 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByProjectManagerInAndClassificationIn(List<String> pmNames, List<String> classifications);
 
     List<RevenueBudgetSummary> findByAccountInAndClassificationIn(List<String> accountNames, List<String> classifications);
+
+    List<RevenueBudgetSummary> findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget);
+
+    RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
+            String vertical,
+            String classification,
+            String deliveryDirector,
+            String deliveryManager,
+            String account,
+            String projectManager,
+            String projectName,
+            int financialYear,
+            String quarter
+    );
 }

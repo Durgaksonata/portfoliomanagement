@@ -6,7 +6,6 @@ import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
-import lombok.Setter;
 import org.junit.Assert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -18,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.*;
 import java.util.function.Function;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = TestConfig.class)
@@ -35,6 +36,7 @@ public class FinancialYearByProjectSteps {
 
     private RevenueDTO projectList;
     private RevenueDTO criteria;
+    private List<String> verticalListReturned;
 
 
     private ResponseEntity<Set<String>> classificationResponseEntity;
@@ -44,6 +46,9 @@ public class FinancialYearByProjectSteps {
     private ResponseEntity<Set<String>> projectResponseEntity;
     private ResponseEntity<Set<Integer>> financialYearResponseEntity;
     private ResponseEntity<List<RevenueBudgetSummary>> responseEntity;
+    private RevenueDTO requestDTO;
+    private ResponseEntity<Set<Map<String, Object>>> newResponseEntity;
+
 
 
     private RevenueBudgetSummaryRepositoryMock revenueRepoMock;
@@ -313,35 +318,40 @@ public class FinancialYearByProjectSteps {
         Assert.assertEquals(expectedYears, financialYearResponseEntity.getBody());
     }
 
-    //feature to give all the data by giving filters(vertical,classification,dm,account,pm,project,fy,quarter)-->
-//    @Given("the client provides criteria for financial data retrieval")
-//    public void the_client_provides_criteria_for_financial_data_retrieval() {
-//        criteria = new RevenueDTO();
-//        // Set criteria fields
-//        criteria.setFinancialYear(Collections.singletonList(2024));
-//        criteria.setProjectList(Arrays.asList("Project1", "Project2"));
-//        criteria.setVerticalList(Arrays.asList("Vertical1", "Vertical2"));
-//        criteria.setClassificationList(Arrays.asList("Classification1", "Classification2"));
-//        criteria.setDmList(Arrays.asList("DM1", "DM2"));
-//        criteria.setAccountList(Arrays.asList("Account1", "Account2"));
-//        criteria.setPmList(Arrays.asList("PM1", "PM2"));
-//        criteria.setQuarterList(Arrays.asList("Q1", "Q2"));
-//    }
-//
-//    @When("the financial data is retrieved based on the provided criteria")
-//    public void the_financial_data_is_retrieved_based_on_the_provided_criteria() {
-//        // Call the controller method with the provided criteria
-//        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController(revenueRepoMock);
-//        responseEntity = controller.getFinancialDataByCriteria(criteria);
-//    }
-//
-//    @Then("the financial data matching the criteria is returned")
-//    public void theFinancialDataMatchingTheCriteriaIsReturned() {
-//        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        // Validate the returned financial data if necessary
-//        List<RevenueBudgetSummary> financialData = responseEntity.getBody();
-//        // Add assertions to validate the financial data
-//    }
+
+    //get all data by dm and classification new method-->
+
+    @Given("revenue data exists in the repository")
+    public void revenueDataExistsInTheRepository() {
+        // You may set up some mock data in the repository for testing purposes
+        // or assume that actual data is present based on your database setup
+    }
+
+    @When("the getVerticalList method is called")
+    public void theGetVerticalListMethodIsCalled() {
+        // Call the method from your controller
+        RevenueBudgetSummaryController controller = new RevenueBudgetSummaryController();
+        verticalListReturned = controller.getVerticalList();
+    }
+
+    @Then("it should return a list of distinct verticals")
+    public void itShouldReturnAListOfDistinctVerticals() {
+        // Assert that the returned list is not null and contains distinct values
+        assertNotNull(verticalListReturned);
+        assertEquals(verticalListReturned.size(), verticalListReturned.stream().distinct().count());
+    }
+
+    @Then("each vertical should be valid")
+    public void eachVerticalShouldBeValid() {
+        // Add any specific validations for the returned verticals
+        // For example, check if each vertical is not empty or not null
+        for (String vertical : verticalListReturned) {
+            assertNotNull(vertical);
+            assertFalse(vertical.isEmpty());
+            // Add more validations if needed
+        }
+    }
+
 
     // Mock repository implementation for testing
     static class RevenueBudgetSummaryRepositoryMock implements RevenueBudgetSummaryRepository {
@@ -362,7 +372,8 @@ public class FinancialYearByProjectSteps {
 
         private Set<Integer> financialYearsByProject;
         private Set<String> quartersByFinancialYear;
-        private Set<String> getAllData;
+        private Set<String> getVerticalList;
+        private List<RevenueBudgetSummary> allDataByVerticalAndClassification;
 
 
         public void setClassificationByVertical(Set<String> classificationByVertical){
@@ -408,6 +419,11 @@ public class FinancialYearByProjectSteps {
         public void setQuartersByFinancialYear(Set<String> quartersByFinancialYear) {
             this.quartersByFinancialYear = quartersByFinancialYear;
         }
+
+        public void setDataByVerticalAndClassification(List<RevenueBudgetSummary> allDataByVerticalAndClassification) {
+            this.allDataByVerticalAndClassification = allDataByVerticalAndClassification;
+        }
+
 
         @Override
         public List<RevenueBudgetSummary> findByVerticalIn(List<String> verticals) {
@@ -491,6 +507,16 @@ public class FinancialYearByProjectSteps {
         }
 
         @Override
+        public List<RevenueBudgetSummary> findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget) {
+            return null;
+        }
+
+        @Override
+        public RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter) {
+            return null;
+        }
+
+        @Override
         public List<RevenueBudgetSummary> findByProjectManagerIn(List<String> pmNames) {
             // Mock implementation to return projects from project managers
             List<RevenueBudgetSummary> revenues = new ArrayList<>();
@@ -525,6 +551,27 @@ public class FinancialYearByProjectSteps {
             }
             return revenues;
         }
+
+        @Override
+        public List<RevenueBudgetSummary> findByVerticalAndClassification(String vertical, String classification) {
+            List<RevenueBudgetSummaryRepositoryMock> revenues = new ArrayList<>();
+            RevenueBudgetSummaryRepositoryMock mock = new RevenueBudgetSummaryRepositoryMock();
+                RevenueBudgetSummary revenue = new RevenueBudgetSummary();
+                revenue.setVertical(revenue.getVertical());
+                revenue.setClassification(revenue.getClassification());
+                revenue.setDeliveryManager(revenue.getDeliveryManager());
+                revenue.setAccount(revenue.getAccount());
+                revenue.setProjectManager(revenue.getProjectManager());
+                revenue.setProjectName(revenue.getProjectName());
+                revenue.setFinancialYear(revenue.getFinancialYear());
+                revenue.setBudget(revenue.getBudget());
+                revenue.setForecast(revenue.getForecast());
+                revenue.setGap(revenue.getGap());
+                mock.findAll();
+                revenues.add(mock);
+
+            return (List<RevenueBudgetSummary>) ResponseEntity.ok(revenues);
+            }
 
         @Override
         public List<RevenueBudgetSummary> findBydeliveryManager(String deliveryManager) {
@@ -606,10 +653,6 @@ public class FinancialYearByProjectSteps {
             return null;
         }
 
-        @Override
-        public List<RevenueBudgetSummary> findByVerticalAndClassification(String vertical, String classification) {
-            return null;
-        }
 
         @Override
         public List<RevenueBudgetSummary> findByFinancialYearIn(List<Integer> financialYears) {
@@ -718,7 +761,8 @@ public class FinancialYearByProjectSteps {
 
         @Override
         public List<RevenueBudgetSummary> findAll() {
-            return null;
+            RevenueBudgetSummaryRepositoryMock revenue = new RevenueBudgetSummaryRepositoryMock();
+            return revenue.findAll().stream().distinct().collect(Collectors.toList());
         }
 
         @Override

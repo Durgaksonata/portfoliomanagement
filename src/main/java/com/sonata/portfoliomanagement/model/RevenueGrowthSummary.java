@@ -2,8 +2,12 @@ package com.sonata.portfoliomanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
+@Getter
+@Setter
 @Entity
 @Table(name = "revenue_growth_summary")
 public class RevenueGrowthSummary {
@@ -11,10 +15,11 @@ public class RevenueGrowthSummary {
         super();
     }
 
-    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, Date month, float accountExpected, float forecast, float gap) {
+    public RevenueGrowthSummary(int id, String vertical, String classification, String deliveryDirector,String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, float accountExpected, float forecast, float gap) {
         this.id = id;
         this.vertical = vertical;
         this.classification = classification;
+        this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.projectManager = projectManager;
@@ -34,6 +39,8 @@ public class RevenueGrowthSummary {
     private String classification;
     @Column(name="Delivery_Manager")
     private String deliveryManager;
+    @Column(name="Delivery_Director")
+    private String deliveryDirector;
     private String account;
     @Column(name="Project_Manager")
     private String projectManager;
@@ -43,7 +50,7 @@ public class RevenueGrowthSummary {
     private int financialYear;
     private String quarter;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date month;
+    private String month;
     @Column(name="Account_Expected")
     private float AccountExpected;
     private float forecast;
@@ -121,11 +128,11 @@ public class RevenueGrowthSummary {
         this.quarter = quarter;
     }
 
-    public Date getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(Date month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 

@@ -58,9 +58,16 @@ Feature: Retrieving Financial Years by Project
     Given the client provides a list of project managers and classifications
     When the projects are retrieved by project managers and classifications
     Then the projects associated with the project managers and classifications are returned
-#
-#    #get all data by criteria
-#  Scenario: Retrieving Financial Data by Criteria
-#    Given the client provides criteria for financial data retrieval
-#    When the financial data is retrieved based on the provided criteria
-#    Then the financial data matching the criteria is returned
+
+    #get all data from vert and class
+#  Scenario: Retrieve all data by verticals and classifications
+#    Given the client provides list of verticals and classifications
+#    When the data is retrieved by verticals and classifications
+#    Then the data associated with the verticals and classifications is returned
+
+  #get all data from vert and classification
+  Scenario: Verify distinct verticals are returned
+    Given revenue data exists in the repository
+    When the getVerticalList method is called
+    Then it should return a list of distinct verticals
+    And each vertical should be valid
