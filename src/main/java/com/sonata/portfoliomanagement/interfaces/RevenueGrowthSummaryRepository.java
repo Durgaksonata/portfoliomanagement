@@ -5,9 +5,10 @@ import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGrowthSummary,Integer> {
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
@@ -58,8 +59,8 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     List<RevenueGrowthSummary> findByClassificationIn(List<String> classificationNames);
 
 
-    RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
-
+    boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
+            String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
     List<RevenueGrowthSummary> findByFinancialYear(Integer year);
 
     List<RevenueGrowthSummary> findDmByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
@@ -67,4 +68,7 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     List<RevenueGrowthSummary> findByVerticalInAndClassificationIn(List<String> verticals, List<String> classifications);
 
     void deleteByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
+
+    boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month);
 }

@@ -12,7 +12,7 @@ public class PursuitActions {
     public PursuitActions() {
     }
 
-    public PursuitActions(int id, String deliveryDirector, String pursuitid, String deliveryManager, String account, String pursuit, String actionItemNumber, String actionDescription, String actionType, String status, String actionOwner, Date dueDate, String dependentActionItem, String remarks, PursuitTracker pursuitTracker) {
+    public PursuitActions(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String pursuit, String actionItemNumber, String actionDescription, String actionType, String status, String actionOwner, Date dueDate, String dependentActionItem, String remarks, PursuitTracker pursuitTracker) {
         this.id = id;
         this.pursuitid = pursuitid;
         this.deliveryDirector = deliveryDirector;
@@ -35,7 +35,7 @@ public class PursuitActions {
     private int id;
 
     @Column(name = "pursuit_id", nullable = false)
-    private String pursuitid;
+    private int pursuitid;
 
     @Column(name="Delivery_Director")
     private String deliveryDirector;
@@ -60,7 +60,7 @@ public class PursuitActions {
     private Date dueDate;
     @Column(name="dependent_Action_Item")
     private String dependentActionItem;
-    @Column(name="remarks")
+    @Column(name="remarks", length = 5000)
     private String remarks;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -76,11 +76,11 @@ public class PursuitActions {
     }
 
 
-    public String getPursuitid() {
+    public int getPursuitid() {
         return pursuitid;
     }
 
-    public void setPursuitid(String pursuitid) {
+    public void setPursuitid(int pursuitid) {
         this.pursuitid = pursuitid;
     }
 

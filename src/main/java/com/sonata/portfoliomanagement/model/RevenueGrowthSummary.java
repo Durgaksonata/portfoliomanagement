@@ -47,9 +47,7 @@ public class RevenueGrowthSummary {
     @Column(name = "Financial_Year")
     private int financialYear;
     private String quarter;
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private String month;
-
     @Column(name = "Account_Expected")
     private float accountExpected;
     private float forecast;

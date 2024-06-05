@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name="users")
 public class User {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name="id",nullable = false,unique = true)
     private int id;

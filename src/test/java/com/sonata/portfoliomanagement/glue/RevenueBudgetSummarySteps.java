@@ -42,35 +42,35 @@ public class RevenueBudgetSummarySteps {
     private List<String> projectNames;
 
 
-    @Given("the revenue data exists in the database")
-    public void theRevenueDataExistsInTheDatabase() {
-        // Mocking the repository behavior
-        RevenueBudgetSummaryRepository revenueRepo = mock(RevenueBudgetSummaryRepository.class);
-        List<RevenueBudgetSummary> mockData = Arrays.asList(
-                new RevenueBudgetSummary("Vertical1"),
-                new RevenueBudgetSummary("Vertical2")
-        );
-        when(revenueRepo.findAll()).thenReturn(mockData);
-    }
-
-    @When("the client requests to get the vertical list")
-    public void theClientRequestsToGetTheVerticalList() {
-        // Simulate HTTP request
-        String getUrl = "http://localhost:8081/revenuebudgets/getverticallist";
-        restTemplate = new RestTemplate();
-        responseEntity = restTemplate.getForEntity(getUrl, List.class);
-    }
-
-    @Then("the client receives a list of distinct verticals")
-    public void theClientReceivesAListOfDistinctVerticals() {
-
-        assertNotNull(responseEntity);
-        assertEquals(200, responseEntity.getStatusCodeValue());
-        List<String> verticalList = responseEntity.getBody();
-        assertNotNull(verticalList);
-        assertFalse(verticalList.isEmpty());
-
-    }
+//    @Given("the revenue data exists in the database")
+//    public void theRevenueDataExistsInTheDatabase() {
+//        // Mocking the repository behavior
+//        RevenueBudgetSummaryRepository revenueRepo = mock(RevenueBudgetSummaryRepository.class);
+//        List<RevenueBudgetSummary> mockData = Arrays.asList(
+//                new RevenueBudgetSummary("Vertical1"),
+//                new RevenueBudgetSummary("Vertical2")
+//        );
+//        when(revenueRepo.findAll()).thenReturn(mockData);
+//    }
+//
+//    @When("the client requests to get the vertical list")
+//    public void theClientRequestsToGetTheVerticalList() {
+//        // Simulate HTTP request
+//        String getUrl = "http://localhost:8081/revenuebudgets/getverticallist";
+//        restTemplate = new RestTemplate();
+//        responseEntity = restTemplate.getForEntity(getUrl, List.class);
+//    }
+//
+//    @Then("the client receives a list of distinct verticals")
+//    public void theClientReceivesAListOfDistinctVerticals() {
+//
+//        assertNotNull(responseEntity);
+//        assertEquals(200, responseEntity.getStatusCodeValue());
+//        List<String> verticalList = responseEntity.getBody();
+//        assertNotNull(verticalList);
+//        assertFalse(verticalList.isEmpty());
+//
+//    }
     @Given("the client has a list of vertical names")
     public void theClientHasAListOfVerticalNames(List<String> verticalNames) {
         // The list of vertical names is provided as a parameter

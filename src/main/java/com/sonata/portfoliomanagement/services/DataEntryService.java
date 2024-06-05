@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DataEntryService {
@@ -17,6 +18,7 @@ public class DataEntryService {
 
     @Autowired
     private PursuitTrackerRepository pursuitTrackerRepository;
+
 
     public DataEntry saveDataEntry(DataEntry dataEntry) {
         // Calculate fields
@@ -40,7 +42,7 @@ public class DataEntryService {
     }
 
     public boolean isDuplicateEntry(DataEntryDTO dataEntryDTO) {
-        List<DataEntry> existingEntries = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
+        List<DataEntry> existingEntries = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(
                 dataEntryDTO.getVertical(),
                 dataEntryDTO.getClassification(),
                 dataEntryDTO.getDeliveryDirector(),
@@ -49,7 +51,8 @@ public class DataEntryService {
                 dataEntryDTO.getProjectManager(),
                 dataEntryDTO.getProjectName(),
                 dataEntryDTO.getFinancialYear(),
-                dataEntryDTO.getQuarter()
+                dataEntryDTO.getQuarter(),
+                dataEntryDTO.getMonth()
         );
         return !existingEntries.isEmpty();
     }
@@ -216,6 +219,38 @@ public class DataEntryService {
             }
         }
     }
+
+
+    public List<DataEntryDTO> getAllDataEntries() {
+        List<DataEntry> dataEntries = dataEntryRepo.findAll();
+        return dataEntries.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private DataEntryDTO convertToDTO(DataEntry dataEntry) {
+        DataEntryDTO dto = new DataEntryDTO();
+        dto.setId(dataEntry.getId());
+        dto.setMonth(dataEntry.getMonth());
+        dto.setVertical(dataEntry.getVertical());
+        dto.setClassification(dataEntry.getClassification());
+        dto.setDeliveryManager(dataEntry.getDeliveryManager());
+        dto.setDeliveryDirector(dataEntry.getDeliveryDirector());
+        dto.setAccount(dataEntry.getAccount());
+        dto.setProjectManager(dataEntry.getProjectManager());
+        dto.setProjectName(dataEntry.getProjectName());
+        dto.setCategory(dataEntry.getCategory());
+        dto.setAnnuityorNonAnnuity(dataEntry.getAnnuityorNonAnnuity());
+        dto.setValue(dataEntry.getValue());
+        dto.setFinancialYear(dataEntry.getFinancialYear());
+        dto.setQuarter(dataEntry.getQuarter());
+        dto.setBudget(dataEntry.getBudget());
+
+        return dto;
+    }
 }
+
+
+
 
 

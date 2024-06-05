@@ -1,15 +1,12 @@
 package com.sonata.portfoliomanagement.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Data_Entry")
+@Table(name = "data_entry")
 public class DataEntry {
 	public DataEntry(Integer id, String month, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, String category, String annuityorNonAnnuity, float value, String type, int financialYear, String quarter, int probability, String projectsOrPursuitStage, float confirmed, float upside, float likely, float annuityRevenue, float nonAnnuityRevenue, float offshoreCost, float onsiteCost, float totalCost, float offshoreProjectManager, float onsiteProjectManager, float billableProjectManager,float budget) {
 		this.id = id;
@@ -93,7 +90,26 @@ public class DataEntry {
 	private float onsiteProjectManager;
 	@Column(name="Billable_Project_Manager")
 	private float billableProjectManager;
+
+	@Column(name = "budget($)")
 	private float budget;
+
+	@Column(name = "last_updated")
+	private LocalDateTime lastUpdated;
+
+	public LocalDateTime getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(LocalDateTime lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+	@PrePersist
+	@PreUpdate
+	public void setLastUpdated() {
+		this.lastUpdated = LocalDateTime.now();
+	}
 
 	public Integer getId() {
 		return id;

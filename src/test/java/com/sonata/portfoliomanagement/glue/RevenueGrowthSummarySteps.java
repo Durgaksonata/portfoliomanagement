@@ -177,6 +177,10 @@ public class RevenueGrowthSummarySteps {
             return revenues;
         }
 
+        @Override
+        public void deleteByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter) {
+
+        }
 
 
         @Override

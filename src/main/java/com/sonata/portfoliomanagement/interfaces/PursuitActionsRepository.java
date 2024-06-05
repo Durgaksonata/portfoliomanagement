@@ -8,14 +8,15 @@ import java.util.Date;
 import java.util.List;
 
 public interface PursuitActionsRepository extends JpaRepository<PursuitActions, Integer> {
-    List<PursuitActions> findByPursuitid(String pursuitid);
+    List<PursuitActions> findByPursuitid(int pursuitid);
 
-    void deleteByPursuitid(String pursuitid);
+    void deleteByPursuitid(int pursuitid);
 
-    List<PursuitActions> findByDeliveryManager(String deliveryManager);
-    List<PursuitActions> findByPursuit(String pursuit);
+    List<PursuitActions> findByActionItemNumber(String actionItemNumber);
 
-    long countByPursuit(String pursuit);
+
 
     List<PursuitActions> findByDeliveryManagerAndDeliveryDirectorAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(String deliveryManager, String deliveryDirector, String account, String pursuit, String actionItemNumber, String actionDescription, String actionType, String status, String actionOwner, Date dueDate, String dependentActionItem, String remarks);
+
+    List<PursuitActions> findByPursuit(String projectOrPursuit);
 }

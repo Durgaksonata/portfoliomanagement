@@ -16,15 +16,24 @@ public class PursuitActionsService {
     private PursuitActionsRepository pursuitActionsRepository;
 
     @Transactional
-    public void deleteByPursuitid(String pursuitid) {
+    public void deleteByPursuitid(int pursuitid) {
         pursuitActionsRepository.deleteByPursuitid(pursuitid);
     }
 
-    public List<PursuitActions> findByPursuitid(String pursuitid) {
+    public List<PursuitActions> findByPursuitid(int pursuitid) {
         return pursuitActionsRepository.findByPursuitid(pursuitid);
 
     }
     public void save(PursuitActions pursuitAction) {
         pursuitActionsRepository.save(pursuitAction);
+    }
+
+    public List<PursuitActions> findByActionItemNumber(String actionItemNumber) {
+        return pursuitActionsRepository.findByActionItemNumber(actionItemNumber);
+    }
+
+    public void delete(PursuitActions pursuitAction) {
+        pursuitActionsRepository.delete(pursuitAction);
+
     }
 }

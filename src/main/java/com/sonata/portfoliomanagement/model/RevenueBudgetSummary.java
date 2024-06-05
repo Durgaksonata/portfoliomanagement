@@ -51,7 +51,6 @@ public class RevenueBudgetSummary {
 	@Column(name="Financial_Year")
 	private int financialYear;
 	private String quarter;
-	@JsonFormat(pattern = "dd-MM-yyyy")
 	private String month;
 	private float budget;
 	private float forecast;
@@ -59,6 +58,8 @@ public class RevenueBudgetSummary {
 
 	public RevenueBudgetSummary(String vertical1) {
 	}
+
+
 
 
 	public int getId() {

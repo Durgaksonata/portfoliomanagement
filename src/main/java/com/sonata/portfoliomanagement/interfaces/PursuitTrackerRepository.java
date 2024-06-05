@@ -14,8 +14,6 @@ import java.util.Optional;
 public interface PursuitTrackerRepository extends JpaRepository<PursuitTracker, Integer> {
 Optional<PursuitTracker> findByProjectorPursuit(String projectorPursuit);
 
-    void deleteByProjectorPursuit(String projectorPursuit);
-    Optional<PursuitTracker> findByPursuitstatusAndType(String pursuitstatus, String type);
 
 
     @Query("SELECT p FROM PursuitTracker p WHERE CONCAT(p.account, p.projectorPursuit) = :concatenatedName")
@@ -30,4 +28,8 @@ Optional<PursuitTracker> findByProjectorPursuit(String projectorPursuit);
 
 
     List<PursuitTracker> findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarks(String deliveryManager, String deliveryDirector, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks);
+
+
+
+
 }
