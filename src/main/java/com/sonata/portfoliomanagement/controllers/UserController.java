@@ -47,55 +47,6 @@ public class UserController {
         }
     }
 
-//
-//
-//    //Check whether user exists and return me the response for it-->
-//    @PostMapping("/checkUserAndReturnResponse")
-//    public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody User user) {
-//        try {
-//            String email = user.getEmail();
-//            String password = user.getPassword();
-//
-//            // Check if user with provided email exists in the database
-//            boolean emailExists = userService.userExistsByEmail(email);
-//            if (!emailExists) {
-//                // User with the provided email does not exist
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Email provided is incorrect"));
-//            }
-//            // Get the existing user
-//            User existingUser = userService.getUserByEmail(email);
-//
-//            // Check if the provided password matches the one associated with the email
-//            boolean passwordCorrect = userService.verifyPassword(email, password);
-//            if (passwordCorrect) {
-//                // Check if isFirstLogin is true
-//                boolean isFirstLogin = existingUser.isFirstLogin();
-//                if (isFirstLogin) {
-//                    // Update isFirstLogin to false and save the user
-//                    existingUser.setFirstLogin(false);
-//                    userService.saveUser(existingUser); // Update isFirstLogin in the database
-//                }
-//
-//                // Prepare the response JSON
-//                Map<String, Object> response = new HashMap<>();
-//                response.put("response", "Email provided is correct");
-//                response.put("isFirstLogin", isFirstLogin);
-//
-//                // Return the response
-//                return ResponseEntity.status(HttpStatus.OK).body(response);
-//            } else {
-//                // Password provided is incorrect
-//                // Include isFirstLogin status in the response
-//                Map<String, Object> errorResponse = new HashMap<>();
-//                errorResponse.put("response", "Password provided is incorrect");
-//                errorResponse.put("isFirstLogin", existingUser.isFirstLogin());
-//
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
-//        }
-//    }
 
 
     @PostMapping("/checkUserAndReturnResponse")
@@ -108,7 +59,7 @@ public class UserController {
             boolean emailExists = userService.userExistsByEmail(email);
             if (!emailExists) {
                 // User with the provided email does not exist
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("response", "Email provided is incorrect"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Email provided is incorrect"));
             }
 
             // Get the existing user
@@ -124,7 +75,7 @@ public class UserController {
                     existingUser.setFirstLogin(false);
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "Email provided is correct");
+                    response.put("message", "Email provided is correct");
                     response.put("isFirstLogin", isFirstLogin);
 
                     // Return the response without saving the user
@@ -132,47 +83,25 @@ public class UserController {
                 } else {
                     // isFirstLogin is already false
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "Email provided is correct");
+                    response.put("message", "Email provided is correct");
                     response.put("isFirstLogin", isFirstLogin);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             } else {
                 // Password provided is incorrect
                 Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("response", "Password provided is incorrect");
+                errorResponse.put("message", "Password provided is incorrect");
                 errorResponse.put("isFirstLogin", existingUser.isFirstLogin());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", "Failed to check user: " + e.getMessage()));
         }
     }
 
 
 
-//
-//    @PutMapping("/users/{email}")
-//    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
-//        try {
-//            // Retrieve the user by email
-//            User existingUser = userService.getUserByEmail(email);
-//            if (existingUser == null) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-//            }
-//
-//            // Update the user with the new information
-//            existingUser.setPassword(updatedUser.getPassword());
-//            existingUser.setEmail(updatedUser.getEmail());
-//            // Set other properties as needed
-//
-//            userService.saveUser(existingUser); // Save the updated user
-//
-//            return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
-//        }
-//    }
-//
+
 
 @PutMapping("/users/{email}")
 public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {

@@ -24,8 +24,9 @@ public class PursuitActionsService {
         return pursuitActionsRepository.findByPursuitid(pursuitid);
 
     }
-    public void save(PursuitActions pursuitAction) {
+    public PursuitActions save(PursuitActions pursuitAction) {
         pursuitActionsRepository.save(pursuitAction);
+        return pursuitAction;
     }
 
     public List<PursuitActions> findByActionItemNumber(String actionItemNumber) {
@@ -35,5 +36,9 @@ public class PursuitActionsService {
     public void delete(PursuitActions pursuitAction) {
         pursuitActionsRepository.delete(pursuitAction);
 
+    }
+
+    public List<PursuitActions> findAll() {
+       return pursuitActionsRepository.findAll();
     }
 }

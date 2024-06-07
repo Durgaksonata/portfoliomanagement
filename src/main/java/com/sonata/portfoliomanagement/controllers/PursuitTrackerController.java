@@ -113,18 +113,57 @@ public class PursuitTrackerController {
             if (optionalPursuitTracker.isPresent()) {
                 PursuitTracker existingPursuitTracker = optionalPursuitTracker.get();
 
-                // Update the existing PursuitTracker with new values
-                existingPursuitTracker.setDeliveryDirector(pursuitTrackerDetails.getDeliveryDirector());
-                existingPursuitTracker.setDeliveryManager(pursuitTrackerDetails.getDeliveryManager());
-                existingPursuitTracker.setAccount(pursuitTrackerDetails.getAccount());
-                existingPursuitTracker.setType(pursuitTrackerDetails.getType());
-                existingPursuitTracker.setTcv(pursuitTrackerDetails.getTcv());
-                existingPursuitTracker.setIdentifiedmonth(pursuitTrackerDetails.getIdentifiedmonth());
-                existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
-                existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
-                existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
-                existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
-                existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
+                // Check if any fields have been changed
+                Map<String, Object> changes = new HashMap<>();
+                boolean updated = false;
+
+                if (!Objects.equals(existingPursuitTracker.getDeliveryDirector(), pursuitTrackerDetails.getDeliveryDirector())) {
+                    existingPursuitTracker.setDeliveryDirector(pursuitTrackerDetails.getDeliveryDirector());
+                    changes.put("deliveryDirector", pursuitTrackerDetails.getDeliveryDirector());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getDeliveryManager(), pursuitTrackerDetails.getDeliveryManager())) {
+                    existingPursuitTracker.setDeliveryManager(pursuitTrackerDetails.getDeliveryManager());
+                    changes.put("deliveryManager", pursuitTrackerDetails.getDeliveryManager());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getAccount(), pursuitTrackerDetails.getAccount())) {
+                    existingPursuitTracker.setAccount(pursuitTrackerDetails.getAccount());
+                    changes.put("account", pursuitTrackerDetails.getAccount());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getType(), pursuitTrackerDetails.getType())) {
+                    existingPursuitTracker.setType(pursuitTrackerDetails.getType());
+                    changes.put("type", pursuitTrackerDetails.getType());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getTcv(), pursuitTrackerDetails.getTcv())) {
+                    existingPursuitTracker.setTcv(pursuitTrackerDetails.getTcv());
+                    changes.put("tcv", pursuitTrackerDetails.getTcv());
+                    updated = true;
+                }
+
+                if (!Objects.equals(existingPursuitTracker.getPursuitstatus(), pursuitTrackerDetails.getPursuitstatus())) {
+                    existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
+                    changes.put("pursuitstatus", pursuitTrackerDetails.getPursuitstatus());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getProjectorPursuit(), pursuitTrackerDetails.getProjectorPursuit())) {
+                    existingPursuitTracker.setProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit());
+                    changes.put("projectorPursuit", pursuitTrackerDetails.getProjectorPursuit());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitTracker.getPursuitorpotential(), pursuitTrackerDetails.getPursuitorpotential())) {
+                    existingPursuitTracker.setPursuitorpotential(pursuitTrackerDetails.getPursuitorpotential());
+                    changes.put("pursuitorpotential", pursuitTrackerDetails.getPursuitorpotential());
+                    updated = true;
+                }
+
+                if (!Objects.equals(existingPursuitTracker.getRemarks(), pursuitTrackerDetails.getRemarks())) {
+                    existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
+                    changes.put("remarks", pursuitTrackerDetails.getRemarks());
+                    updated = true;
+                }
 
                 // Calculate and update stage and pursuitProbability
                 String stage = pursuitTrackerService.calculateStage(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
@@ -133,20 +172,65 @@ public class PursuitTrackerController {
                 int pursuitProbability = pursuitTrackerService.calculatePursuitProbability(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
                 existingPursuitTracker.setPursuitProbability(pursuitProbability);
 
-                // Save the updated PursuitTracker
-                PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
-                updatedPursuitTrackers.add(updatedPursuitTracker);
+                // Check for duplicate entry
+                if (updated && !isDuplicateEntry(existingPursuitTracker)) {
+                    // Save the updated PursuitTracker
+                    PursuitTracker updatedPursuitTracker = pursuitTrackerRepository.save(existingPursuitTracker);
+                    updatedPursuitTrackers.add(updatedPursuitTracker);
+                    // Add changes to response
+                    if (!changes.isEmpty()) {
+                        response.put("message", "Data successfully updated.");
+                        response.put("changes", changes);
+                    }
+                } else if (!updated) {
+                    response.put("message", "No changes detected.");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    // if data entry with the given ID is a duplicate, add it to the response
+                    response.put("message", "Duplicate entry: Data already exists.");
+                    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+                }
             } else {
-                // If data entry with the given ID is not found, add it to the response
+                // if data entry with the given ID is not found, add it to the response
                 response.put("message", "Data entry not found for one or more entries.");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
         }
 
-        response.put("message", "Data successfully updated.");
         response.put("data", updatedPursuitTrackers);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    private boolean isDuplicateEntry(PursuitTracker pursuitTracker) {
+        // Retrieve all existing pursuit trackers excluding the current one being updated
+        List<PursuitTracker> existingEntries = pursuitTrackerRepository.findAll();
+
+        // Iterate through existing entries to check for duplicates
+        for (PursuitTracker existingEntry : existingEntries) {
+            // Exclude the current entry being updated from duplicate check
+            if (existingEntry.getId() != (pursuitTracker.getId()) && areEntriesEqual(existingEntry, pursuitTracker)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean areEntriesEqual(PursuitTracker entry1, PursuitTracker entry2) {
+        // Compare all fields of the entries
+        // Return true if all fields match, false otherwise
+        return entry1.getDeliveryDirector().equals(entry2.getDeliveryDirector()) &&
+                entry1.getDeliveryManager().equals(entry2.getDeliveryManager()) &&
+                entry1.getAccount().equals(entry2.getAccount()) &&
+                entry1.getType().equals(entry2.getType()) &&
+                entry1.getTcv() == entry2.getTcv() &&
+                entry1.getPursuitstatus().equals(entry2.getPursuitstatus()) &&
+                entry1.getProjectorPursuit().equals(entry2.getProjectorPursuit()) &&
+                entry1.getPursuitorpotential().equals(entry2.getPursuitorpotential()) &&
+                entry1.getRemarks().equals(entry2.getRemarks()) &&
+                entry1.getStage().equals(entry2.getStage()) &&
+                entry1.getPursuitProbability() == entry2.getPursuitProbability();
+    }
+
 
 
 

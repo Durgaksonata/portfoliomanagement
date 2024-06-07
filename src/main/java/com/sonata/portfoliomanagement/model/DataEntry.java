@@ -91,7 +91,6 @@ public class DataEntry {
 	@Column(name="Billable_Project_Manager")
 	private float billableProjectManager;
 
-	@Column(name = "budget($)")
 	private float budget;
 
 	@Column(name = "last_updated")

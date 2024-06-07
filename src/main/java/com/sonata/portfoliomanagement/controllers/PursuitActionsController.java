@@ -41,7 +41,7 @@ public class PursuitActionsController {
 
             // If no matching PursuitTracker entry is found, add an error message and continue
             if (pursuitTracker == null) {
-                errors.add("No matching Pursuits entry found for pursuit: " + pursuitAction.getPursuit());
+                errors.add("No matching Pursuits entry found in pursuit tracker: " + pursuitAction.getPursuit());
                 continue;
             }
 
@@ -94,33 +94,129 @@ public class PursuitActionsController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<String> updatePursuitActionsByActionItemNumber(@RequestBody List<PursuitActions> updatedPursuitActionsList) {
+    public ResponseEntity<Map<String, Object>> updatePursuitActionsByActionItemNumber(@RequestBody List<PursuitActions> updatedPursuitActionsList) {
+        Map<String, Object> response = new HashMap<>();
+        List<PursuitActions> updatedPursuitActionsEntities = new ArrayList<>();
+
         for (PursuitActions updatedPursuitActions : updatedPursuitActionsList) {
             String actionItemNumber = updatedPursuitActions.getActionItemNumber();
-            List<PursuitActions> existingPursuitActions = pursuitActionsService.findByActionItemNumber(actionItemNumber);
+            List<PursuitActions> existingPursuitActionsList = pursuitActionsService.findByActionItemNumber(actionItemNumber);
 
-            if (existingPursuitActions.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No PursuitActions found with actionItemNumber: " + actionItemNumber);
+            if (existingPursuitActionsList.isEmpty()) {
+                response.put("message", "No PursuitActions found with actionItemNumber: " + actionItemNumber);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            for (PursuitActions pursuitAction : existingPursuitActions) {
-                pursuitAction.setDeliveryDirector(updatedPursuitActions.getDeliveryDirector());
-                pursuitAction.setDeliveryManager(updatedPursuitActions.getDeliveryManager());
-                pursuitAction.setAccount(updatedPursuitActions.getAccount());
-                pursuitAction.setPursuit(updatedPursuitActions.getPursuit());
-                pursuitAction.setActionItemNumber(updatedPursuitActions.getActionItemNumber());
-                pursuitAction.setActionDescription(updatedPursuitActions.getActionDescription());
-                pursuitAction.setActionType(updatedPursuitActions.getActionType());
-                pursuitAction.setStatus(updatedPursuitActions.getStatus());
-                pursuitAction.setActionOwner(updatedPursuitActions.getActionOwner());
-                pursuitAction.setDueDate(updatedPursuitActions.getDueDate());
-                pursuitAction.setDependentActionItem(updatedPursuitActions.getDependentActionItem());
-                pursuitAction.setRemarks(updatedPursuitActions.getRemarks());
-                pursuitActionsService.save(pursuitAction);
+            for (PursuitActions existingPursuitActions : existingPursuitActionsList) {
+                // Check if any fields have been changed
+                Map<String, Object> changes = new HashMap<>();
+                boolean updated = false;
+
+                if (!Objects.equals(existingPursuitActions.getDeliveryDirector(), updatedPursuitActions.getDeliveryDirector())) {
+                    existingPursuitActions.setDeliveryDirector(updatedPursuitActions.getDeliveryDirector());
+                    changes.put("deliveryDirector", updatedPursuitActions.getDeliveryDirector());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getDeliveryManager(), updatedPursuitActions.getDeliveryManager())) {
+                    existingPursuitActions.setDeliveryManager(updatedPursuitActions.getDeliveryManager());
+                    changes.put("deliveryManager", updatedPursuitActions.getDeliveryManager());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getAccount(), updatedPursuitActions.getAccount())) {
+                    existingPursuitActions.setAccount(updatedPursuitActions.getAccount());
+                    changes.put("account", updatedPursuitActions.getAccount());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getPursuit(), updatedPursuitActions.getPursuit())) {
+                    existingPursuitActions.setPursuit(updatedPursuitActions.getPursuit());
+                    changes.put("pursuit", updatedPursuitActions.getPursuit());
+                    updated = true;
+                }
+
+                if (!Objects.equals(existingPursuitActions.getActionDescription(), updatedPursuitActions.getActionDescription())) {
+                    existingPursuitActions.setActionDescription(updatedPursuitActions.getActionDescription());
+                    changes.put("actionDescription", updatedPursuitActions.getActionDescription());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getActionType(), updatedPursuitActions.getActionType())) {
+                    existingPursuitActions.setActionType(updatedPursuitActions.getActionType());
+                    changes.put("actionType", updatedPursuitActions.getActionType());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getStatus(), updatedPursuitActions.getStatus())) {
+                    existingPursuitActions.setStatus(updatedPursuitActions.getStatus());
+                    changes.put("status", updatedPursuitActions.getStatus());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getActionOwner(), updatedPursuitActions.getActionOwner())) {
+                    existingPursuitActions.setActionOwner(updatedPursuitActions.getActionOwner());
+                    changes.put("actionOwner", updatedPursuitActions.getActionOwner());
+                    updated = true;
+                }
+
+                if (!Objects.equals(existingPursuitActions.getDependentActionItem(), updatedPursuitActions.getDependentActionItem())) {
+                    existingPursuitActions.setDependentActionItem(updatedPursuitActions.getDependentActionItem());
+                    changes.put("dependentActionItem", updatedPursuitActions.getDependentActionItem());
+                    updated = true;
+                }
+                if (!Objects.equals(existingPursuitActions.getRemarks(), updatedPursuitActions.getRemarks())) {
+                    existingPursuitActions.setRemarks(updatedPursuitActions.getRemarks());
+                    changes.put("remarks", updatedPursuitActions.getRemarks());
+                    updated = true;
+                }
+
+                // Check for duplicate entry
+                if (updated && !isDuplicateEntry(existingPursuitActions)) {
+                    // Save the updated PursuitActions
+                    PursuitActions updatedPursuitActionsEntity = pursuitActionsService.save(existingPursuitActions);
+                    updatedPursuitActionsEntities.add(updatedPursuitActionsEntity);
+                    // Add changes to response
+                    if (!changes.isEmpty()) {
+                        response.put("message", "Data successfully updated.");
+                        response.put("changes", changes);
+                    }
+                } else if (!updated) {
+                    response.put("message", "No changes detected.");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    // if data entry with the given ID is a duplicate, add it to the response
+                    response.put("message", "Duplicate entry: Data already exists.");
+                    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+                }
             }
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("PursuitActions have been updated.");
+        response.put("data", updatedPursuitActionsEntities);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private boolean isDuplicateEntry(PursuitActions pursuitActions) {
+        // Retrieve all existing pursuit actions excluding the current one being updated
+        List<PursuitActions> existingEntries = pursuitActionsService.findAll();
+
+        // Iterate through existing entries to check for duplicates
+        for (PursuitActions existingEntry : existingEntries) {
+            // Exclude the current entry being updated from duplicate check
+            if (existingEntry.getId() != (pursuitActions.getId()) && areEntriesEqual(existingEntry, pursuitActions)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean areEntriesEqual(PursuitActions entry1, PursuitActions entry2) {
+        // Compare all fields of the entries
+        // Return true if all fields match, false otherwise
+        return entry1.getDeliveryDirector().equals(entry2.getDeliveryDirector()) &&
+                entry1.getDeliveryManager().equals(entry2.getDeliveryManager()) &&
+                entry1.getAccount().equals(entry2.getAccount()) &&
+                entry1.getPursuit().equals(entry2.getPursuit()) &&
+                entry1.getActionDescription().equals(entry2.getActionDescription()) &&
+                entry1.getActionType().equals(entry2.getActionType()) &&
+                entry1.getStatus().equals(entry2.getStatus()) &&
+                entry1.getActionOwner().equals(entry2.getActionOwner()) &&
+                entry1.getDependentActionItem().equals(entry2.getDependentActionItem()) &&
+                entry1.getRemarks().equals(entry2.getRemarks());
     }
 
 
