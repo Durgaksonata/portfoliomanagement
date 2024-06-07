@@ -35,6 +35,9 @@ public class PursuitTrackerController {
     @PostMapping("/save")
     public ResponseEntity<?> addPursuitTrackers(@RequestBody List<PursuitTracker> pursuitTrackers) {
         List<PursuitTracker> savedPursuitTrackers = new ArrayList<>();
+        Map<String, Object> response = new HashMap<>();
+        List<String> duplicateProjectorPursuits = new ArrayList<>();
+
         for (PursuitTracker pursuitTracker : pursuitTrackers) {
             // Calculate stage based on PursuitStatus and Type
             String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
@@ -44,7 +47,7 @@ public class PursuitTrackerController {
             int pursuitProbability = calculatePursuitProbability(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
             pursuitTracker.setPursuitProbability(pursuitProbability);
 
-            // Check for duplicate entry
+            // Check for duplicate entry based on all fields
             List<PursuitTracker> existingEntries = pursuitTrackerRepository.findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarks(
                     pursuitTracker.getDeliveryManager(),
                     pursuitTracker.getDeliveryDirector(),
@@ -62,16 +65,17 @@ public class PursuitTrackerController {
             );
 
             if (!existingEntries.isEmpty()) {
+                duplicateProjectorPursuits.add(pursuitTracker.getProjectorPursuit());
                 continue; // Skip this entry if it's a duplicate
             }
 
-            // Check if the projectorPursuit already exists
+            // Check if the projectorPursuit already exists in the repository
             Optional<PursuitTracker> existingPursuitTracker = pursuitTrackerRepository.findByProjectorPursuit(pursuitTracker.getProjectorPursuit());
             if (existingPursuitTracker.isPresent()) {
-                // If it exists, set the same pursuitNo
-                pursuitTracker.setPursuitid(existingPursuitTracker.get().getPursuitid());
+                duplicateProjectorPursuits.add(pursuitTracker.getProjectorPursuit());
+                continue; // Skip this entry if projectorPursuit is a duplicate
             } else {
-                // If it doesn't exist, generate a new pursuitNo
+                // Generate a new pursuitId if projectorPursuit doesn't exist
                 int maxPursuitid = pursuitTrackerRepository.findMaxPursuitid();
                 pursuitTracker.setPursuitid(maxPursuitid + 1);
             }
@@ -79,7 +83,17 @@ public class PursuitTrackerController {
             PursuitTracker savedPursuitTracker = pursuitTrackerRepository.save(pursuitTracker);
             savedPursuitTrackers.add(savedPursuitTracker);
         }
-        return new ResponseEntity<>(savedPursuitTrackers, HttpStatus.CREATED);
+
+        if (!duplicateProjectorPursuits.isEmpty()) {
+            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved!" + " " +duplicateProjectorPursuits);
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+
+
+        response.put("message", "Data Saved Successfully!");
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
     }
 
     // Method to calculate stage based on PursuitStatus and Type
@@ -101,6 +115,7 @@ public class PursuitTrackerController {
         Optional<MD_PursuitProbability> result = mdPursuitProbabilityRepository.findByPursuitStatusAndType(pursuitStatus, type);
         return result.map(MD_PursuitProbability::getProbability).orElse(0);
     }
+
 
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updatePursuitTrackers(@RequestBody List<PursuitTracker> pursuitTrackerDetailsList) {
@@ -197,7 +212,7 @@ public class PursuitTrackerController {
             }
         }
 
-        response.put("data", updatedPursuitTrackers);
+       // response.put("data", updatedPursuitTrackers);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

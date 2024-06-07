@@ -149,7 +149,7 @@ public class DataEntryController {
                         response.put("changes", changes);
                     }
                 } else if (!updated) {
-                    response.put("message", "No changes detected.");
+                    response.put("message", "No changes found.");
                     return new ResponseEntity<>(response, HttpStatus.OK);
                 } else {
                     // if data entry with the given ID is a duplicate, add it to the response
@@ -356,182 +356,11 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
 
 
 
-
-
-
-
-
     @PostMapping("/populateAll")
-    public String populateAllData() {
-        List<DataEntry> dataEntryList = dataEntryRepo.findAll();
-
-        for (DataEntry dataEntry : dataEntryList) {
-            // Populate RevenueBudgetSummary
-            RevenueBudgetSummary revenueBudget = getRevenueBudgetSummary(dataEntry);
-
-            // Check for duplicates in RevenueBudgetSummary
-            RevenueBudgetSummary existingRevenueBudget = revenueBudgetSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-                    dataEntry.getVertical(),
-                    dataEntry.getClassification(),
-                    dataEntry.getDeliveryDirector(),
-                    dataEntry.getDeliveryManager(),
-                    dataEntry.getAccount(),
-                    dataEntry.getProjectManager(),
-                    dataEntry.getProjectName(),
-                    dataEntry.getFinancialYear(),
-                    dataEntry.getQuarter(),
-                    dataEntry.getBudget()
-            );
-
-            if (existingRevenueBudget == null) {
-                // Fetch data for RevenueBudgetSummary
-                List<DataEntry> budgetData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-                        dataEntry.getVertical(),
-                        dataEntry.getClassification(),
-                        dataEntry.getDeliveryDirector(),
-                        dataEntry.getDeliveryManager(),
-                        dataEntry.getAccount(),
-                        dataEntry.getProjectManager(),
-                        dataEntry.getProjectName(),
-                        dataEntry.getFinancialYear(),
-                        dataEntry.getQuarter(),
-                        dataEntry.getBudget()
-                );
-
-                // Calculate total forecast for RevenueBudgetSummary
-                float totalForecast = (float) budgetData.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-                revenueBudget.setForecast(totalForecast);
-
-                // Calculate gap for RevenueBudgetSummary
-                float gap = dataEntry.getBudget() - revenueBudget.getForecast();
-                revenueBudget.setGap(gap);
-
-                // Save RevenueBudgetSummary
-                revenueBudgetSummaryRepository.save(revenueBudget);
-                System.out.println("Saved RevenueBudgetSummary for dataEntry: " + dataEntry.getId());
-            }
-
-            // Populate RevenueGrowthSummary
-            RevenueGrowthSummary revenueGrowth = getRevenueGrowthSummary(dataEntry);
-
-            // Check for duplicates in RevenueGrowthSummary
-            RevenueGrowthSummary existingRevenueGrowth = revenueGrowthSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                    dataEntry.getVertical(),
-                    dataEntry.getClassification(),
-                    dataEntry.getDeliveryDirector(),
-                    dataEntry.getDeliveryManager(),
-                    dataEntry.getAccount(),
-                    dataEntry.getProjectManager(),
-                    dataEntry.getProjectName(),
-                    dataEntry.getFinancialYear(),
-                    dataEntry.getQuarter()
-            );
-
-            if (existingRevenueGrowth == null) {
-                // Fetch data for current quarter
-                List<DataEntry> currentQuarterData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                        dataEntry.getVertical(),
-                        dataEntry.getClassification(),
-                        dataEntry.getDeliveryDirector(),
-                        dataEntry.getDeliveryManager(),
-                        dataEntry.getAccount(),
-                        dataEntry.getProjectManager(),
-                        dataEntry.getProjectName(),
-                        dataEntry.getFinancialYear(),
-                        dataEntry.getQuarter()
-                );
-
-                // Fetch data for previous quarter
-                String previousQuarter = getPreviousQuarter(dataEntry.getQuarter());
-                List<DataEntry> previousQuarterData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                        dataEntry.getVertical(),
-                        dataEntry.getClassification(),
-                        dataEntry.getDeliveryDirector(),
-                        dataEntry.getDeliveryManager(),
-                        dataEntry.getAccount(),
-                        dataEntry.getProjectManager(),
-                        dataEntry.getProjectName(),
-                        dataEntry.getFinancialYear(),
-                        previousQuarter
-                );
-
-                // Calculate forecast for RevenueGrowthSummary
-                float currentQuarterForecast = (float) currentQuarterData.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-                revenueGrowth.setForecast(currentQuarterForecast);
-
-                // Calculate account expected
-                float previousQuarterForecast = calculatePreviousQuarterForecast(previousQuarterData);
-                float accountExpected = Math.max(dataEntry.getBudget(), 1.07f * previousQuarterForecast);
-                revenueGrowth.setAccountExpected(accountExpected);
-
-                // Calculate gap for RevenueGrowthSummary
-                float growthGap = revenueGrowth.getAccountExpected() - revenueGrowth.getForecast();
-                revenueGrowth.setGap(growthGap);
-
-                // Save RevenueGrowthSummary
-                revenueGrowthSummaryRepository.save(revenueGrowth);
-                System.out.println("Saved RevenueGrowthSummary for dataEntry: " + dataEntry.getId());
-            }
-        }
-
-        return "Data populated successfully to both RevenueBudgetSummary and RevenueGrowthSummary";
+    public ResponseEntity<String> populateAllData() {
+        dataPopulationService.populateData();
+        return ResponseEntity.ok("Data populated successfully");
     }
-
-    private static RevenueBudgetSummary getRevenueBudgetSummary(DataEntry dataEntry) {
-        RevenueBudgetSummary revenueBudgetSummary = new RevenueBudgetSummary();
-        revenueBudgetSummary.setVertical(dataEntry.getVertical());
-        revenueBudgetSummary.setClassification(dataEntry.getClassification());
-        revenueBudgetSummary.setDeliveryDirector(dataEntry.getDeliveryDirector());
-        revenueBudgetSummary.setDeliveryManager(dataEntry.getDeliveryManager());
-        revenueBudgetSummary.setAccount(dataEntry.getAccount());
-        revenueBudgetSummary.setProjectManager(dataEntry.getProjectManager());
-        revenueBudgetSummary.setProjectName(dataEntry.getProjectName());
-        revenueBudgetSummary.setFinancialYear(dataEntry.getFinancialYear());
-        revenueBudgetSummary.setQuarter(dataEntry.getQuarter());
-        revenueBudgetSummary.setMonth(dataEntry.getMonth());
-        revenueBudgetSummary.setBudget(dataEntry.getBudget());
-        return revenueBudgetSummary;
-    }
-
-    private static RevenueGrowthSummary getRevenueGrowthSummary(DataEntry dataEntry) {
-        RevenueGrowthSummary revenueGrowthSummary = new RevenueGrowthSummary();
-        revenueGrowthSummary.setVertical(dataEntry.getVertical());
-        revenueGrowthSummary.setClassification(dataEntry.getClassification());
-        revenueGrowthSummary.setDeliveryDirector(dataEntry.getDeliveryDirector());
-        revenueGrowthSummary.setDeliveryManager(dataEntry.getDeliveryManager());
-        revenueGrowthSummary.setAccount(dataEntry.getAccount());
-        revenueGrowthSummary.setProjectManager(dataEntry.getProjectManager());
-        revenueGrowthSummary.setProjectName(dataEntry.getProjectName());
-        revenueGrowthSummary.setFinancialYear(dataEntry.getFinancialYear());
-        revenueGrowthSummary.setQuarter(dataEntry.getQuarter());
-        revenueGrowthSummary.setMonth(dataEntry.getMonth());
-        return revenueGrowthSummary;
-    }
-
-    private static float calculatePreviousQuarterForecast(List<DataEntry> previousQuarterData) {
-        return (float) previousQuarterData.stream()
-                .mapToDouble(DataEntry::getLikely)
-                .sum() / 1000000;
-    }
-
-    private static String getPreviousQuarter(String currentQuarter) {
-        switch (currentQuarter) {
-            case "Q1":
-                return "Q4";
-            case "Q2":
-                return "Q1";
-            case "Q3":
-                return "Q2";
-            case "Q4":
-                return "Q3";
-            default:
-                return "Invalid quarter";
-        }
-
-
-
-    }
-
 
 
 

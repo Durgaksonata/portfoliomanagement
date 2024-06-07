@@ -3,7 +3,9 @@ package com.sonata.portfoliomanagement.controllers;
 import com.sonata.portfoliomanagement.interfaces.PursuitActionsRepository;
 import com.sonata.portfoliomanagement.interfaces.PursuitTrackerRepository;
 import com.sonata.portfoliomanagement.model.PursuitActions;
+import com.sonata.portfoliomanagement.model.PursuitActionsDTO;
 import com.sonata.portfoliomanagement.model.PursuitTracker;
+import com.sonata.portfoliomanagement.model.PursuitTrackerDTO;
 import com.sonata.portfoliomanagement.services.PursuitActionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,41 @@ public class PursuitActionsController {
         List<PursuitActions> pursuitAction = pursuitActionRepo.findAll();
         return ResponseEntity.ok(pursuitAction);
     }
+
+    @GetMapping("/getByPursuitId/{pursuitId}")
+    public ResponseEntity<?> getPursuitActionsByPursuitId(@PathVariable int pursuitId) {
+        List<PursuitTracker> pursuitTrackerList = PursuitTrackerRepo.findByPursuitid(pursuitId);
+
+        if (pursuitTrackerList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No PursuitActions found with pursuitId: " + pursuitId);
+        }
+
+        List<PursuitActionsDTO> result = pursuitTrackerList.stream()
+                .map(action -> new PursuitActionsDTO(
+                           action.getDeliveryManager(),
+                        action.getDeliveryDirector(),
+                        action.getAccount(),
+                        action.getProjectorPursuit()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getAllPursuitIds")
+    public ResponseEntity<?> getAllPursuitIds() {
+        List<Integer> pursuitIds = PursuitTrackerRepo.findAll().stream()
+                .map(PursuitTracker::getPursuitid)
+                .collect(Collectors.toList());
+
+        if (pursuitIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Pursuit IDs found.");
+        }
+
+        return ResponseEntity.ok(pursuitIds);
+    }
+
+
+
     @PostMapping("/save")
     public ResponseEntity<?> createPursuitActions(@RequestBody List<PursuitActions> pursuitActionsList) {
         List<String> errors = new ArrayList<>();
@@ -87,8 +124,6 @@ public class PursuitActionsController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPursuits);
     }
-
-
 
 
 
@@ -237,6 +272,8 @@ public class PursuitActionsController {
 
         return ResponseEntity.status(HttpStatus.OK).body("PursuitActions with specified actionItemNumbers have been deleted.");
     }
+
+
 
 
 }

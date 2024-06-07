@@ -71,26 +71,5 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     RevenueBudgetSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget);
 
 
-
-    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DataEntry d " +
-            "WHERE d.vertical = :vertical AND d.classification = :classification " +
-            "AND d.deliveryDirector = :deliveryDirector AND d.deliveryManager = :deliveryManager " +
-            "AND d.account = :account AND d.projectManager = :projectManager " +
-            "AND d.projectName = :projectName AND d.financialYear = :financialYear " +
-            "AND d.quarter = :quarter AND d.budget BETWEEN :budget - :epsilon AND :budget + :epsilon " +
-            "AND d.month = :month")
-    boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(
-            @Param("vertical") String vertical,
-            @Param("classification") String classification,
-            @Param("deliveryDirector") String deliveryDirector,
-            @Param("deliveryManager") String deliveryManager,
-            @Param("account") String account,
-            @Param("projectManager") String projectManager,
-            @Param("projectName") String projectName,
-            @Param("financialYear") int financialYear,
-            @Param("quarter") String quarter,
-            @Param("budget") float budget,
-            @Param("epsilon") float epsilon,
-            @Param("month") String month);
-
+    boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget, String month);
 }

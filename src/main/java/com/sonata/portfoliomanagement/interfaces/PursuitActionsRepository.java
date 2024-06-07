@@ -10,6 +10,8 @@ import java.util.List;
 public interface PursuitActionsRepository extends JpaRepository<PursuitActions, Integer> {
     List<PursuitActions> findByPursuitid(int pursuitid);
 
+
+
     void deleteByPursuitid(int pursuitid);
 
     List<PursuitActions> findByActionItemNumber(String actionItemNumber);

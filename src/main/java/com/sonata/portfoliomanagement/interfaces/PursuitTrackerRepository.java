@@ -30,6 +30,5 @@ Optional<PursuitTracker> findByProjectorPursuit(String projectorPursuit);
     List<PursuitTracker> findByDeliveryManagerAndDeliveryDirectorAndAccountAndTypeAndTcvAndIdentifiedmonthAndPursuitstatusAndStageAndPursuitProbabilityAndProjectorPursuitAndPursuitorpotentialAndLikelyClosureorActualClosureAndRemarks(String deliveryManager, String deliveryDirector, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks);
 
 
-
-
+    List<PursuitTracker> findByPursuitid(int pursuitId);
 }
