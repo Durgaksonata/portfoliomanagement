@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,20 @@ public class PursuitTrackerController {
         Map<String, Object> response = new HashMap<>();
         List<String> duplicateProjectorPursuits = new ArrayList<>();
 
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM-yy");
+
         for (PursuitTracker pursuitTracker : pursuitTrackers) {
+            // Format dates to ensure they do not include time components
+            try {
+                String identifiedMonthStr = formatter.format(pursuitTracker.getIdentifiedmonth());
+                String likelyClosureStr = formatter.format(pursuitTracker.getLikelyClosureorActualClosure());
+
+                pursuitTracker.setIdentifiedmonth(formatter.parse(identifiedMonthStr));
+                pursuitTracker.setLikelyClosureorActualClosure(formatter.parse(likelyClosureStr));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             // Calculate stage based on PursuitStatus and Type
             String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
             pursuitTracker.setStage(stage);
@@ -85,16 +99,14 @@ public class PursuitTrackerController {
         }
 
         if (!duplicateProjectorPursuits.isEmpty()) {
-            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved!" + " " +duplicateProjectorPursuits);
+            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved! " + duplicateProjectorPursuits);
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
-
         response.put("message", "Data Saved Successfully!");
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-
     }
+
 
     // Method to calculate stage based on PursuitStatus and Type
     private String calculateStage(String pursuitStatus, String type) {
@@ -117,16 +129,30 @@ public class PursuitTrackerController {
     }
 
 
+
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updatePursuitTrackers(@RequestBody List<PursuitTracker> pursuitTrackerDetailsList) {
         Map<String, Object> response = new HashMap<>();
         List<PursuitTracker> updatedPursuitTrackers = new ArrayList<>();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM-yy");
 
         for (PursuitTracker pursuitTrackerDetails : pursuitTrackerDetailsList) {
             int pursuitTrackerId = pursuitTrackerDetails.getId();
             Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findById(pursuitTrackerId);
             if (optionalPursuitTracker.isPresent()) {
                 PursuitTracker existingPursuitTracker = optionalPursuitTracker.get();
+
+                // Format dates to ensure they do not include time components
+                try {
+                    String identifiedMonthStr = formatter.format(pursuitTrackerDetails.getIdentifiedmonth());
+                    String likelyClosureStr = formatter.format(pursuitTrackerDetails.getLikelyClosureorActualClosure());
+
+                    pursuitTrackerDetails.setIdentifiedmonth(formatter.parse(identifiedMonthStr));
+                    pursuitTrackerDetails.setLikelyClosureorActualClosure(formatter.parse(likelyClosureStr));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 // Check if any fields have been changed
                 Map<String, Object> changes = new HashMap<>();
@@ -157,7 +183,11 @@ public class PursuitTrackerController {
                     changes.put("tcv", pursuitTrackerDetails.getTcv());
                     updated = true;
                 }
-
+                if (!Objects.equals(existingPursuitTracker.getIdentifiedmonth(), pursuitTrackerDetails.getIdentifiedmonth())) {
+                    existingPursuitTracker.setIdentifiedmonth(pursuitTrackerDetails.getIdentifiedmonth());
+                    changes.put("identifiedmonth", pursuitTrackerDetails.getIdentifiedmonth());
+                    updated = true;
+                }
                 if (!Objects.equals(existingPursuitTracker.getPursuitstatus(), pursuitTrackerDetails.getPursuitstatus())) {
                     existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
                     changes.put("pursuitstatus", pursuitTrackerDetails.getPursuitstatus());
@@ -173,7 +203,11 @@ public class PursuitTrackerController {
                     changes.put("pursuitorpotential", pursuitTrackerDetails.getPursuitorpotential());
                     updated = true;
                 }
-
+                if (!Objects.equals(existingPursuitTracker.getLikelyClosureorActualClosure(), pursuitTrackerDetails.getLikelyClosureorActualClosure())) {
+                    existingPursuitTracker.setLikelyClosureorActualClosure(pursuitTrackerDetails.getLikelyClosureorActualClosure());
+                    changes.put("likelyClosureorActualClosure", pursuitTrackerDetails.getLikelyClosureorActualClosure());
+                    updated = true;
+                }
                 if (!Objects.equals(existingPursuitTracker.getRemarks(), pursuitTrackerDetails.getRemarks())) {
                     existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
                     changes.put("remarks", pursuitTrackerDetails.getRemarks());
@@ -181,10 +215,10 @@ public class PursuitTrackerController {
                 }
 
                 // Calculate and update stage and pursuitProbability
-                String stage = pursuitTrackerService.calculateStage(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
+                String stage = calculateStage(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
                 existingPursuitTracker.setStage(stage);
 
-                int pursuitProbability = pursuitTrackerService.calculatePursuitProbability(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
+                int pursuitProbability = calculatePursuitProbability(pursuitTrackerDetails.getPursuitstatus(), pursuitTrackerDetails.getType());
                 existingPursuitTracker.setPursuitProbability(pursuitProbability);
 
                 // Check for duplicate entry
@@ -212,7 +246,6 @@ public class PursuitTrackerController {
             }
         }
 
-       // response.put("data", updatedPursuitTrackers);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -317,9 +350,6 @@ public class PursuitTrackerController {
         response.put("deletedIds", deletedIds);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
-
 
 
 

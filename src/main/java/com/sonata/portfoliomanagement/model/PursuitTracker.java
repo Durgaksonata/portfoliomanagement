@@ -31,6 +31,7 @@ public class PursuitTracker {
     private float tcv;
     @Column(name="Identified_Month")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
+    @Temporal(TemporalType.DATE)
     private Date identifiedmonth;
     @Column(name="Pursuit_Status")
     private String pursuitstatus;
@@ -45,6 +46,7 @@ public class PursuitTracker {
     private String pursuitorpotential;
     @Column(name="likely_Closure_Or_Actual_Closure")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
+    @Temporal(TemporalType.DATE)
     private Date likelyClosureorActualClosure;
     @Column(name = "remarks", length = 5000)
     private String remarks;

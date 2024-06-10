@@ -83,14 +83,14 @@ public class UserController {
                 } else {
                     // isFirstLogin is already false
                     Map<String, Object> response = new HashMap<>();
-                    response.put("message", "Email provided is correct");
+                    response.put("Status", "Email provided is correct");
                     response.put("isFirstLogin", isFirstLogin);
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             } else {
                 // Password provided is incorrect
                 Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("message", "Password provided is incorrect");
+                errorResponse.put("Status", "Password provided is incorrect");
                 errorResponse.put("isFirstLogin", existingUser.isFirstLogin());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
             }
