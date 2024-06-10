@@ -75,7 +75,7 @@ public class UserController {
                     existingUser.setFirstLogin(false);
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
-                    response.put("message", "Email provided is correct");
+                    response.put("Status", "Email provided is correct");
                     response.put("isFirstLogin", isFirstLogin);
 
                     // Return the response without saving the user
