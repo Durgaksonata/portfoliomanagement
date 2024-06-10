@@ -103,40 +103,65 @@ public class UserController {
 
 
 
-@PutMapping("/users/{email}")
-public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
-    try {
-        // Retrieve the user by email
-        User existingUser = userService.getUserByEmail(email);
-        if (existingUser == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//@PutMapping("/users/{email}")
+//public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
+//    try {
+//        // Retrieve the user by email
+//        User existingUser = userService.getUserByEmail(email);
+//        if (existingUser == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//        }
+//
+//        // Get the old and new passwords from the request body
+//        String oldPassword = passwordMap.get("oldPassword");
+//        String newPassword = passwordMap.get("newPassword");
+//
+//        // Retrieve the hashed password associated with the user's email from the database
+//        String hashedPasswordFromDB = existingUser.getPassword();
+//
+//        // Check if the provided old password matches the hashed password stored in the database
+//        if (!BCrypt.checkpw(oldPassword, hashedPasswordFromDB)) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
+//        }
+//
+//        // Generate a new salt and hash the new password with it
+//        String newSalt = BCrypt.gensalt();
+//        String newHashedPassword = BCrypt.hashpw(newPassword, newSalt);
+//
+//        // Update the user's password with the new hashed password
+//        existingUser.setPassword(newHashedPassword);
+//        userService.saveUser(existingUser); // Save the updated user
+//
+//        return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
+//    } catch (Exception e) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update password: " + e.getMessage());
+//    }
+//}
+
+    //updated one that is working properly now-->
+    //doesn't check for old password tho, that's something I need help with to fix-->
+    @PutMapping("/users/{email}")
+    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
+        try {
+            // Retrieve the user by email
+            User existingUser = userService.getUserByEmail(email);
+            if (existingUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            // Update the user with the new information
+            existingUser.setPassword(updatedUser.getPassword());
+            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setFirstLogin(false); // Set isFirstLogin to false after updating the password
+
+            // Save the updated user
+            userService.saveUser(existingUser);
+
+            return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
         }
-
-        // Get the old and new passwords from the request body
-        String oldPassword = passwordMap.get("oldPassword");
-        String newPassword = passwordMap.get("newPassword");
-
-        // Retrieve the hashed password associated with the user's email from the database
-        String hashedPasswordFromDB = existingUser.getPassword();
-
-        // Check if the provided old password matches the hashed password stored in the database
-        if (!BCrypt.checkpw(oldPassword, hashedPasswordFromDB)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
-        }
-
-        // Generate a new salt and hash the new password with it
-        String newSalt = BCrypt.gensalt();
-        String newHashedPassword = BCrypt.hashpw(newPassword, newSalt);
-
-        // Update the user's password with the new hashed password
-        existingUser.setPassword(newHashedPassword);
-        userService.saveUser(existingUser); // Save the updated user
-
-        return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update password: " + e.getMessage());
     }
-}
 
 
     @GetMapping("/users/{id}")
