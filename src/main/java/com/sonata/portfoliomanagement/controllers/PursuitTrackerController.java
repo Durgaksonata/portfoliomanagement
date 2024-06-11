@@ -13,13 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
+@Validated
 @RequestMapping("/pursuittracker")
 public class PursuitTrackerController {
     @Autowired
@@ -33,12 +36,32 @@ public class PursuitTrackerController {
     private MD_PursuitProbabilityRepository mdPursuitProbabilityRepository;
 
     @PostMapping("/save")
-    public ResponseEntity<?> addPursuitTrackers(@RequestBody List<PursuitTracker> pursuitTrackers) {
+    public ResponseEntity<?> addPursuitTrackers(@Valid @RequestBody List<PursuitTracker> pursuitTrackers) {
         List<PursuitTracker> savedPursuitTrackers = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
         List<String> duplicateProjectorPursuits = new ArrayList<>();
 
         for (PursuitTracker pursuitTracker : pursuitTrackers) {
+            StringJoiner emptyFields = new StringJoiner(", ");
+
+            if (pursuitTracker.getProjectorPursuit().isEmpty()) {
+                emptyFields.add("Projector Pursuit");
+            }
+
+            if (pursuitTracker.getPursuitstatus().isEmpty()) {
+                emptyFields.add("Pursuit Status");
+            }
+
+            if (pursuitTracker.getType().isEmpty()) {
+                emptyFields.add("Type");
+            }
+
+            if (emptyFields.length() > 0) {
+                String message = "Required fields cannot be empty: " + emptyFields.toString();
+                response.put("message", message);
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
             // Calculate stage based on PursuitStatus and Type
             String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
             pursuitTracker.setStage(stage);
@@ -85,14 +108,13 @@ public class PursuitTrackerController {
         }
 
         if (!duplicateProjectorPursuits.isEmpty()) {
-            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved!" + " " +duplicateProjectorPursuits);
+            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved! " + duplicateProjectorPursuits);
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
         response.put("message", "Data Saved Successfully!");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 
     // Method to calculate stage based on PursuitStatus and Type
     private String calculateStage(String pursuitStatus, String type) {
@@ -115,13 +137,19 @@ public class PursuitTrackerController {
     }
 
 
-
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updatePursuitTrackers(@RequestBody List<PursuitTracker> pursuitTrackerDetailsList) {
+    public ResponseEntity<Map<String, Object>> updatePursuitTrackers(@Valid @RequestBody List<PursuitTracker> pursuitTrackerDetailsList) {
         Map<String, Object> response = new HashMap<>();
         List<PursuitTracker> updatedPursuitTrackers = new ArrayList<>();
 
         for (PursuitTracker pursuitTrackerDetails : pursuitTrackerDetailsList) {
+            if (pursuitTrackerDetails.getProjectorPursuit() == null || pursuitTrackerDetails.getProjectorPursuit().isEmpty() ||
+                    pursuitTrackerDetails.getPursuitstatus() == null || pursuitTrackerDetails.getPursuitstatus().isEmpty() ||
+                    pursuitTrackerDetails.getType() == null || pursuitTrackerDetails.getType().isEmpty()) {
+                response.put("message", "Required fields cannot be null or empty");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
             int pursuitTrackerId = pursuitTrackerDetails.getId();
             Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findById(pursuitTrackerId);
             if (optionalPursuitTracker.isPresent()) {
@@ -253,7 +281,6 @@ public class PursuitTrackerController {
                 entry1.getStage().equals(entry2.getStage()) &&
                 entry1.getPursuitProbability() == entry2.getPursuitProbability();
     }
-
 
 
     @GetMapping("/getall")

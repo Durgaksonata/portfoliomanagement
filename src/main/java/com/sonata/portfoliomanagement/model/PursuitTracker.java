@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 @Entity
@@ -27,6 +27,7 @@ public class PursuitTracker {
     @Column(name="Account")
     private String account;
     @Column(name = "type")
+    @NotEmpty(message = "Type cannot be null")
     private String type;
     @Column(name="TCV")
     private float tcv;
@@ -35,6 +36,7 @@ public class PursuitTracker {
     @Temporal(TemporalType.DATE)
     private LocalDate identifiedmonth;
     @Column(name="Pursuit_Status")
+    @NotEmpty(message = "Pursuit Status cannot be null")
     private String pursuitstatus;
     @Column(name="Stage")
     private String stage;
@@ -42,6 +44,7 @@ public class PursuitTracker {
     private int pursuitProbability;
 
     @Column(name="Project_or_Pursuit")
+    @NotEmpty(message = "Projector Pursuit cannot be null")
     private String projectorPursuit;
     @Column(name="pursuit_or_potential")
     private String pursuitorpotential;
