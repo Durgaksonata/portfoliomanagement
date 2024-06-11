@@ -3,6 +3,7 @@ package com.sonata.portfoliomanagement.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -30,9 +31,9 @@ public class PursuitTracker {
     @Column(name="TCV")
     private float tcv;
     @Column(name="Identified_Month")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     @Temporal(TemporalType.DATE)
-    private Date identifiedmonth;
+    private LocalDate identifiedmonth;
     @Column(name="Pursuit_Status")
     private String pursuitstatus;
     @Column(name="Stage")
@@ -45,9 +46,9 @@ public class PursuitTracker {
     @Column(name="pursuit_or_potential")
     private String pursuitorpotential;
     @Column(name="likely_Closure_Or_Actual_Closure")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     @Temporal(TemporalType.DATE)
-    private Date likelyClosureorActualClosure;
+    private LocalDate likelyClosureorActualClosure;
     @Column(name = "remarks", length = 5000)
     private String remarks;
 
@@ -55,7 +56,7 @@ public class PursuitTracker {
     @OneToMany(mappedBy = "pursuitTracker", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<PursuitActions> pursuitActions;
 
-    public PursuitTracker(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks, Set<PursuitActions> pursuitActions) {
+    public PursuitTracker(int id, String deliveryDirector, int pursuitid, String deliveryManager, String account, String type, float tcv, LocalDate identifiedmonth, String pursuitstatus, String stage, int pursuitProbability, String projectorPursuit, String pursuitorpotential, LocalDate likelyClosureorActualClosure, String remarks, Set<PursuitActions> pursuitActions) {
         this.id = id;
         this.pursuitid = pursuitid;
         this.deliveryDirector = deliveryDirector;
@@ -131,11 +132,11 @@ public class PursuitTracker {
         this.tcv = tcv;
     }
 
-    public Date getIdentifiedmonth() {
+    public LocalDate getIdentifiedmonth() {
         return identifiedmonth;
     }
 
-    public void setIdentifiedmonth(Date identifiedmonth) {
+    public void setIdentifiedmonth(LocalDate identifiedmonth) {
         this.identifiedmonth = identifiedmonth;
     }
 
@@ -179,11 +180,11 @@ public class PursuitTracker {
         this.pursuitorpotential = pursuitorpotential;
     }
 
-    public Date getLikelyClosureorActualClosure() {
+    public LocalDate getLikelyClosureorActualClosure() {
         return likelyClosureorActualClosure;
     }
 
-    public void setLikelyClosureorActualClosure(Date likelyClosureorActualClosure) {
+    public void setLikelyClosureorActualClosure(LocalDate likelyClosureorActualClosure) {
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
     }
 

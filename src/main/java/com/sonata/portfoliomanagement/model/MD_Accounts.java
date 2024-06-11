@@ -19,6 +19,9 @@ public class MD_Accounts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String accounts;
+
+    @Column(name="Delivery_Managers")
+    private String deliveryManager;
     public MD_Accounts(Integer id, String accounts, String deliveryManager) {
         super();
         this.id = id;
@@ -26,29 +29,27 @@ public class MD_Accounts {
         this.deliveryManager = deliveryManager;
     }
 
-    @Column(name="Delivery_Managers")
-    private String deliveryManager;
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(String accounts) {
+        this.accounts = accounts;
+    }
 
     public String getDeliveryManager() {
         return deliveryManager;
     }
+
     public void setDeliveryManager(String deliveryManager) {
         this.deliveryManager = deliveryManager;
     }
-
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    public String getAccounts() {
-        return deliveryManager;
-    }
-    public void setAccounts(String accounts) {
-        deliveryManager = accounts;
-    }
-
-
-
 }

@@ -2,6 +2,7 @@ package com.sonata.portfoliomanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class PursuitTrackerDTO {
@@ -13,21 +14,21 @@ public class PursuitTrackerDTO {
     private String type;
     private float tcv;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
-    private Date identifiedmonth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    private LocalDate identifiedmonth;
 
     private String pursuitstatus;
     private String projectorPursuit;
     private String pursuitorpotential;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM-yy")
-    private Date likelyClosureorActualClosure;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    private LocalDate likelyClosureorActualClosure;
 
     private String remarks;
 
     // Constructors, getters, and setters
 
-    public PursuitTrackerDTO(int id, String deliveryDirector, String deliveryManager, String account, String type, float tcv, Date identifiedmonth, String pursuitstatus, String projectorPursuit, String pursuitorpotential, Date likelyClosureorActualClosure, String remarks) {
+    public PursuitTrackerDTO(int id, String deliveryDirector, String deliveryManager, String account, String type, float tcv, LocalDate identifiedmonth, String pursuitstatus, String projectorPursuit, String pursuitorpotential, LocalDate likelyClosureorActualClosure, String remarks) {
         this.id = id;
         this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
@@ -93,11 +94,11 @@ public class PursuitTrackerDTO {
         this.tcv = tcv;
     }
 
-    public Date getIdentifiedmonth() {
+    public LocalDate getIdentifiedmonth() {
         return identifiedmonth;
     }
 
-    public void setIdentifiedmonth(Date identifiedmonth) {
+    public void setIdentifiedmonth(LocalDate identifiedmonth) {
         this.identifiedmonth = identifiedmonth;
     }
 
@@ -125,11 +126,11 @@ public class PursuitTrackerDTO {
         this.pursuitorpotential = pursuitorpotential;
     }
 
-    public Date getLikelyClosureorActualClosure() {
+    public LocalDate getLikelyClosureorActualClosure() {
         return likelyClosureorActualClosure;
     }
 
-    public void setLikelyClosureorActualClosure(Date likelyClosureorActualClosure) {
+    public void setLikelyClosureorActualClosure(LocalDate likelyClosureorActualClosure) {
         this.likelyClosureorActualClosure = likelyClosureorActualClosure;
     }
 

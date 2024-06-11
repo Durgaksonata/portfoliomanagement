@@ -27,8 +27,7 @@ public class PursuitTrackerController {
     @Autowired
     private PursuitActionsRepository pursuitActionsRepository;
 
-    @Autowired
-    private PursuitTrackerService pursuitTrackerService;
+
 
     @Autowired
     private MD_PursuitProbabilityRepository mdPursuitProbabilityRepository;
@@ -39,20 +38,7 @@ public class PursuitTrackerController {
         Map<String, Object> response = new HashMap<>();
         List<String> duplicateProjectorPursuits = new ArrayList<>();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM-yy");
-
         for (PursuitTracker pursuitTracker : pursuitTrackers) {
-            // Format dates to ensure they do not include time components
-            try {
-                String identifiedMonthStr = formatter.format(pursuitTracker.getIdentifiedmonth());
-                String likelyClosureStr = formatter.format(pursuitTracker.getLikelyClosureorActualClosure());
-
-                pursuitTracker.setIdentifiedmonth(formatter.parse(identifiedMonthStr));
-                pursuitTracker.setLikelyClosureorActualClosure(formatter.parse(likelyClosureStr));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             // Calculate stage based on PursuitStatus and Type
             String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
             pursuitTracker.setStage(stage);
@@ -99,7 +85,7 @@ public class PursuitTrackerController {
         }
 
         if (!duplicateProjectorPursuits.isEmpty()) {
-            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved! " + duplicateProjectorPursuits);
+            response.put("message", "The following entries with projectorPursuit already exist and cannot be saved!" + " " +duplicateProjectorPursuits);
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
@@ -135,24 +121,11 @@ public class PursuitTrackerController {
         Map<String, Object> response = new HashMap<>();
         List<PursuitTracker> updatedPursuitTrackers = new ArrayList<>();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM-yy");
-
         for (PursuitTracker pursuitTrackerDetails : pursuitTrackerDetailsList) {
             int pursuitTrackerId = pursuitTrackerDetails.getId();
             Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findById(pursuitTrackerId);
             if (optionalPursuitTracker.isPresent()) {
                 PursuitTracker existingPursuitTracker = optionalPursuitTracker.get();
-
-                // Format dates to ensure they do not include time components
-                try {
-                    String identifiedMonthStr = formatter.format(pursuitTrackerDetails.getIdentifiedmonth());
-                    String likelyClosureStr = formatter.format(pursuitTrackerDetails.getLikelyClosureorActualClosure());
-
-                    pursuitTrackerDetails.setIdentifiedmonth(formatter.parse(identifiedMonthStr));
-                    pursuitTrackerDetails.setLikelyClosureorActualClosure(formatter.parse(likelyClosureStr));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
                 // Check if any fields have been changed
                 Map<String, Object> changes = new HashMap<>();
@@ -188,6 +161,7 @@ public class PursuitTrackerController {
                     changes.put("identifiedmonth", pursuitTrackerDetails.getIdentifiedmonth());
                     updated = true;
                 }
+
                 if (!Objects.equals(existingPursuitTracker.getPursuitstatus(), pursuitTrackerDetails.getPursuitstatus())) {
                     existingPursuitTracker.setPursuitstatus(pursuitTrackerDetails.getPursuitstatus());
                     changes.put("pursuitstatus", pursuitTrackerDetails.getPursuitstatus());
@@ -208,6 +182,7 @@ public class PursuitTrackerController {
                     changes.put("likelyClosureorActualClosure", pursuitTrackerDetails.getLikelyClosureorActualClosure());
                     updated = true;
                 }
+
                 if (!Objects.equals(existingPursuitTracker.getRemarks(), pursuitTrackerDetails.getRemarks())) {
                     existingPursuitTracker.setRemarks(pursuitTrackerDetails.getRemarks());
                     changes.put("remarks", pursuitTrackerDetails.getRemarks());
@@ -246,9 +221,9 @@ public class PursuitTrackerController {
             }
         }
 
+        // response.put("data", updatedPursuitTrackers);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
     private boolean isDuplicateEntry(PursuitTracker pursuitTracker) {
         // Retrieve all existing pursuit trackers excluding the current one being updated
         List<PursuitTracker> existingEntries = pursuitTrackerRepository.findAll();
@@ -281,13 +256,11 @@ public class PursuitTrackerController {
 
 
 
-
     @GetMapping("/getall")
     public List<PursuitTracker> getAllPursuitTrackers() {
         return pursuitTrackerRepository.findAll();
     }
 
-//to get only editable fields
     @GetMapping("/get")
     public List<PursuitTrackerDTO> getPursuitTrackers() {
         List<PursuitTracker> pursuitTrackers = pursuitTrackerRepository.findAll();
@@ -295,6 +268,8 @@ public class PursuitTrackerController {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
+
 
     private PursuitTrackerDTO convertToDto(PursuitTracker pursuitTracker) {
         return new PursuitTrackerDTO(
