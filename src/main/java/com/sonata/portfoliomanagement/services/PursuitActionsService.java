@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PursuitActionsService {
@@ -33,12 +34,23 @@ public class PursuitActionsService {
         return pursuitActionsRepository.findByActionItemNumber(actionItemNumber);
     }
 
-    public void delete(PursuitActions pursuitAction) {
-        pursuitActionsRepository.delete(pursuitAction);
-
-    }
 
     public List<PursuitActions> findAll() {
        return pursuitActionsRepository.findAll();
     }
+
+
+    public Optional<PursuitActions> findById(int id) {
+        return pursuitActionsRepository.findById(id);
+    }
+
+    public void delete(PursuitActions pursuitAction) {
+        pursuitActionsRepository.delete(pursuitAction);
+    }
+
+
+
+
+
+
 }
