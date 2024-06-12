@@ -16,7 +16,7 @@ public interface UserService {
 
     boolean userExistsByEmailAndPassword(String email, String password);
 
-    boolean verifyPassword(String email, String password);
+    boolean verifyPassword(String email, String password) throws Exception;
 
     boolean userExistsByEmail(String email);
     void updateFirstLogin(String email, String password, boolean isFirstLogin);

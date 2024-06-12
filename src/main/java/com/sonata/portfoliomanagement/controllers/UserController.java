@@ -1,15 +1,14 @@
 package com.sonata.portfoliomanagement.controllers;
 import com.sonata.portfoliomanagement.model.User;
+import com.sonata.portfoliomanagement.services.AESUtil;
 import com.sonata.portfoliomanagement.services.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -41,13 +40,12 @@ public class UserController {
 
             // Save the user
             userService.saveUser(user);
+
             return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create user: " + e.getMessage());
         }
     }
-
-
 
     @PostMapping("/checkUserAndReturnResponse")
     public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody User user) {
@@ -59,124 +57,109 @@ public class UserController {
             boolean emailExists = userService.userExistsByEmail(email);
             if (!emailExists) {
                 // User with the provided email does not exist
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Email provided is incorrect"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Collections.singletonMap("response", "Email provided is incorrect"));
             }
-
             // Get the existing user
             User existingUser = userService.getUserByEmail(email);
 
             // Check if the provided password matches the one associated with the email
             boolean passwordCorrect = userService.verifyPassword(email, password);
+            //System.out.println(passwordCorrect);
             if (passwordCorrect) {
                 // Check if isFirstLogin is true
                 boolean isFirstLogin = existingUser.isFirstLogin();
+                //System.out.println(isFirstLogin);
                 if (isFirstLogin) {
-                    // Update isFirstLogin to false (only in memory)
+                    // Update isFirstLogin to false and save the user
                     existingUser.setFirstLogin(false);
+                    userService.saveUser(existingUser);
+
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
-                    response.put("Status", "Email provided is correct");
-                    response.put("isFirstLogin", isFirstLogin);
-
-                    // Return the response without saving the user
+                    response.put("response", "Email provided is correct");
+                    response.put("isFirstLogin", true); // Indicate that it was the first login
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // isFirstLogin is already false
                     Map<String, Object> response = new HashMap<>();
-                    response.put("Status", "Email provided is correct");
-                    response.put("isFirstLogin", isFirstLogin);
+                    response.put("response", "Email provided is correct");
+                    response.put("isFirstLogin", false); // Indicate that it is not the first login
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             } else {
                 // Password provided is incorrect
                 Map<String, Object> errorResponse = new HashMap<>();
-                errorResponse.put("Status", "Password provided is incorrect");
+                errorResponse.put("response", "Password provided is incorrect");
                 errorResponse.put("isFirstLogin", existingUser.isFirstLogin());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("message", "Failed to check user: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
         }
     }
 
 
 
-
-
-//@PutMapping("/users/{email}")
-//public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
-//    try {
-//        // Retrieve the user by email
-//        User existingUser = userService.getUserByEmail(email);
-//        if (existingUser == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//
+//    @PutMapping("/users/{email}")
+//    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
+//        try {
+//            // Retrieve the user by email
+//            User existingUser = userService.getUserByEmail(email);
+//            if (existingUser == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//            }
+//
+//            // Update the user with the new information
+//            existingUser.setPassword(updatedUser.getPassword());
+//            existingUser.setEmail(updatedUser.getEmail());
+//            // Set other properties as needed
+//
+//            userService.saveUser(existingUser); // Save the updated user
+//
+//            return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
 //        }
-//
-//        // Get the old and new passwords from the request body
-//        String oldPassword = passwordMap.get("oldPassword");
-//        String newPassword = passwordMap.get("newPassword");
-//
-//        // Retrieve the hashed password associated with the user's email from the database
-//        String hashedPasswordFromDB = existingUser.getPassword();
-//
-//        // Check if the provided old password matches the hashed password stored in the database
-//        if (!BCrypt.checkpw(oldPassword, hashedPasswordFromDB)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
-//        }
-//
-//        // Generate a new salt and hash the new password with it
-//        String newSalt = BCrypt.gensalt();
-//        String newHashedPassword = BCrypt.hashpw(newPassword, newSalt);
-//
-//        // Update the user's password with the new hashed password
-//        existingUser.setPassword(newHashedPassword);
-//        userService.saveUser(existingUser); // Save the updated user
-//
-//        return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
-//    } catch (Exception e) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update password: " + e.getMessage());
 //    }
-//}
+//
 
-    //updated one that is working properly now-->
-    //doesn't check for old password tho, that's something I need help with to fix-->
     @PutMapping("/users/{email}")
-    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
+    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
         try {
             // Retrieve the user by email
             User existingUser = userService.getUserByEmail(email);
+
             if (existingUser == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
 
-            // Update the user with the new information
-            existingUser.setPassword(updatedUser.getPassword());
-            existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setFirstLogin(false); // Set isFirstLogin to false after updating the password
+            // Get the old and new passwords from the request body
+            String oldPassword = passwordMap.get("oldPassword");
+            String newPassword = passwordMap.get("newPassword");
 
-            // Save the updated user
-            userService.saveUser(existingUser);
-
-            return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
-        }
-    }
-
-
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
-        try {
-            User user = userService.getUserById(id);
-            if (user != null) {
-                return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.notFound().build();
+            // Retrieve the hashed password associated with the user's email from the database
+            String encryptedPasswordFromDB = existingUser.getPassword();
+            String decryptedEncryptedPasswordFromDB = AESUtil.decrypt(encryptedPasswordFromDB);
+            System.out.println(decryptedEncryptedPasswordFromDB);
+            // Check if the provided old password matches the hashed password stored in the database
+            if(!Objects.equals(oldPassword, decryptedEncryptedPasswordFromDB)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
             }
+            String newEncryptedPassword = AESUtil.encrypt(newPassword);
+            // Update the user's password with the new hashed password
+            existingUser.setPassword(newEncryptedPassword);
+            userService.saveUser(existingUser); // Save the updated user
+            return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update password: " + e.getMessage());
         }
     }
+
+
+
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         try {
@@ -190,4 +173,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
