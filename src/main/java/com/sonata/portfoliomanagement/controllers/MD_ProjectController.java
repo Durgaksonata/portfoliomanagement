@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:5173" )
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/md_project")
 public class MD_ProjectController {
@@ -28,22 +30,35 @@ public class MD_ProjectController {
         return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<MD_Project> updateProject(@PathVariable int id, @RequestBody MD_Project updatedProject) {
-        if (!projectRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+    @PutMapping("/update")
+    public ResponseEntity<List<MD_Project>> updateProjects(@RequestBody List<MD_Project> updatedProjects) {
+        for (MD_Project project : updatedProjects) {
+            if (!projectRepository.existsById(project.getId())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
         }
-        updatedProject.setId(id);
-        MD_Project updatedProjectEntity = projectRepository.save(updatedProject);
-        return ResponseEntity.ok(updatedProjectEntity);
+        List<MD_Project> updatedProjectEntities = projectRepository.saveAll(updatedProjects);
+        return ResponseEntity.ok(updatedProjectEntities);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable int id) {
-        if (!projectRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteProjects(@RequestBody List<Integer> ids) {
+        for (Integer id : ids) {
+            if (!projectRepository.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
         }
-        projectRepository.deleteById(id);
+        projectRepository.deleteAllById(ids);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/getAccountsByProjects")
+    public ResponseEntity<Set<String>> getDistinctAccountsByProjects(@RequestBody List<String> projectNames) {
+        List<MD_Project> projects = projectRepository.findAll();
+        Set<String> accounts = projects.stream()
+                .filter(project -> projectNames.contains(project.getProject()))
+                .map(MD_Project::getAccount)
+                .collect(Collectors.toSet());
+        return ResponseEntity.ok(accounts);
     }
 }

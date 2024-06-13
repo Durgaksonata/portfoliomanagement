@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:5173" )
 @RestController
 @RequestMapping("/pm")
@@ -57,5 +60,18 @@ public class MD_ProjectManagerController {
             }
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/dmbypm")
+    public ResponseEntity<Set<String>> getDistinctDeliveryManagersByProjectManagers(@RequestBody List<String> pmNames) {
+        // Find all Project Managers matching the given PM names
+        List<MD_ProjectManager> projectManagers = projectManagerRepository.findAllByProjectManagerIn(pmNames);
+
+        // Collect unique Delivery Managers
+        Set<String> distinctDeliveryManagers = projectManagers.stream()
+                .map(MD_ProjectManager::getDeliveryManager)
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok(distinctDeliveryManagers);
     }
 }
