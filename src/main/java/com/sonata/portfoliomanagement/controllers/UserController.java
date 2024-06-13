@@ -102,6 +102,30 @@ public class UserController {
 
 
 
+//
+//    @PutMapping("/users/{email}")
+//    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody User updatedUser) {
+//        try {
+//            // Retrieve the user by email
+//            User existingUser = userService.getUserByEmail(email);
+//            if (existingUser == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//            }
+//
+//            // Update the user with the new information
+//            existingUser.setPassword(updatedUser.getPassword());
+//            existingUser.setEmail(updatedUser.getEmail());
+//            // Set other properties as needed
+//
+//            userService.saveUser(existingUser); // Save the updated user
+//
+//            return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
+//        }
+//    }
+//
+
     @PutMapping("/users/{email}")
     public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
         try {
@@ -135,7 +159,19 @@ public class UserController {
     }
 
 
-
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
+        try {
+            User user = userService.getUserById(id);
+            if (user != null) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         try {
@@ -149,5 +185,22 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    @PostMapping("/check")
+    public ResponseEntity<String> checkout(@RequestBody User user) throws Exception {
+        int id = user.getId();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        //String encryptedPassword = AESUtil.encrypt(user.getPassword());
+        //String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        //String encryptedPassword = AESUtil.encrypt(password);
+        System.out.println("User entered"+" "+password);
+//        User existingUser = userService.getUserByEmail(email);
+//        String encryptedPassword = existingUser.getPassword();
+//        String existingDecrptedPassword = AESUtil.decrypt(encryptedPassword);
+        String encryptUserInputPassword = AESUtil.encrypt(password);
+        System.out.println("existing"+" "+encryptUserInputPassword );
+        String decryptUserInputPassword = AESUtil.decrypt(encryptUserInputPassword);
+        System.out.println("existing"+" "+decryptUserInputPassword );
+        return ResponseEntity.status(HttpStatus.OK).body("OK");
+    }
 }

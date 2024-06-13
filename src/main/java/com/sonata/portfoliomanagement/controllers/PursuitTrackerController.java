@@ -322,8 +322,6 @@ public class PursuitTrackerController {
         List<Integer> deletedIds = new ArrayList<>();
         List<Integer> notFoundIds = new ArrayList<>();
 
-
-
         for (int pursuitTrackerId : pursuitTrackerIds) {
             Optional<PursuitTracker> optionalPursuitTracker = pursuitTrackerRepository.findById(pursuitTrackerId);
             if (optionalPursuitTracker.isPresent()) {

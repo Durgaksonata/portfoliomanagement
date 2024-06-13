@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/mdacnt")
+@RequestMapping("/mdaccount")
 public class MD_AccountsController {
 
     @Autowired
