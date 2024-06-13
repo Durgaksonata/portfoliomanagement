@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@CrossOrigin(origins = "http://localhost:5173" )
 @RestController
 @Validated
 @RequestMapping("/pursuittracker")
