@@ -17,12 +17,16 @@ public class MD_ProjectManager {
     @Column(name="projectManager")
     private String projectManager;
 
+    @Column(name="deliveryManager")
+    private String deliveryManager;
+
     public MD_ProjectManager() {}
 
-    public MD_ProjectManager(Integer id, String projectManager ) {
+    public MD_ProjectManager(Integer id, String projectManager, String deliveryManager ) {
         super();
         this.id = id;
         this.projectManager = projectManager;
+        this.deliveryManager=deliveryManager;
     }
 
     public Integer getId() {
@@ -39,5 +43,13 @@ public class MD_ProjectManager {
 
     public void setProjectManager(String projectManager) {
         this.projectManager = projectManager;
+    }
+
+    public String getDeliveryManager() {
+        return deliveryManager;
+    }
+
+    public void setDeliveryManager(String deliveryManager) {
+        this.deliveryManager = deliveryManager;
     }
 }
