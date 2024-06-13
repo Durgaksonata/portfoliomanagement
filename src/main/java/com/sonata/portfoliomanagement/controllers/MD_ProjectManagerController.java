@@ -24,7 +24,6 @@ public class MD_ProjectManagerController {
         List<MD_ProjectManager> projectManagers = projectManagerRepository.findAll();
         return ResponseEntity.ok(projectManagers);
     }
-
     @PostMapping("/save")
     public ResponseEntity<List<MD_ProjectManager>> createProjectManagers(@RequestBody List<MD_ProjectManager> projectManagerList) {
         List<MD_ProjectManager> createdProjectManagers = new ArrayList<>();

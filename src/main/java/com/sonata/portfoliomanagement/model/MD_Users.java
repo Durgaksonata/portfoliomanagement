@@ -13,45 +13,51 @@ public class MD_Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="Delivery_Director")
-    private String deliveryDirector;
-    @Column(name="Delivery_Manager")
-    private String deliveryManager;
-    @Column(name="Project_Manager")
-    private  String projectManager;
+    @Column(name="first_name")
+    private String firstName;
+    @Column(name="last_name")
+    private String lastName;
+    private  String role;
 
     public MD_Users() {}
-    public MD_Users(int id, String deliveryDirector, String deliveryManager, String projectManager) {
+
+    public MD_Users(int id, String firstName, String lastName, String role) {
         super();
         this.id = id;
-        this.deliveryDirector = deliveryDirector;
-        this.deliveryManager = deliveryManager;
-        this.projectManager = projectManager;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
     }
+
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
-    public String getDeliveryDirector() {
-        return deliveryDirector;
-    }
-    public void setDeliveryDirector(String deliveryDirector) {
-        this.deliveryDirector = deliveryDirector;
-    }
-    public String getDeliveryManager() {
-        return deliveryManager;
-    }
-    public void setDeliveryManager(String deliveryManager) {
-        this.deliveryManager = deliveryManager;
-    }
-    public String getProjectManager() {
-        return projectManager;
-    }
-    public void setProjectManager(String projectManager) {
-        this.projectManager = projectManager;
+
+    public String getFirstName() {
+        return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
