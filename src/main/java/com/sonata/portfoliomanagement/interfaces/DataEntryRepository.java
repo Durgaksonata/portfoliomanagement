@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DataEntryRepository extends JpaRepository<DataEntry, Integer>{
 
@@ -28,4 +29,17 @@ public interface DataEntryRepository extends JpaRepository<DataEntry, Integer>{
     List<DataEntry> findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget);
 
     List<DataEntry> findAllByFinancialYear(int financialYear);
+
+    Optional<RevenueBudgetSummary> findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
+            String vertical,
+            String classification,
+            String deliveryDirector,
+            String deliveryManager,
+            String account,
+            String projectManager,
+            String projectName,
+            int financialYear,
+            String quarter,
+            float budget
+    );
 }

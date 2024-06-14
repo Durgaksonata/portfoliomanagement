@@ -9,6 +9,7 @@ import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueGrowthSummaryRepository;
 import com.sonata.portfoliomanagement.model.*;
 import com.sonata.portfoliomanagement.services.DataEntryService;
+import com.sonata.portfoliomanagement.services.DataPopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,8 @@ public class DataEntryController {
     private RevenueBudgetSummaryRepository revenueBudgetSummaryRepository;
     @Autowired
     private RevenueGrowthSummaryRepository revenueGrowthSummaryRepository;
+    @Autowired
+    private DataPopulationService dataPopulationService;
 
     @GetMapping("/get")
     public ResponseEntity<List<DataEntry>> getAllData() {
@@ -72,93 +75,50 @@ public class DataEntryController {
         return dto;
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> createDataEntries(@RequestBody List<DataEntryDTO> dataEntryDTOList) {
-        Map<String, Object> response = new HashMap<>();
-        List<DataEntry> savedDataEntries = new ArrayList<>();
-
-        for (DataEntryDTO dataEntryDTO : dataEntryDTOList) {
-            // Check for duplicate entries for each DTO
-            if (dataEntryService.isDuplicateEntry(dataEntryDTO)) {
-                response.put("message", "Data already exists for one or more entries.");
-                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-            }
-
-            // Create DataEntry entity from DTO
-            DataEntry dataEntry = dataEntryService.createDataEntryFromDTO(dataEntryDTO);
-            // Save DataEntry
-            DataEntry savedDataEntry = dataEntryService.saveDataEntry(dataEntry);
-            savedDataEntries.add(savedDataEntry);
-        }
-
-        response.put("message", "Data successfully created.");
-        response.put("data", savedDataEntries);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    //It's a helper method for the below one-->
-    private DataEntry getExistingDataEntry(Optional<DataEntry> optionalDataEntry) {
-        return optionalDataEntry.orElse(null);
-    }
-
-    //Method for updating multiple rows of data at once-->
-    @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateDataEntries(@RequestBody List<DataEntryDTO> dataEntryDTOList) {
-        Map<String, Object> response = new HashMap<>();
-        List<DataEntry> updatedDataEntries = new ArrayList<>();
-
-        for (DataEntryDTO dataEntryDTO : dataEntryDTOList) {
-            // Find the data entry by ID
-            Optional<DataEntry> optionalDataEntry = dataEntryRepo.findById(dataEntryDTO.getId());
-
-            // Get the existing data entry
-            DataEntry existingDataEntry = getExistingDataEntry(optionalDataEntry);
-
-            // Check if data entry exists
-            if (existingDataEntry != null) {
-                // Update the existing data entry with new values
-                existingDataEntry.setMonth(dataEntryDTO.getMonth());
-                existingDataEntry.setVertical(dataEntryDTO.getVertical());
-                existingDataEntry.setClassification(dataEntryDTO.getClassification());
-                existingDataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
-                existingDataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
-                existingDataEntry.setAccount(dataEntryDTO.getAccount());
-                existingDataEntry.setProjectManager(dataEntryDTO.getProjectManager());
-                existingDataEntry.setProjectName(dataEntryDTO.getProjectName());
-                existingDataEntry.setCategory(dataEntryDTO.getCategory());
-                existingDataEntry.setAnnuityorNonAnnuity(dataEntryDTO.getAnnuityorNonAnnuity());
-                existingDataEntry.setValue(dataEntryDTO.getValue());
-                existingDataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
-                existingDataEntry.setQuarter(dataEntryDTO.getQuarter());
-
-                DataEntry updatedDataEntry = dataEntryService.saveDataEntry(existingDataEntry);
-                updatedDataEntries.add(updatedDataEntry);
-            } else {
-                // if data entry with the given ID is not found, add it to the response
-                response.put("message", "Data entry not found for one or more entries.");
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
-        }
-
-        response.put("message", "Data successfully updated.");
-        response.put("data", updatedDataEntries);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    private static DataEntry getDataEntry(DataEntryDTO dataEntryDTO, Optional<DataEntry> optionalDataEntry) {
-        DataEntry existingDataEntry = optionalDataEntry.get();
-
-        // Update the existing data entry with new values-->
-        existingDataEntry.setMonth(dataEntryDTO.getMonth());
-        existingDataEntry.setVertical(dataEntryDTO.getVertical());
-        existingDataEntry.setClassification(dataEntryDTO.getClassification());
-        existingDataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
-        existingDataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
-        existingDataEntry.setCategory(dataEntryDTO.getCategory());
-        existingDataEntry.setAnnuityorNonAnnuity(dataEntryDTO.getAnnuityorNonAnnuity());
-        existingDataEntry.setValue(dataEntryDTO.getValue());
-        return existingDataEntry;
-    }
+//    @PostMapping("/save")
+//    public ResponseEntity<Map<String, Object>> createDataEntries(@RequestBody List<DataEntryDTO> dataEntryDTOList) {
+//        Map<String, Object> response = new HashMap<>();
+//        List<DataEntry> savedDataEntries = new ArrayList<>();
+//
+//        for (DataEntryDTO dataEntryDTO : dataEntryDTOList) {
+//            // Check for duplicate entries for each DTO
+//            if (dataEntryService.isDuplicateEntry(dataEntryDTO)) {
+//                response.put("message", "Data already exists for one or more entries.");
+//                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+//            }
+//
+//            // Create DataEntry entity from DTO
+//            DataEntry dataEntry = dataEntryService.createDataEntryFromDTO(dataEntryDTO);
+//            // Save DataEntry
+//            DataEntry savedDataEntry = dataEntryService.saveDataEntry(dataEntry);
+//            savedDataEntries.add(savedDataEntry);
+//        }
+//
+//        response.put("message", "Data successfully created.");
+//        response.put("data", savedDataEntries);
+//        return new ResponseEntity<>(response, HttpStatus.CREATED);
+//    }
+//
+//    //It's a helper method for the below one-->
+//    private DataEntry getExistingDataEntry(Optional<DataEntry> optionalDataEntry) {
+//        return optionalDataEntry.orElse(null);
+//    }
+//
+//
+//    private static DataEntry getDataEntry(DataEntryDTO dataEntryDTO, Optional<DataEntry> optionalDataEntry) {
+//        DataEntry existingDataEntry = optionalDataEntry.get();
+//
+//        // Update the existing data entry with new values-->
+//        existingDataEntry.setMonth(dataEntryDTO.getMonth());
+//        existingDataEntry.setVertical(dataEntryDTO.getVertical());
+//        existingDataEntry.setClassification(dataEntryDTO.getClassification());
+//        existingDataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
+//        existingDataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
+//        existingDataEntry.setCategory(dataEntryDTO.getCategory());
+//        existingDataEntry.setAnnuityorNonAnnuity(dataEntryDTO.getAnnuityorNonAnnuity());
+//        existingDataEntry.setValue(dataEntryDTO.getValue());
+//        return existingDataEntry;
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<DataEntry> updateDataEntry(@PathVariable Integer id, @RequestBody DataEntryDTO dataEntryDTO) {
@@ -238,217 +198,6 @@ public class DataEntryController {
         return ResponseEntity.ok(data);
     }
 
-//    @PostMapping("/populate")
-//    private String fetchData() {
-//        List<DataEntry> dataEntryList = dataEntryRepo.findAll();
-//        for (DataEntry dataEntry : dataEntryList) {
-//            RevenueBudgetSummary revenue = getRevenueBudgetSummary(dataEntry);
-//            // check if a duplicate entry exists
-//            RevenueBudgetSummary existingRevenue = revenueBudgetSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter(),
-//                    dataEntry.getBudget()
-//            );
-//
-//            if (existingRevenue != null) {
-//                continue;
-//            }
-//
-//            // Fetch data from the repository based on the provided criteria
-//            List<DataEntry> data = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter(),
-//                    dataEntry.getBudget()
-//            );
-//
-//            // Calculate total forecast
-//            float total = (float) data.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-//            revenue.setForecast(total);
-//
-//            // Calculate gap
-//            float temp = dataEntry.getBudget() - revenue.getForecast();
-//            revenue.setGap(temp);
-//
-//            // Save RevenueBudgetSummary
-//            revenueBudgetSummaryRepository.save(revenue);
-//        }
-//
-//        return "Data populated successfully to RevenueBudgetSummary";
-//    }
-//
-//    private static RevenueBudgetSummary getRevenueBudgetSummary(DataEntry dataEntry) {
-//        RevenueBudgetSummary revenueBudgetSummary = new RevenueBudgetSummary();
-//        revenueBudgetSummary.setVertical(dataEntry.getVertical());
-//        revenueBudgetSummary.setClassification(dataEntry.getClassification());
-//        revenueBudgetSummary.setDeliveryDirector(dataEntry.getDeliveryDirector());
-//        revenueBudgetSummary.setDeliveryManager(dataEntry.getDeliveryManager());
-//        revenueBudgetSummary.setAccount(dataEntry.getAccount());
-//        revenueBudgetSummary.setProjectManager(dataEntry.getProjectManager());
-//        revenueBudgetSummary.setProjectName(dataEntry.getProjectName());
-//        revenueBudgetSummary.setFinancialYear(dataEntry.getFinancialYear());
-//        revenueBudgetSummary.setQuarter(dataEntry.getQuarter());
-//        revenueBudgetSummary.setMonth(dataEntry.getMonth());
-//        revenueBudgetSummary.setBudget(dataEntry.getBudget()); // Populate the budget field
-//        return revenueBudgetSummary;
-//    }
-
-    //method to populate revenueGrowthSummary table-->
-//    @PostMapping("/populateGrowth")
-//    private String fetchDataforRevenueGrowth() {
-//        List<DataEntry> dataEntryList = dataEntryRepo.findAll();
-//
-//        for (DataEntry dataEntry : dataEntryList) {
-//
-//            // Check if a duplicate entry exists-->
-//            RevenueGrowthSummary existingRevenue = revenueGrowthSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter()
-//            );
-//
-//            //checking for duplicate values-->
-//            if (existingRevenue != null) {
-//
-//                continue;
-//            }
-//            // Fetch data from the repository based on the provided criteria
-//            List<DataEntry> data = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter()
-//            );
-//
-//            // Get previous quarter data
-//            String previousQuarter = getPreviousQuarter(dataEntry.getQuarter());
-//            List<DataEntry> previousQuarterData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    previousQuarter
-//            );
-//
-//            // Get or create RevenueGrowthSummary and calculate forecast, accountExpected, gap-->
-//            RevenueGrowthSummary revenue = getRevenueGrowthSummary(dataEntry, data, previousQuarterData);
-//
-//            revenueGrowthSummaryRepository.save(revenue);
-//        }
-//
-//        return "Data populated successfully to RevenueGrowthSummary";
-//    }
-//    private static RevenueGrowthSummary getRevenueGrowthSummary(DataEntry accountBudgets, List<DataEntry> data, List<DataEntry> previousQuarterData) {
-//        RevenueGrowthSummary revenueGrowthSummary = new RevenueGrowthSummary();
-//        // Set properties of revenueGrowthSummary based on accountBudgets
-//        revenueGrowthSummary.setVertical(accountBudgets.getVertical());
-//        revenueGrowthSummary.setClassification(accountBudgets.getClassification());
-//        revenueGrowthSummary.setDeliveryDirector(accountBudgets.getDeliveryDirector());
-//        revenueGrowthSummary.setDeliveryManager(accountBudgets.getDeliveryManager());
-//        revenueGrowthSummary.setAccount(accountBudgets.getAccount());
-//        revenueGrowthSummary.setProjectManager(accountBudgets.getProjectManager());
-//        revenueGrowthSummary.setProjectName(accountBudgets.getProjectName());
-//        revenueGrowthSummary.setFinancialYear(accountBudgets.getFinancialYear());
-//        revenueGrowthSummary.setQuarter(accountBudgets.getQuarter());
-//        revenueGrowthSummary.setMonth(accountBudgets.getMonth());
-//        // Calculate forecast from current quarter data
-//        float currentQuarterForecast = (float) data.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-//        revenueGrowthSummary.setForecast(currentQuarterForecast);
-//
-//        // Calculate accountExpected based on previous quarter's forecast
-//        float previousQuarterForecast = calculatePreviousQuarterForecast(accountBudgets.getQuarter(), previousQuarterData);
-//
-//        float accountExpected = Math.max(accountBudgets.getBudget(), 1.07f * previousQuarterForecast);
-//        revenueGrowthSummary.setAccountExpected(accountExpected);
-//
-//        // Calculate gap
-//        float gap = revenueGrowthSummary.getAccountExpected() - revenueGrowthSummary.getForecast();
-//        revenueGrowthSummary.setGap(gap);
-//
-//        return revenueGrowthSummary;
-//    }
-//
-//    // Helper method to calculate forecast of the previous quarter for a specific account
-//    private static float calculatePreviousQuarterForecast(String currentQuarter, List<DataEntry> previousQuarterData) {
-//        String previousQuarter = getPreviousQuarter(currentQuarter);
-//        return (float) previousQuarterData.stream()
-//                .filter(entry -> entry.getQuarter().equals(previousQuarter))
-//                .mapToDouble(DataEntry::getLikely)
-//                .sum() / 1000000;
-//    }
-//
-//    //method to get the previous quarter based on the current quarter-->
-//    private static String getPreviousQuarter(String currentQuarter) {
-//        switch (currentQuarter) {
-//            case "Q1":
-//                return "Q4";
-//            case "Q2":
-//                return "Q1";
-//            case "Q3":
-//                return "Q2";
-//            case "Q4":
-//                return "Q3";
-//            default:
-//                return "Enter valid data";
-//        }
-//    }
-
-//    @PostMapping("/updateBudget")
-//    public ResponseEntity<String> updateBudgetFromRevenueBudgetSummary() {
-//        List<DataEntry> dataEntries = dataEntryRepo.findAll();
-//
-//        for (DataEntry dataEntry : dataEntries) {
-//            RevenueBudgetSummary matchingRevenueBudget = revenueBudgetSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter()
-//            );
-//
-//            if (matchingRevenueBudget != null) {
-//                dataEntry.setBudget(matchingRevenueBudget.getBudget());
-//                dataEntryRepo.save(dataEntry);
-//            }
-//        }
-//
-//        return ResponseEntity.ok("Budget updated for matching DataEntries.");
-//    }
-
-
-
     @PostMapping("/updateBudget")
     public ResponseEntity<String> updateBudgetFromRevenueBudgetSummary() {
         List<DataEntry> dataEntries = dataEntryRepo.findAll();
@@ -480,6 +229,11 @@ public class DataEntryController {
         return ResponseEntity.ok("Budget updated for matching DataEntries.");
     }
 
+    @PostMapping("/populateAll")
+    public ResponseEntity<String> populateAllData() {
+        dataPopulationService.populateData();
+        return ResponseEntity.ok("Data populated successfully");
+    }
 
 
 
@@ -490,387 +244,398 @@ public class DataEntryController {
 
 
 
+    //update method which also shows the changes made-->
+    @PutMapping("/update")
+    public ResponseEntity<Map<String, Object>> updateDataEntries(@RequestBody List<DataEntryDTO> dataEntryDTOList) {
+        Map<String, Object> response = new HashMap<>();
+        List<DataEntry> updatedDataEntries = new ArrayList<>();
 
+        for (DataEntryDTO dataEntryDTO : dataEntryDTOList) {
+            // Find the data entry by ID
+            Optional<DataEntry> optionalDataEntry = dataEntryRepo.findById(dataEntryDTO.getId());
 
+            // Get the existing data entry
+            DataEntry existingDataEntry = getExistingDataEntry1(optionalDataEntry);
 
+            // Check if data entry exists
+            if (existingDataEntry != null) {
+                // Check if any fields have been changed
+                Map<String, Object> changes = new HashMap<>();
+                boolean updated = false;
 
+                if (!Objects.equals(existingDataEntry.getMonth(), dataEntryDTO.getMonth())) {
+                    existingDataEntry.setMonth(dataEntryDTO.getMonth());
+                    changes.put("month", dataEntryDTO.getMonth());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getVertical(), dataEntryDTO.getVertical())) {
+                    existingDataEntry.setVertical(dataEntryDTO.getVertical());
+                    changes.put("vertical", dataEntryDTO.getVertical());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getClassification(), dataEntryDTO.getClassification())) {
+                    existingDataEntry.setClassification(dataEntryDTO.getClassification());
+                    changes.put("classification", dataEntryDTO.getClassification());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getDeliveryDirector(), dataEntryDTO.getDeliveryDirector())) {
+                    existingDataEntry.setDeliveryDirector(dataEntryDTO.getDeliveryDirector());
+                    changes.put("deliveryDirector", dataEntryDTO.getDeliveryDirector());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getDeliveryManager(), dataEntryDTO.getDeliveryManager())) {
+                    existingDataEntry.setDeliveryManager(dataEntryDTO.getDeliveryManager());
+                    changes.put("deliveryManager", dataEntryDTO.getDeliveryManager());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getAccount(), dataEntryDTO.getAccount())) {
+                    existingDataEntry.setAccount(dataEntryDTO.getAccount());
+                    changes.put("account", dataEntryDTO.getAccount());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getProjectManager(), dataEntryDTO.getProjectManager())) {
+                    existingDataEntry.setProjectManager(dataEntryDTO.getProjectManager());
+                    changes.put("projectManager", dataEntryDTO.getProjectManager());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getProjectName(), dataEntryDTO.getProjectName())) {
+                    existingDataEntry.setProjectName(dataEntryDTO.getProjectName());
+                    changes.put("projectName", dataEntryDTO.getProjectName());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getFinancialYear(), dataEntryDTO.getFinancialYear())) {
+                    existingDataEntry.setFinancialYear(dataEntryDTO.getFinancialYear());
+                    changes.put("financialYear", dataEntryDTO.getFinancialYear());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getQuarter(), dataEntryDTO.getQuarter())) {
+                    existingDataEntry.setQuarter(dataEntryDTO.getQuarter());
+                    changes.put("quarter", dataEntryDTO.getQuarter());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getBudget(), dataEntryDTO.getBudget())) {
+                    existingDataEntry.setBudget(dataEntryDTO.getBudget());
+                    changes.put("budget", dataEntryDTO.getBudget());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getValue(), dataEntryDTO.getValue())) {
+                    existingDataEntry.setValue(dataEntryDTO.getValue());
+                    changes.put("value", dataEntryDTO.getValue());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getCategory(), dataEntryDTO.getCategory())) {
+                    existingDataEntry.setCategory(dataEntryDTO.getCategory());
+                    changes.put("category", dataEntryDTO.getCategory());
+                    updated = true;
+                }
+                if (!Objects.equals(existingDataEntry.getAnnuityorNonAnnuity(), dataEntryDTO.getAnnuityorNonAnnuity())) {
+                    existingDataEntry.setAnnuityorNonAnnuity(dataEntryDTO.getAnnuityorNonAnnuity());
+                    changes.put("annuityorNonAnnuity", dataEntryDTO.getAnnuityorNonAnnuity());
+                    updated = true;
+                }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @PostMapping("/populateGrowth")
-//    public ResponseEntity<String> fetchDataforRevenueGrowth() {
-//        List<DataEntry> dataEntryList = dataEntryRepo.findAll();
-//
-//        for (DataEntry dataEntry : dataEntryList) {
-//            // Check if a duplicate entry exists
-//            RevenueGrowthSummary existingRevenue = revenueGrowthSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter()
-//            );
-//
-//            // Checking for duplicate values
-//            if (existingRevenue != null) {
-//                continue;
-//            }
-//
-//            // Fetch data from the repository based on the provided criteria
-//            List<DataEntry> data = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    dataEntry.getFinancialYear(),
-//                    dataEntry.getQuarter()
-//            );
-//
-//            // Validate the current quarter
-//            if (!isValidQuarter(dataEntry.getQuarter())) {
-//                throw new IllegalArgumentException("Invalid quarter: " + dataEntry.getQuarter());
-//            }
-//
-//            // Get previous quarter data
-//            String previousQuarterKey = getPreviousQuarter(dataEntry.getFinancialYear(), dataEntry.getQuarter());
-//            int previousFinancialYear = extractFinancialYear(previousQuarterKey);
-//            String previousQuarter = extractQuarter(previousQuarterKey);
-//
-//            List<DataEntry> previousQuarterData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-//                    dataEntry.getVertical(),
-//                    dataEntry.getClassification(),
-//                    dataEntry.getDeliveryDirector(),
-//                    dataEntry.getDeliveryManager(),
-//                    dataEntry.getAccount(),
-//                    dataEntry.getProjectManager(),
-//                    dataEntry.getProjectName(),
-//                    previousFinancialYear,
-//                    previousQuarter
-//            );
-//
-//            // Get or create RevenueGrowthSummary and calculate forecast, accountExpected, gap
-//            RevenueGrowthSummary revenue = getRevenueGrowthSummary(dataEntry, data, previousQuarterData);
-//
-//            revenueGrowthSummaryRepository.save(revenue);
-//        }
-//
-//        return ResponseEntity.ok("Data populated successfully to RevenueGrowthSummary");
-//    }
-//
-//    private static RevenueGrowthSummary getRevenueGrowthSummary(DataEntry accountBudgets, List<DataEntry> data, List<DataEntry> previousQuarterData) {
-//        RevenueGrowthSummary revenueGrowthSummary = new RevenueGrowthSummary();
-//        // Set properties of revenueGrowthSummary based on accountBudgets
-//        revenueGrowthSummary.setVertical(accountBudgets.getVertical());
-//        revenueGrowthSummary.setClassification(accountBudgets.getClassification());
-//        revenueGrowthSummary.setDeliveryDirector(accountBudgets.getDeliveryDirector());
-//        revenueGrowthSummary.setDeliveryManager(accountBudgets.getDeliveryManager());
-//        revenueGrowthSummary.setAccount(accountBudgets.getAccount());
-//        revenueGrowthSummary.setProjectManager(accountBudgets.getProjectManager());
-//        revenueGrowthSummary.setProjectName(accountBudgets.getProjectName());
-//        revenueGrowthSummary.setFinancialYear(accountBudgets.getFinancialYear());
-//        revenueGrowthSummary.setQuarter(accountBudgets.getQuarter());
-//        revenueGrowthSummary.setMonth(accountBudgets.getMonth());
-//        // Calculate forecast from current quarter data
-//        float currentQuarterForecast = (float) data.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-//        revenueGrowthSummary.setForecast(currentQuarterForecast);
-//
-//        // Calculate accountExpected based on previous quarter's forecast
-//        float previousQuarterForecast = calculatePreviousQuarterForecast(previousQuarterData);
-//
-//        float accountExpected = Math.max(accountBudgets.getBudget(), 1.07f * previousQuarterForecast);
-//        revenueGrowthSummary.setAccountExpected(accountExpected);
-//
-//        // Calculate gap
-//        float gap = revenueGrowthSummary.getAccountExpected() - revenueGrowthSummary.getForecast();
-//        revenueGrowthSummary.setGap(gap);
-//
-//        return revenueGrowthSummary;
-//    }
-//
-//    // Helper method to calculate forecast of the previous quarter for a specific account
-//    private static float calculatePreviousQuarterForecast(List<DataEntry> previousQuarterData) {
-//        return (float) previousQuarterData.stream()
-//                .mapToDouble(DataEntry::getLikely)
-//                .sum() / 1000000;
-//    }
-//
-//    // Method to get the previous quarter based on the current quarter
-//    private static String getPreviousQuarter(int financialYear, String currentQuarter) {
-//        switch (currentQuarter) {
-//            case "Q1":
-//                return (financialYear - 1) + "Q4";
-//            case "Q2":
-//                return financialYear + "Q1";
-//            case "Q3":
-//                return financialYear + "Q2";
-//            case "Q4":
-//                return financialYear + "Q3";
-//            default:
-//                throw new IllegalArgumentException("Invalid quarter: " + currentQuarter);
-//        }
-//    }
-//
-//    // Method to extract financial year from the previous quarter key
-//    private static int extractFinancialYear(String previousQuarterKey) {
-//        try {
-//            return Integer.parseInt(previousQuarterKey.substring(0, 4));
-//        } catch (NumberFormatException e) {
-//            throw new IllegalArgumentException("Invalid financial year in previous quarter key: " + previousQuarterKey, e);
-//        }
-//    }
-//
-//    // Method to extract quarter from the previous quarter key
-//    private static String extractQuarter(String previousQuarterKey) {
-//        return previousQuarterKey.substring(4);
-//    }
-//
-//    // Validate the quarter format
-//    private static boolean isValidQuarter(String quarter) {
-//        return quarter.equals("Q1") || quarter.equals("Q2") || quarter.equals("Q3") || quarter.equals("Q4");
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @PostMapping("/populate")
-    public ResponseEntity<String> fetchDataAndPopulateTables() {
-        List<DataEntry> dataEntryList = dataEntryRepo.findAll();
-
-        for (DataEntry dataEntry : dataEntryList) {
-            populateRevenueBudgetSummary(dataEntry);
-            populateRevenueGrowthSummary(dataEntry);
+                // Check for duplicate entry
+                if (updated && !isDuplicateEntry(existingDataEntry)) {
+                    // Save the updated data entry
+                    DataEntry updatedDataEntry = dataEntryService.saveDataEntry(existingDataEntry);
+                    updatedDataEntries.add(updatedDataEntry);
+                    // Add changes to response
+                    if (!changes.isEmpty()) {
+                        response.put("message", "Data successfully updated.");
+                        response.put("changes", changes);
+                    }
+                } else if (!updated) {
+                    response.put("message", "No changes detected.");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    // if data entry with the given ID is a duplicate, add it to the response
+                    response.put("message", "Duplicate entry: Data already exists.");
+                    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+                }
+            } else {
+                // if data entry with the given ID is not found, add it to the response
+                response.put("message", "Data entry not found for one or more entries.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
         }
 
-        return ResponseEntity.ok("Data populated successfully to both RevenueBudgetSummary and RevenueGrowthSummary");
+        response.put("data", updatedDataEntries);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private void populateRevenueBudgetSummary(DataEntry dataEntry) {
-        // Check if the entry already exists in RevenueBudgetSummary
-        if (isEntryExistsInRevenueBudgetSummary(dataEntry)) {
-            // Log and skip existing entries
-            System.out.println("Entry already exists in RevenueBudgetSummary. Skipping population for: " + dataEntry);
-            return;
+    private boolean isDuplicateEntry(DataEntry dataEntry) {
+        // Retrieve all existing data entries excluding the current one being updated
+        List<DataEntry> existingEntries = dataEntryRepo.findAll();
+
+        // Iterate through existing entries to check for duplicates
+        for (DataEntry existingEntry : existingEntries) {
+            // Exclude the current entry being updated from duplicate check
+            if (!existingEntry.getId().equals(dataEntry.getId()) && areEntriesEqual(existingEntry, dataEntry)) {
+                return true;
+            }
         }
-
-        // Populate the entry in RevenueBudgetSummary
-        RevenueBudgetSummary revenue = getRevenueBudgetSummary(dataEntry);
-
-        List<DataEntry> data = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-                dataEntry.getVertical(),
-                dataEntry.getClassification(),
-                dataEntry.getDeliveryDirector(),
-                dataEntry.getDeliveryManager(),
-                dataEntry.getAccount(),
-                dataEntry.getProjectManager(),
-                dataEntry.getProjectName(),
-                dataEntry.getFinancialYear(),
-                dataEntry.getQuarter(),
-                dataEntry.getBudget()
-        );
-
-        float total = (float) data.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-        revenue.setForecast(total);
-
-        float temp = dataEntry.getBudget() - revenue.getForecast();
-        revenue.setGap(temp);
-
-        revenueBudgetSummaryRepository.save(revenue);
+        return false;
     }
 
-    private boolean isEntryExistsInRevenueBudgetSummary(DataEntry dataEntry) {
-        List<RevenueBudgetSummary> existingEntries = revenueBudgetSummaryRepository
-                .findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudget(
-                        dataEntry.getVertical(),
-                        dataEntry.getClassification(),
-                        dataEntry.getDeliveryDirector(),
-                        dataEntry.getDeliveryManager(),
-                        dataEntry.getAccount(),
-                        dataEntry.getProjectManager(),
-                        dataEntry.getProjectName(),
-                        dataEntry.getFinancialYear(),
-                        dataEntry.getQuarter(),
-                        dataEntry.getBudget()
-                );
-
-        return !existingEntries.isEmpty();
+    private boolean areEntriesEqual(DataEntry entry1, DataEntry entry2) {
+        // Compare all fields of the entries
+        // Return true if all fields match, false otherwise
+        return entry1.getMonth().equals(entry2.getMonth()) &&
+                entry1.getVertical().equals(entry2.getVertical()) &&
+                entry1.getClassification().equals(entry2.getClassification()) &&
+                entry1.getDeliveryDirector().equals(entry2.getDeliveryDirector()) &&
+                entry1.getDeliveryManager().equals(entry2.getDeliveryManager()) &&
+                entry1.getAccount().equals(entry2.getAccount()) &&
+                entry1.getProjectManager().equals(entry2.getProjectManager()) &&
+                entry1.getProjectName().equals(entry2.getProjectName()) &&
+                entry1.getValue() == entry2.getValue() &&
+                entry1.getCategory().equals(entry2.getCategory()) &&
+                entry1.getAnnuityorNonAnnuity().equals(entry2.getAnnuityorNonAnnuity()) &&
+                entry1.getFinancialYear() == entry2.getFinancialYear() &&
+                entry1.getBudget() == entry2.getBudget() &&
+                entry1.getQuarter().equals(entry2.getQuarter());
     }
 
-    private void populateRevenueGrowthSummary(DataEntry dataEntry) {
-        RevenueGrowthSummary existingRevenue = revenueGrowthSummaryRepository.findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                dataEntry.getVertical(),
-                dataEntry.getClassification(),
-                dataEntry.getDeliveryDirector(),
-                dataEntry.getDeliveryManager(),
-                dataEntry.getAccount(),
-                dataEntry.getProjectManager(),
-                dataEntry.getProjectName(),
-                dataEntry.getFinancialYear(),
-                dataEntry.getQuarter()
-        );
-
-        if (existingRevenue != null) {
-            return;
-        }
-
-        List<DataEntry> data = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                dataEntry.getVertical(),
-                dataEntry.getClassification(),
-                dataEntry.getDeliveryDirector(),
-                dataEntry.getDeliveryManager(),
-                dataEntry.getAccount(),
-                dataEntry.getProjectManager(),
-                dataEntry.getProjectName(),
-                dataEntry.getFinancialYear(),
-                dataEntry.getQuarter()
-        );
-
-        if (!isValidQuarter(dataEntry.getQuarter())) {
-            throw new IllegalArgumentException("Invalid quarter: " + dataEntry.getQuarter());
-        }
-
-        String previousQuarterKey = getPreviousQuarter(dataEntry.getFinancialYear(), dataEntry.getQuarter());
-        int previousFinancialYear = extractFinancialYear(previousQuarterKey);
-        String previousQuarter = extractQuarter(previousQuarterKey);
-
-        List<DataEntry> previousQuarterData = dataEntryRepo.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(
-                dataEntry.getVertical(),
-                dataEntry.getClassification(),
-                dataEntry.getDeliveryDirector(),
-                dataEntry.getDeliveryManager(),
-                dataEntry.getAccount(),
-                dataEntry.getProjectManager(),
-                dataEntry.getProjectName(),
-                previousFinancialYear,
-                previousQuarter
-        );
-
-        RevenueGrowthSummary revenue = getRevenueGrowthSummary(dataEntry, data, previousQuarterData);
-
-        revenueGrowthSummaryRepository.save(revenue);
-    }
-
-    private static RevenueBudgetSummary getRevenueBudgetSummary(DataEntry dataEntry) {
-        RevenueBudgetSummary revenueBudgetSummary = new RevenueBudgetSummary();
-        revenueBudgetSummary.setVertical(dataEntry.getVertical());
-        revenueBudgetSummary.setClassification(dataEntry.getClassification());
-        revenueBudgetSummary.setDeliveryDirector(dataEntry.getDeliveryDirector());
-        revenueBudgetSummary.setDeliveryManager(dataEntry.getDeliveryManager());
-        revenueBudgetSummary.setAccount(dataEntry.getAccount());
-        revenueBudgetSummary.setProjectManager(dataEntry.getProjectManager());
-        revenueBudgetSummary.setProjectName(dataEntry.getProjectName());
-        revenueBudgetSummary.setFinancialYear(dataEntry.getFinancialYear());
-        revenueBudgetSummary.setQuarter(dataEntry.getQuarter());
-        revenueBudgetSummary.setMonth(dataEntry.getMonth());
-        revenueBudgetSummary.setBudget(dataEntry.getBudget());
-        return revenueBudgetSummary;
-    }
-
-    private static RevenueGrowthSummary getRevenueGrowthSummary(DataEntry accountBudgets, List<DataEntry> data, List<DataEntry> previousQuarterData) {
-        RevenueGrowthSummary revenueGrowthSummary = new RevenueGrowthSummary();
-        revenueGrowthSummary.setVertical(accountBudgets.getVertical());
-        revenueGrowthSummary.setClassification(accountBudgets.getClassification());
-        revenueGrowthSummary.setDeliveryDirector(accountBudgets.getDeliveryDirector());
-        revenueGrowthSummary.setDeliveryManager(accountBudgets.getDeliveryManager());
-        revenueGrowthSummary.setAccount(accountBudgets.getAccount());
-        revenueGrowthSummary.setProjectManager(accountBudgets.getProjectManager());
-        revenueGrowthSummary.setProjectName(accountBudgets.getProjectName());
-        revenueGrowthSummary.setFinancialYear(accountBudgets.getFinancialYear());
-        revenueGrowthSummary.setQuarter(accountBudgets.getQuarter());
-        revenueGrowthSummary.setMonth(accountBudgets.getMonth());
-
-        float currentQuarterForecast = (float) data.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-        revenueGrowthSummary.setForecast(currentQuarterForecast);
-
-        float previousQuarterForecast = calculatePreviousQuarterForecast(previousQuarterData);
-
-        float accountExpected = Math.max(accountBudgets.getBudget(), 1.07f * previousQuarterForecast);
-        revenueGrowthSummary.setAccountExpected(accountExpected);
-
-        float gap = revenueGrowthSummary.getAccountExpected() - revenueGrowthSummary.getForecast();
-        revenueGrowthSummary.setGap(gap);
-
-        return revenueGrowthSummary;
-    }
-
-    private static float calculatePreviousQuarterForecast(List<DataEntry> previousQuarterData) {
-        return (float) previousQuarterData.stream().mapToDouble(DataEntry::getLikely).sum() / 1000000;
-    }
-
-    private static String getPreviousQuarter(int financialYear, String currentQuarter) {
-        switch (currentQuarter) {
-            case "Q1":
-                return (financialYear - 1) + "Q4";
-            case "Q2":
-                return financialYear + "Q1";
-            case "Q3":
-                return financialYear + "Q2";
-            case "Q4":
-                return financialYear + "Q3";
-            default:
-                throw new IllegalArgumentException("Invalid quarter: " + currentQuarter);
+    private DataEntry getExistingDataEntry1(Optional<DataEntry> optionalDataEntry) {
+        // Check if optionalDataEntry contains a value
+        if (optionalDataEntry.isPresent()) {
+            // Return the existing data entry if present
+            return optionalDataEntry.get();
+        } else {
+            // Return null if optionalDataEntry is empty
+            return null;
         }
     }
 
-    private static int extractFinancialYear(String previousQuarterKey) {
-        try {
-            return Integer.parseInt(previousQuarterKey.substring(0, 4));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid financial year in previous quarter key: " + previousQuarterKey, e);
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/save")
+    public ResponseEntity<Map<String, Object>> createDataEntries(@RequestBody List<DataEntryDTO> dataEntryDTOList) {
+        Map<String, Object> response = new HashMap<>();
+        List<DataEntry> savedDataEntries = new ArrayList<>();
+
+        for (DataEntryDTO dataEntryDTO : dataEntryDTOList) {
+            // Check for duplicate entries for each DTO
+            if (dataEntryService.isDuplicateEntry(dataEntryDTO)) {
+                response.put("message", "Data already exists for one or more entries.");
+                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+            }
+
+            // Create DataEntry entity from DTO
+            DataEntry dataEntry = new DataEntry(
+                    dataEntryDTO.getId(),
+                    dataEntryDTO.getMonth(),
+                    dataEntryDTO.getVertical(),
+                    dataEntryDTO.getClassification(),
+                    dataEntryDTO.getDeliveryDirector(),
+                    dataEntryDTO.getDeliveryManager(),
+                    dataEntryDTO.getAccount(),
+                    dataEntryDTO.getProjectManager(),
+                    dataEntryDTO.getProjectName(),
+                    dataEntryDTO.getCategory(),
+                    dataEntryDTO.getAnnuityorNonAnnuity(),
+                    dataEntryDTO.getValue(),
+                    null, // Type will be calculated
+                    dataEntryDTO.getFinancialYear(),
+                    dataEntryDTO.getQuarter(),
+                    0, // Probability will be calculated
+                    null, // Projects or Pursuit Stage will be calculated
+                    0, // Confirmed will be calculated
+                    0, // Upside will be calculated
+                    0, // Likely will be calculated
+                    0, // Annuity Revenue will be calculated
+                    0, // Non-Annuity Revenue will be calculated
+                    0, // Offshore Cost will be calculated
+                    0, // Onsite Cost will be calculated
+                    0, // Total Cost will be calculated
+                    0, // Offshore Project Manager will be calculated
+                    0, // Onsite Project Manager will be calculated
+                    0, // Billable Project Manager will be calculated
+                    dataEntryDTO.getBudget()
+            );
+
+            // Perform calculations
+            calculateType(dataEntry);
+            calculateOffshoreCost(dataEntry);
+            calculateOnsiteCost(dataEntry);
+            calculateTotalCost(dataEntry);
+            calculateBillablePM(dataEntry);
+            calculateConfirmed(dataEntry);
+            calculateUpside(dataEntry);
+            calculateLikely(dataEntry);
+            calculateProjectsOrPursuitStage(dataEntry);
+            calculateProbability(dataEntry);
+            calculateAnnuityRevenue(dataEntry);
+            calculateNonAnnuityRevenue(dataEntry);
+            calculateOffshorePM(dataEntry);
+            calculateOnsitePM(dataEntry);
+
+            // Save DataEntry
+            DataEntry savedDataEntry = dataEntryService.saveDataEntry(dataEntry);
+            savedDataEntries.add(savedDataEntry);
+        }
+
+        response.put("message", "Data successfully created.");
+        response.put("data", savedDataEntries);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // Calculation methods here (same as before)
+    private void calculateOffshoreCost(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Offshore Cost")) {
+            dataEntry.setOffshoreCost(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOffshoreCost(0);
         }
     }
 
-    private static String extractQuarter(String previousQuarterKey) {
-        return previousQuarterKey.substring(4);
+    private void calculateOnsiteCost(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Onsite Cost")) {
+            dataEntry.setOnsiteCost(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOnsiteCost(0);
+        }
     }
 
-    private static boolean isValidQuarter(String quarter) {
-        return quarter.equals("Q1") || quarter.equals("Q2") || quarter.equals("Q3") || quarter.equals("Q4");
+    private void calculateType(DataEntry dataEntry) {
+        String category = dataEntry.getCategory().toLowerCase();
+        String type;
+        if (category.contains("confirmed") || category.contains("upside")) {
+            type = "Revenue";
+        } else if (category.contains("cost")) {
+            type = "Cost";
+        } else {
+            type = "Operations";
+        }
+        dataEntry.setType(type);
+    }
+
+    private void calculateTotalCost(DataEntry dataEntry) {
+        float offshoreCost = dataEntry.getOffshoreCost();
+        float onsiteCost = dataEntry.getOnsiteCost();
+        float totalCost = offshoreCost + onsiteCost;
+        dataEntry.setTotalCost(totalCost);
+    }
+
+    private void calculateBillablePM(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Billable PM")) {
+            dataEntry.setBillableProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setBillableProjectManager(0);
+        }
+    }
+
+    private void calculateConfirmed(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        if (category.equals("Offshore Confirmed") || category.equals("Onsite Confirmed")) {
+            dataEntry.setConfirmed(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setConfirmed(0);
+        }
+    }
+
+    private void calculateUpside(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        if (category.equals("Offshore Upside") || category.equals("Onsite Upside")) {
+            dataEntry.setUpside(dataEntry.getValue());
+        } else {
+            dataEntry.setUpside(0);
+        }
+    }
+
+    private void calculateLikely(DataEntry dataEntry) {
+        float confirmed = dataEntry.getConfirmed();
+        float probability = dataEntry.getProbability() / 100.0f; // Ensure probability is treated as a percentage
+        float upside = dataEntry.getUpside();
+        float likely = confirmed + (probability * upside);
+        dataEntry.setLikely(likely);
+    }
+
+    private void calculateOffshorePM(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Offshore PM")) {
+            dataEntry.setOffshoreProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOffshoreProjectManager(0);
+        }
+    }
+
+    private void calculateOnsitePM(DataEntry dataEntry) {
+        if (dataEntry.getCategory().equals("Onsite PM")) {
+            dataEntry.setOnsiteProjectManager(dataEntry.getValue() * dataEntry.getProbability() / 100);
+        } else {
+            dataEntry.setOnsiteProjectManager(0);
+        }
+    }
+
+    private void calculateAnnuityRevenue(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityorNonAnnuity();
+        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
+                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
+                annuityOrNonAnnuity.equals("Annuity")) {
+            dataEntry.setAnnuityRevenue(dataEntry.getLikely());
+        } else {
+            dataEntry.setAnnuityRevenue(0);
+        }
+    }
+
+    private void calculateNonAnnuityRevenue(DataEntry dataEntry) {
+        String category = dataEntry.getCategory();
+        String annuityOrNonAnnuity = dataEntry.getAnnuityorNonAnnuity();
+        if ((category.equals("Offshore Confirmed") || category.equals("Offshore Upside") ||
+                category.equals("Onsite Confirmed") || category.equals("Onsite Upside")) &&
+                annuityOrNonAnnuity.equals("Annuity")) {
+            dataEntry.setNonAnnuityRevenue(0);
+        } else {
+            dataEntry.setNonAnnuityRevenue(dataEntry.getLikely());
+        }
+    }
+
+    private void calculateProjectsOrPursuitStage(DataEntry dataEntry) {
+        // Concatenate Account and Project Name
+        String concatenatedName = dataEntry.getAccount() + dataEntry.getProjectName();
+
+        // Check if the concatenated name exists in PursuitTracker
+        PursuitTracker pursuitTracker = pursuitTrackerRepository.findByConcatenatedName(concatenatedName);
+
+        // If pursuitTracker is null, set Projects or Pursuit Stage to "Confirmed"
+        if (pursuitTracker == null) {
+            dataEntry.setProjectsOrPursuitStage("Confirmed");
+        } else {
+            // Set Projects or Pursuit Stage to the respective stage value
+            dataEntry.setProjectsOrPursuitStage(pursuitTracker.getStage());
+        }
+    }
+
+    private void calculateProbability(DataEntry dataEntry) {
+        // Get the Projects or Pursuit Stage value
+        String projectsOrPursuitStage = dataEntry.getProjectsOrPursuitStage();
+
+        // If Projects or Pursuit Stage is "Confirmed", set Probability to 100%
+        if (projectsOrPursuitStage.equals("Confirmed")) {
+            dataEntry.setProbability(100);
+        } else {
+            // Concatenate Account and Project Name
+            String concatenatedName = dataEntry.getAccount() + dataEntry.getProjectName();
+
+            // Retrieve PursuitTracker by concatenated name
+            PursuitTracker pursuitTracker = pursuitTrackerRepository.findByConcatenatedName(concatenatedName);
+
+            // If PursuitTracker exists, set Probability to Pursuit Probability
+            if (pursuitTracker != null) {
+                dataEntry.setProbability(pursuitTracker.getPursuitProbability());
+            } else {
+                // If PursuitTracker does not exist, set Probability to 0
+                dataEntry.setProbability(0);
+            }
+        }
     }
 }

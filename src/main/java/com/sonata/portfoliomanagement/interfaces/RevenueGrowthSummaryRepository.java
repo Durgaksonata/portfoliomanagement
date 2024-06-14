@@ -1,5 +1,6 @@
 package com.sonata.portfoliomanagement.interfaces;
 
+import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -56,4 +57,7 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
+    boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
+
 }
