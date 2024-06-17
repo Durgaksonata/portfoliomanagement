@@ -26,44 +26,42 @@ public class MD_ClassificationController {
         return ResponseEntity.ok(classifications);
     }
 
+//    @PostMapping("/save")
+//    public ResponseEntity<List<MD_Classification>> createClassifications(@RequestBody List<MD_Classification> classificationList) {
+//        List<MD_Classification> createdClassifications = new ArrayList<>();
+//        for (MD_Classification classification : classificationList) {
+//            MD_Classification createdClassification = classificationRepo.save(classification);
+//            createdClassifications.add(createdClassification);
+//        }
+//        return new ResponseEntity<>(createdClassifications, HttpStatus.CREATED);
+//    }
+
     @PostMapping("/save")
-    public ResponseEntity<List<MD_Classification>> createClassifications(@RequestBody List<MD_Classification> classificationList) {
-        List<MD_Classification> createdClassifications = new ArrayList<>();
-        for (MD_Classification classification : classificationList) {
-            MD_Classification createdClassification = classificationRepo.save(classification);
-            createdClassifications.add(createdClassification);
-        }
-        return new ResponseEntity<>(createdClassifications, HttpStatus.CREATED);
+    public ResponseEntity<MD_Classification> createClassification(@RequestBody MD_Classification classification) {
+        MD_Classification createdClassification = classificationRepo.save(classification);
+        return new ResponseEntity<>(createdClassification, HttpStatus.CREATED);
     }
+
+
+
     @PutMapping("/update")
-    public ResponseEntity<String> updateClassifications(@RequestBody List<MD_Classification> classifications) {
-        List<Integer> notFoundIds = classifications.stream()
-                .filter(classificationDetails -> {
-                    Integer id = classificationDetails.getId();
-                    if (id == null) {
-                        return true;
-                    }
-                    Optional<MD_Classification> existingClassification = classificationRepo.findById(id);
-                    if (existingClassification.isPresent()) {
-                        MD_Classification classificationToUpdate = existingClassification.get();
-                        classificationToUpdate.setClassification(classificationDetails.getClassification());
-                        classificationRepo.save(classificationToUpdate);
-                        return false;
-                    } else {
-                        return true;
-                    }
-                })
-                .map(MD_Classification::getId)
-                .collect(Collectors.toList());
-
-        if (!notFoundIds.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No classifications found with IDs: " + notFoundIds.toString());
+    public ResponseEntity<String> updateClassification(@RequestBody MD_Classification classification) {
+        Integer id = classification.getId();
+        if (id == null) {
+            return ResponseEntity.badRequest().body("ID must be provided for update.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Classifications have been successfully updated.");
+        Optional<MD_Classification> existingClassificationOptional = classificationRepo.findById(id);
+        if (existingClassificationOptional.isPresent()) {
+            MD_Classification existingClassification = existingClassificationOptional.get();
+            existingClassification.setClassification(classification.getClassification());
+            classificationRepo.save(existingClassification);
+            return ResponseEntity.ok("Classification with ID " + id + " has been successfully updated.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
 
     @DeleteMapping("/delete")

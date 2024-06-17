@@ -1,11 +1,8 @@
 package com.sonata.portfoliomanagement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="md_users")
@@ -17,11 +14,14 @@ public class MD_Users {
     private String firstName;
     @Column(name="last_name")
     private String lastName;
-    private  String role;
+
+    @ElementCollection
+    @Column(name = "role")
+    private List<String> role;
 
     public MD_Users() {}
 
-    public MD_Users(int id, String firstName, String lastName, String role) {
+    public MD_Users(int id, String firstName, String lastName, List<String> role) {
         super();
         this.id = id;
         this.firstName = firstName;
@@ -52,12 +52,11 @@ public class MD_Users {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    public String getRole() {
+    public List<String> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(List<String> role) {
         this.role = role;
     }
 }

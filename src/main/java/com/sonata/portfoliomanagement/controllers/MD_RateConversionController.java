@@ -23,11 +23,11 @@ public class MD_RateConversionController {
     private static final Logger logger = LoggerFactory.getLogger(MD_RateConversionController.class);
 
     @Autowired
-    private MD_RateConversionRepository repository;
+    private MD_RateConversionRepository rateConversionRepository;
 
     @GetMapping("/get")
     public ResponseEntity<List<MD_RateConversion>> getAllData() {
-        List<MD_RateConversion> mdrateconvo = repository.findAll();
+        List<MD_RateConversion> mdrateconvo = rateConversionRepository.findAll();
         return ResponseEntity.ok(mdrateconvo);
     }
 
@@ -35,7 +35,7 @@ public class MD_RateConversionController {
     public ResponseEntity<MD_RateConversion> createMDRateConversion(@Valid @RequestBody MD_RateConversion mdrateconvo) {
         logger.info("Received MDRateConversion: {}", mdrateconvo);
         try {
-            MD_RateConversion createdMDRateConvo = repository.save(mdrateconvo);
+            MD_RateConversion createdMDRateConvo = rateConversionRepository.save(mdrateconvo);
             logger.info("Saved MDRateConversion: {}", createdMDRateConvo);
             return new ResponseEntity<>(createdMDRateConvo, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -43,25 +43,35 @@ public class MD_RateConversionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<MD_RateConversion> updateMDRateConversion(@PathVariable int id, @Valid @RequestBody MD_RateConversion mdrateconvo) {
-        logger.info("Received update request for MDRateConversion with id: {}", id);
 
-        Optional<MD_RateConversion> optionalMDRateConvo = repository.findById(id);
-        if (optionalMDRateConvo.isPresent()) {
-            MD_RateConversion existingMDRateConvo = optionalMDRateConvo.get();
-            existingMDRateConvo.setFinancialYear(mdrateconvo.getFinancialYear());
-            existingMDRateConvo.setMonth(mdrateconvo.getMonth());
-            existingMDRateConvo.setQuarter(mdrateconvo.getQuarter());
-            existingMDRateConvo.setUsdToInr(mdrateconvo.getUsdToInr());
-            existingMDRateConvo.setGbpToUsd(mdrateconvo.getGbpToUsd());
 
-            MD_RateConversion updatedMDRateConvo = repository.save(existingMDRateConvo);
-            logger.info("Updated MDRateConversion: {}", updatedMDRateConvo);
-            return new ResponseEntity<>(updatedMDRateConvo, HttpStatus.OK);
-        } else {
-            logger.error("MDRateConversion with id {} not found", id);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PutMapping("/update")
+    public ResponseEntity<MD_RateConversion> updateRateConversion(@RequestBody MD_RateConversion updatedRateConversion) {
+        Integer id = updatedRateConversion.getId();
+
+        // Check if the entity with the given ID exists
+        if (id == null || !rateConversionRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
+
+        // Save the updated entity
+        MD_RateConversion updatedEntity = rateConversionRepository.save(updatedRateConversion);
+        return ResponseEntity.ok(updatedEntity);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteRateConversions(@RequestBody List<Integer> ids) {
+        StringBuilder responseMessage = new StringBuilder();
+
+        for (Integer id : ids) {
+            if (rateConversionRepository.existsById(id)) {
+                rateConversionRepository.deleteById(id);
+                responseMessage.append("Entity with ID ").append(id).append(" deleted successfully. ");
+            } else {
+                responseMessage.append("Entity with ID ").append(id).append(" does not exist. Skipping deletion. ");
+            }
+        }
+
+        return ResponseEntity.ok(responseMessage.toString());
     }
 }

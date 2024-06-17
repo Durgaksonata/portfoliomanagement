@@ -30,24 +30,17 @@ public class MD_VerticalController {
         return new ResponseEntity<>(createdVertical, HttpStatus.CREATED);
     }
 
-    // Handles PUT requests to update existing MD_Vertical records.
     @PutMapping("/update")
-    public ResponseEntity<List<MD_Vertical>> updateMdVerticals(@RequestBody List<MD_Vertical> updatedVerticalsList) {
-        try {
-            for (MD_Vertical updatedVertical : updatedVerticalsList) {
-                int id = updatedVertical.getId();
-                if (!verticalRepo.existsById(id)) {
-                    return ResponseEntity.notFound().build();
-                }
-            }
-            List<MD_Vertical> updatedVerticals = verticalRepo.saveAll(updatedVerticalsList);
-            return ResponseEntity.ok(updatedVerticals);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    public ResponseEntity<MD_Vertical> updateMdVertical(@RequestBody MD_Vertical updatedVertical) {
+        int id = updatedVertical.getId();
+        if (!verticalRepo.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
+
+        MD_Vertical savedVertical = verticalRepo.save(updatedVertical);
+        return ResponseEntity.ok(savedVertical);
     }
 
-    // Handles DELETE requests to delete MD_Vertical records by IDs
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteMdVerticalsByIds(@RequestBody List<Integer> verticalIds) {
         try {

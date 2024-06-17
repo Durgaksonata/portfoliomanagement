@@ -2,7 +2,9 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.sonata.portfoliomanagement.interfaces.MD_AccountsRepository;
 import com.sonata.portfoliomanagement.model.MD_Accounts;
@@ -31,20 +33,19 @@ public class MD_AccountsController {
         MD_Accounts createdAcnts = acntRepo.save(mdAcnts);
         return new ResponseEntity<>(createdAcnts, HttpStatus.CREATED);
     }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<MD_Accounts> updateMdAcnts(@PathVariable int id, @RequestBody MD_Accounts updatedMdAcnts) {
-        // Check if PursuitAction with given id exists
+
+    @PutMapping("/update")
+    public ResponseEntity<MD_Accounts> updateMdAcnts(@RequestBody MD_Accounts updatedMdAcnts) {
+        int id = updatedMdAcnts.getId();
+
+        // Check if MD_Accounts with the given id exists
         if (!acntRepo.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        // Set the id of updatedPursuitAction
-        updatedMdAcnts.setId(id);
-
-        // Save the updated PursuitAction
-        MD_Accounts updateMdAcnts = acntRepo.save(updatedMdAcnts);
-
-        return ResponseEntity.ok(updateMdAcnts);
+        // Save the updated MD_Accounts
+        MD_Accounts updatedAccount = acntRepo.save(updatedMdAcnts);
+        return ResponseEntity.ok(updatedAccount);
     }
 
     @PostMapping("/accountbydm")
@@ -59,6 +60,28 @@ public class MD_AccountsController {
         }
 
         return ResponseEntity.ok(distinctAccounts);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteAccountsByIds(@RequestBody List<Integer> ids) {
+        List<Integer> notFoundIds = ids.stream()
+                .filter(id -> {
+                    Optional<MD_Accounts> account = acntRepo.findById(id);
+                    if (account.isEmpty()) {
+                        return true;
+                    }
+                    acntRepo.deleteById(id);
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No accounts found with IDs: " + notFoundIds.toString());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Accounts with specified IDs have been deleted.");
     }
 
     @PostMapping("/dmbyacnt")

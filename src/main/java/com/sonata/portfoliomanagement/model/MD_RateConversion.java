@@ -16,23 +16,18 @@ public class MD_RateConversion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     @Column(name = "financialyear")
     @JsonProperty("financialYear")
     private String financialYear;
-
     @Column(name = "month")
     @JsonProperty("month")
     private String month;
-
     @Column(name = "quarter")
     @JsonProperty("quarter")
     private String quarter;
-
     @Column(name = "usd_to_inr")
     @JsonProperty("USDToINR")
     private float usdToInr;
-
     @Column(name = "gbp_to_usd")
     @JsonProperty("GBPToUSD")
     private float gbpToUsd;

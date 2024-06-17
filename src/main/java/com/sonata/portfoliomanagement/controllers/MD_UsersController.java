@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:5173" )
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class MD_UsersController {
 
     @Autowired
@@ -64,6 +64,5 @@ public class MD_UsersController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting users.");
         }
     }
-
 
 }

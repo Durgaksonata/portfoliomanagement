@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173" )
@@ -37,30 +34,57 @@ public class MD_ProjectManagerController {
         return new ResponseEntity<>(createdProjectManagers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{ids}")
-    public ResponseEntity<List<MD_ProjectManager>> updateProjectManagers(@PathVariable List<Integer> ids, @RequestBody List<MD_ProjectManager> updatedProjectManagers) {
-        List<MD_ProjectManager> updatedEntities = new ArrayList<>();
-        for (int i = 0; i < ids.size(); i++) {
-            int id = ids.get(i);
-            MD_ProjectManager updatedProjectManager = updatedProjectManagers.get(i);
-            Optional<MD_ProjectManager> existingProjectManagerOptional = projectManagerRepository.findById(id);
-            if (existingProjectManagerOptional.isPresent()) {
-                updatedProjectManager.setId(id);
-                updatedEntities.add(projectManagerRepository.save(updatedProjectManager));
-            }
+    @PutMapping("/update")
+    public ResponseEntity<String> updateProjectManagers(@RequestBody List<MD_ProjectManager> projectManagers) {
+        List<Integer> notFoundIds = projectManagers.stream()
+                .filter(manager -> {
+                    Integer id = manager.getId();
+                    if (id == null) {
+                        return true;
+                    }
+                    Optional<MD_ProjectManager> existingManager = projectManagerRepository.findById(id);
+                    if (existingManager.isPresent()) {
+                        MD_ProjectManager managerToUpdate = existingManager.get();
+                        managerToUpdate.setProjectManager(manager.getProjectManager());
+                        managerToUpdate.setProject(manager.getProject());
+                        projectManagerRepository.save(managerToUpdate);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
+                .map(MD_ProjectManager::getId)
+                .collect(Collectors.toList());
+
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No project managers found with IDs: " + notFoundIds.toString());
         }
-        return ResponseEntity.ok(updatedEntities);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Project managers have been successfully updated.");
     }
 
-    @DeleteMapping("/delete/{ids}")
-    public ResponseEntity<Void> deleteProjectManagers(@PathVariable List<Integer> ids) {
-        for (Integer id : ids) {
-            if (projectManagerRepository.existsById(id)) {
-                projectManagerRepository.deleteById(id);
-            }
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteProjectManagersByIds(@RequestBody List<Integer> ids) {
+        List<Integer> notFoundIds = ids.stream()
+                .filter(id -> {
+                    Optional<MD_ProjectManager> manager = projectManagerRepository.findById(id);
+                    if (manager.isPresent()) {
+                        projectManagerRepository.deleteById(id);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
+                .collect(Collectors.toList());
+
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No project managers found with IDs: " + notFoundIds.toString());
         }
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Project managers have been deleted successfully.");
     }
-
-
 }

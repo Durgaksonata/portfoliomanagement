@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:5173" )
 @RestController
 @RequestMapping("/mdpursuit")
@@ -28,16 +31,42 @@ public class MD_PursuitStatusController {
         return new ResponseEntity<>(createdPursuitStatus, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<MD_PursuitStatus> updateMdcategory(@PathVariable int id, @RequestBody MD_PursuitStatus updatedMdPursuitStatus) {
-        // Check if PursuitAction with given id exists
-        if (!pursuitRepo.existsById(id)) {
+    @PutMapping("/update")
+    public ResponseEntity<MD_PursuitStatus> updateMdPursuitStatus(@RequestBody MD_PursuitStatus updatedPursuitStatus) {
+        Optional<MD_PursuitStatus> existingPursuitStatus = pursuitRepo.findById(updatedPursuitStatus.getId());
+        if (existingPursuitStatus.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        // Set the id of updatedPursuitAction
-        updatedMdPursuitStatus.setId(id);
-        // Save the updated PursuitAction
-        MD_PursuitStatus updateMdPursuitStatus = pursuitRepo.save(updatedMdPursuitStatus);
-        return ResponseEntity.ok(updateMdPursuitStatus);
+
+        // Update the existing entity with new data
+        MD_PursuitStatus updatedEntity = existingPursuitStatus.get();
+        updatedEntity.setPursuitStatus(updatedPursuitStatus.getPursuitStatus());
+
+        MD_PursuitStatus savedEntity = pursuitRepo.save(updatedEntity);
+        return ResponseEntity.ok(savedEntity);
     }
+
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deletePursuitStatusByIds(@RequestBody List<Integer> ids) {
+        List<Integer> notFoundIds = ids.stream()
+                .filter(id -> {
+                    Optional<MD_PursuitStatus> pursuitStatus = pursuitRepo.findById(id);
+                    if (pursuitStatus.isEmpty()) {
+                        return true;
+                    }
+                    pursuitRepo.deleteById(id);
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No pursuit statuses found with IDs: " + notFoundIds.toString());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Pursuit statuses with specified IDs have been deleted.");
+    }
+
 }
