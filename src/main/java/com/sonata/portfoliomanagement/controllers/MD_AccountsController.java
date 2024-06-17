@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @CrossOrigin(origins = "http://localhost:5173" )
-
 @RestController
 @RequestMapping("/mdaccount")
 public class MD_AccountsController {
@@ -76,7 +75,6 @@ public class MD_AccountsController {
 
         return ResponseEntity.ok(distinctDMs);
     }
-
 
 
 }
