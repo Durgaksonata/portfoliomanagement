@@ -137,7 +137,7 @@ public class MD_UsersController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Users " + deletedUserNames + " deleted successfully");
+                .body("Users: " + deletedUserNames + " deleted successfully");
     }
 
 

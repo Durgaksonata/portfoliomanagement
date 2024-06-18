@@ -111,6 +111,6 @@ public class MD_RolesController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Roles " + deletedRoleNames + " deleted successfully");
+                .body("Roles: " + deletedRoleNames + " deleted successfully");
     }
 }

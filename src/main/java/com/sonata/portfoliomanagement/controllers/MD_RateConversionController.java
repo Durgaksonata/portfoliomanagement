@@ -177,7 +177,7 @@ public class MD_RateConversionController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Rate conversions " + deletedRateConversionDetails + " deleted successfully");
+                .body("Rate conversions: " + deletedRateConversionDetails + " deleted successfully");
     }
 
 }

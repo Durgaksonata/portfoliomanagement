@@ -122,7 +122,7 @@ public class MD_AccountsController {
                     .body("No accounts found with IDs: " + notFoundIds.toString());
         }
 
-        return ResponseEntity.ok("Accounts " + deletedAccountNames + " deleted successfully.");
+        return ResponseEntity.ok("Accounts: " + deletedAccountNames + " deleted successfully.");
     }
 
 

@@ -104,7 +104,7 @@ public class MD_ProjectController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Projects " + deletedProjectNames + " deleted successfully");
+                .body("Projects: " + deletedProjectNames + " deleted successfully");
     }
 
 

@@ -62,7 +62,7 @@ public class MD_CategoryController {
         if (duplicateCategory.isPresent() && duplicateCategory.get().getId() != (updatedCategory.getId())) {
             // If a duplicate category exists and it's not the current category, return a conflict response
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Duplicate entry: Category '" + updatedCategory.getCategory() + "' already exists."));
+                    .body(Map.of("message", "Duplicate entry: Category: '" + updatedCategory.getCategory() + "' already exists."));
         }
 
         // Update the existing category with the new values
@@ -113,6 +113,6 @@ public class MD_CategoryController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Categories" + " " +  deletedCategoryNames +" " +"deleted successfully");
+                .body("Categories:" + " " +  deletedCategoryNames +" " +"deleted successfully");
     }
 }

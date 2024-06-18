@@ -115,6 +115,6 @@ public class MD_ClassificationController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Classifications " + deletedClassificationNames + " deleted successfully");
+                .body("Classifications: " + deletedClassificationNames + " deleted successfully");
     }
 }

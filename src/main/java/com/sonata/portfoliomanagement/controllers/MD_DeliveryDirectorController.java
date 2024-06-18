@@ -108,6 +108,6 @@ public class MD_DeliveryDirectorController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Delivery Directors " + deletedDirectorNames + " deleted successfully");
+                .body("Delivery Directors: " + deletedDirectorNames + " deleted successfully");
     }
 }
