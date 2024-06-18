@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.sonata.portfoliomanagement.model.MD_Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sonata.portfoliomanagement.interfaces.MD_RolesRepository;
-import com.sonata.portfoliomanagement.model.MD_Roles;
+
 
 
 @RestController
@@ -31,59 +32,59 @@ public class MD_RolesController {
     private MD_RolesRepository rolesRepository;
 
     @GetMapping("/get")
-    public ResponseEntity<List<MD_Roles>> getAllRoles() {
-        List<MD_Roles> rolesList = rolesRepository.findAll();
+    public ResponseEntity<List<MD_Role>> getAllRoles() {
+        List<MD_Role> rolesList = rolesRepository.findAll();
         return ResponseEntity.ok(rolesList);
     }
 
 
     @PostMapping("/save")
-    public ResponseEntity<Object> createRole(@RequestBody MD_Roles newRole) {
+    public ResponseEntity<Object> createRole(@RequestBody MD_Role newRole) {
         // Check if a role with the same name already exists
-        Optional<MD_Roles> existingRole = rolesRepository.findByRoles(newRole.getRoles());
+        Optional<MD_Role> existingRole = rolesRepository.findByRole(newRole.getRole());
         if (existingRole.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate entry: Role '" + newRole.getRoles() + "' already exists.");
+                    .body("Duplicate entry: Role '" + newRole.getRole() + "' already exists.");
         }
 
         // Save the new role
-        MD_Roles createdRole = rolesRepository.save(newRole);
+        MD_Role createdRole = rolesRepository.save(newRole);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
 
 
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateRole(@RequestBody MD_Roles updatedRole) {
-        Optional<MD_Roles> roleOptional = rolesRepository.findById(updatedRole.getId());
+    public ResponseEntity<Map<String, Object>> updateRole(@RequestBody MD_Role updatedRole) {
+        Optional<MD_Role> roleOptional = rolesRepository.findById(updatedRole.getId());
 
         if (!roleOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        MD_Roles existingRole = roleOptional.get();
+        MD_Role existingRole = roleOptional.get();
         StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
 
         // Check if the new role name already exists in the database
-        Optional<MD_Roles> roleWithSameName = rolesRepository.findByRoles(updatedRole.getRoles());
+        Optional<MD_Role> roleWithSameName = rolesRepository.findByRole(updatedRole.getRole());
 
         if (roleWithSameName.isPresent() && !roleWithSameName.get().getId().equals(updatedRole.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Collections.singletonMap("message", "Role name '" + updatedRole.getRoles() + "' already exists."));
+                    .body(Collections.singletonMap("message", "Role name '" + updatedRole.getRole() + "' already exists."));
         }
 
         // Check and update the role name if different
-        if (!existingRole.getRoles().equals(updatedRole.getRoles())) {
+        if (!existingRole.getRole().equals(updatedRole.getRole())) {
             updateMessage.append("Role name changed from '")
-                    .append(existingRole.getRoles())
+                    .append(existingRole.getRole())
                     .append("' to '")
-                    .append(updatedRole.getRoles())
+                    .append(updatedRole.getRole())
                     .append("'. ");
-            existingRole.setRoles(updatedRole.getRoles());
+            existingRole.setRole(updatedRole.getRole());
         }
 
         // Save the updated role
-        MD_Roles updatedRoleEntity = rolesRepository.save(existingRole);
+        MD_Role updatedRoleEntity = rolesRepository.save(existingRole);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", updateMessage.toString());
@@ -100,12 +101,12 @@ public class MD_RolesController {
         List<String> deletedRoleNames = new ArrayList<>();
 
         for (Integer id : ids) {
-            Optional<MD_Roles> roleOptional = rolesRepository.findById(id);
+            Optional<MD_Role> roleOptional = rolesRepository.findById(id);
             if (roleOptional.isEmpty()) {
                 notFoundIds.add(id);
             } else {
-                MD_Roles role = roleOptional.get();
-                deletedRoleNames.add(role.getRoles());
+                MD_Role role = roleOptional.get();
+                deletedRoleNames.add(role.getRole());
                 rolesRepository.deleteById(id);
             }
         }

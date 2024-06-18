@@ -9,23 +9,23 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "md_roles")
-public class MD_Roles {
+public class MD_Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="roles")
-    private String roles;
+    @Column(name="role")
+    private String role;
 
 
-    public MD_Roles(Integer id, String roles) {
+    public MD_Role(Integer id, String role) {
         super();
         this.id = id;
-        this.roles = roles;
+        this.role = role;
     }
 
 
-    public MD_Roles() {
+    public MD_Role() {
         super();
     }
 
@@ -40,13 +40,13 @@ public class MD_Roles {
     }
 
 
-    public String getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
 
 
-    public void setRoles(String roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }
