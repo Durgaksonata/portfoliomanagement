@@ -1,7 +1,6 @@
 package com.sonata.portfoliomanagement.controllers;
 
 import com.sonata.portfoliomanagement.interfaces.MD_PursuitProbabilityRepository;
-import com.sonata.portfoliomanagement.model.DataEntry;
 import com.sonata.portfoliomanagement.model.MD_PursuitProbability;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ public class MD_PursuitProbabilityController {
         List<MD_PursuitProbability> pursuitProbabilities = MD_PursuitProbabilityrepo.findAll();
         return ResponseEntity.ok(pursuitProbabilities);
     }
-
     // POST method to add a new MD_PursuitProbability entry
     @PostMapping("/save")
     public ResponseEntity<MD_PursuitProbability> createPursuitProbability(@RequestBody MD_PursuitProbability pursuitProbability) {
@@ -42,7 +40,6 @@ public class MD_PursuitProbabilityController {
         if (existingPursuitProbability.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
         // Update the existing entry with the provided details
         MD_PursuitProbability updatedPursuitProbability = MD_PursuitProbabilityrepo.save(pursuitProbability);
         Map<String, Object> response = new HashMap<>();
