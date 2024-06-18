@@ -7,8 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
-@CrossOrigin(origins = "http://localhost:5173" )
+
 @RestController
 @RequestMapping("/mdvertical")
 public class MD_VerticalController {
@@ -29,39 +30,58 @@ public class MD_VerticalController {
     }
 
 
-    // Handles POST requests to create a new MD_Vertical record
     @PostMapping("/save")
-    public ResponseEntity<?> createMdVertical(@RequestBody MD_Vertical mdVertical) {
-        try {
-            if (verticalRepo.existsByVertical(mdVertical.getVertical())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Duplicate entry for vertical: " + mdVertical.getVertical());
-            }
-            MD_Vertical createdVertical = verticalRepo.save(mdVertical);
-            return new ResponseEntity<>("Vertical added successfully", HttpStatus.CREATED);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while saving the vertical.");
+    public ResponseEntity<Object> createMdVertical( @RequestBody MD_Vertical mdVertical) {
+        if (mdVertical == null) {
+            return ResponseEntity.badRequest().body("MD Vertical object cannot be null. Please provide valid data.");
         }
+
+        // Check if vertical name is null or empty
+        if (mdVertical.getVertical() == null || mdVertical.getVertical().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Vertical name cannot be null or empty. Please provide a valid vertical name.");
+        }
+
+        // Check if a vertical with the same name already exists
+        Optional<MD_Vertical> existingVertical = verticalRepo.findByVertical(mdVertical.getVertical());
+        if (existingVertical.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Duplicate entry: Vertical '" + mdVertical.getVertical() + "' already exists.");
+        }
+
+        // Save the new vertical
+        MD_Vertical createdVertical = verticalRepo.save(mdVertical);
+        if (createdVertical == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save vertical. Please try again later.");
+        }
+
+        String responseMessage = "Data added: Vertical '" + createdVertical.getVertical() + "' added successfully.";
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseMessage);
     }
 
-    // Handles PUT requests to update an existing MD_Vertical record
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateMdVertical(@RequestBody MD_Vertical updatedVertical) {
+        if (updatedVertical.getVertical()=="") {
+            return ResponseEntity.badRequest().body(Map.of("message", "Updated vertical or its ID cannot be null. Please provide valid data."));
+        }
+
         // Check if the vertical with the given ID exists
         Optional<MD_Vertical> existingVerticalOptional = verticalRepo.findById(updatedVertical.getId());
-
         if (!existingVerticalOptional.isPresent()) {
-            // If vertical with the given ID is not found, return 404 Not Found
             return ResponseEntity.notFound().build();
         }
 
-        // Check for duplicate vertical names
-        Optional<MD_Vertical> duplicateVertical = verticalRepo.findByVertical(updatedVertical.getVertical());
-        if (duplicateVertical.isPresent() && duplicateVertical.get().getId() != (updatedVertical.getId())) {
-            // If a duplicate vertical exists and it's not the current vertical, return a conflict response
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Duplicate entry: Vertical '" + updatedVertical.getVertical() + "' already exists."));
+        // Check for duplicate vertical names if the updated vertical name is not null
+        if (updatedVertical.getVertical() != null && !updatedVertical.getVertical().isEmpty()) {
+            Optional<MD_Vertical> duplicateVertical = verticalRepo.findByVertical(updatedVertical.getVertical());
+//            if (duplicateVertical.isPresent() && !duplicateVertical.get().getId().equals(updatedVertical.getId())) {
+            if (duplicateVertical.isPresent() && duplicateVertical.get().getId() != (updatedVertical.getId())) {
+
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "Duplicate entry: Vertical '" + updatedVertical.getVertical() + "' already exists."));
+            }
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("message", "Vertical name cannot be null or empty. Please provide a valid vertical name."));
         }
 
         // Update the existing vertical with the new values
@@ -80,6 +100,10 @@ public class MD_VerticalController {
 
         // Save the updated vertical
         MD_Vertical savedVertical = verticalRepo.save(existingVertical);
+        if (savedVertical == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to update vertical. Please try again later."));
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", updateMessage.toString());
@@ -112,8 +136,6 @@ public class MD_VerticalController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Verticals: " + deletedVerticalNames + "' deleted successfully.");
+                .body("Verticals '" + deletedVerticalNames + "' deleted successfully.");
     }
 }
-
-

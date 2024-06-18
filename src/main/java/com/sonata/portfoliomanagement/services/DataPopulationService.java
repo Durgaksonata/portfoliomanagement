@@ -34,7 +34,7 @@ public class DataPopulationService {
 
         for (DataEntry dataEntry : dataEntryList) {
             // Check if data entry already exists in both tables
-            boolean existsInBudget = revenueBudgetSummaryRepository.existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(
+            boolean existsInBudget = revenueBudgetSummaryRepository.existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(
                     dataEntry.getVertical(),
                     dataEntry.getClassification(),
                     dataEntry.getDeliveryDirector(),
@@ -44,7 +44,6 @@ public class DataPopulationService {
                     dataEntry.getProjectName(),
                     dataEntry.getFinancialYear(),
                     dataEntry.getQuarter(),
-                    dataEntry.getBudget(),
                     dataEntry.getMonth()
             );
 
@@ -75,7 +74,7 @@ public class DataPopulationService {
 
     private void populateRevenueBudgetSummary(DataEntry dataEntry) {
         // Populate RevenueBudgetSummary
-        List<DataEntry> budgetData = dataEntryRepository.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(
+        List<DataEntry> budgetData = dataEntryRepository.findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(
                 dataEntry.getVertical(),
                 dataEntry.getClassification(),
                 dataEntry.getDeliveryDirector(),
@@ -85,7 +84,6 @@ public class DataPopulationService {
                 dataEntry.getProjectName(),
                 dataEntry.getFinancialYear(),
                 dataEntry.getQuarter(),
-                dataEntry.getBudget(),
                 dataEntry.getMonth()
         );
 

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:5173" )
@@ -24,20 +25,24 @@ public class MD_ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Object> createProject(@RequestBody MD_Project project) {
-        // Check if a project with the same name already exists
-        Optional<MD_Project> existingProject = projectRepository.findByProject(project.getProject());
-        if (existingProject.isPresent()) {
-            // If a duplicate project exists, return a conflict response
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate entry: Project '" + project.getProject() + "' already exists.");
+    public ResponseEntity<Object> createProject(@Valid @RequestBody MD_Project project) {
+        if (project == null) {
+            return ResponseEntity.badRequest().body("MD Project object cannot be null. Please provide valid data.");
         }
 
-        // Save the new project
+        if (project.getProject() == null || project.getProject().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Project name cannot be null or empty. Please provide a valid project name.");
+        }
+
+        Optional<MD_Project> existingProject = projectRepository.findByProject(project.getProject());
+        if (existingProject.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Collections.singletonMap("message", "Duplicate entry: Project '" + project.getProject() + "' already exists."));
+        }
+
         MD_Project createdProject = projectRepository.save(project);
-        // Prepare the response message
         String responseMessage = "Data added: Project '" + createdProject.getProject() + "' added successfully.";
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+        return new ResponseEntity<>(Collections.singletonMap("message", responseMessage), HttpStatus.CREATED);
     }
 
     @PutMapping("/update")

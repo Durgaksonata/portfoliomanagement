@@ -3,66 +3,144 @@ package com.sonata.portfoliomanagement.controllers;
 import com.sonata.portfoliomanagement.interfaces.MD_PursuitProbabilityRepository;
 import com.sonata.portfoliomanagement.model.MD_PursuitProbability;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:5173" )
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/MDPursuitProbability")
+@RequestMapping("/mdpursuitprobability")
 public class MD_PursuitProbabilityController {
 
     @Autowired
-    private MD_PursuitProbabilityRepository MD_PursuitProbabilityrepo;
+    private MD_PursuitProbabilityRepository pursuitProbabilityRepo;
 
-    // GET method to retrieve all MD_PursuitProbability entries
     @GetMapping("/get")
     public ResponseEntity<List<MD_PursuitProbability>> getAllPursuitProbabilities() {
-        List<MD_PursuitProbability> pursuitProbabilities = MD_PursuitProbabilityrepo.findAll();
-        return ResponseEntity.ok(pursuitProbabilities);
+        List<MD_PursuitProbability> pursuitProbabilities = pursuitProbabilityRepo.findAll();
+        if (!pursuitProbabilities.isEmpty()) {
+            return ResponseEntity.ok(pursuitProbabilities);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.emptyList());
+        }
     }
-    // POST method to add a new MD_PursuitProbability entry
+
     @PostMapping("/save")
-    public ResponseEntity<MD_PursuitProbability> createPursuitProbability(@RequestBody MD_PursuitProbability pursuitProbability) {
-        MD_PursuitProbability savedPursuitProbability = MD_PursuitProbabilityrepo.save(pursuitProbability);
-        return ResponseEntity.ok(savedPursuitProbability);
+    public ResponseEntity<Object> createPursuitProbability(@RequestBody MD_PursuitProbability pursuitProbability) {
+        if (pursuitProbability == null) {
+            return ResponseEntity.badRequest().body("MD Pursuit Probability object cannot be null. Please provide valid data.");
+        }
+
+        if (pursuitProbability.getPursuitStatus() == null || pursuitProbability.getPursuitStatus().isEmpty() ||
+                pursuitProbability.getType() == null || pursuitProbability.getType().isEmpty()) {
+            return ResponseEntity.badRequest().body("Pursuit Status and Type cannot be null or empty. Please provide valid data.");
+        }
+
+        Optional<MD_PursuitProbability> existingPursuitProbability = pursuitProbabilityRepo.findByPursuitStatusAndType(pursuitProbability.getPursuitStatus(), pursuitProbability.getType());
+        if (existingPursuitProbability.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Duplicate entry: Pursuit Status '" + pursuitProbability.getPursuitStatus() + "' and Type '" + pursuitProbability.getType() + "' already exists.");
+        }
+
+        MD_PursuitProbability createdPursuitProbability = pursuitProbabilityRepo.save(pursuitProbability);
+        return new ResponseEntity<>(createdPursuitProbability, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<MD_PursuitProbability> updatePursuitProbability(@RequestBody MD_PursuitProbability pursuitProbability) {
-        // Check if the ID exists in the database
-        Optional<MD_PursuitProbability> existingPursuitProbability = MD_PursuitProbabilityrepo.findById(pursuitProbability.getId());
-        if (existingPursuitProbability.isEmpty()) {
+    public ResponseEntity<Map<String, Object>> updatePursuitProbability(@RequestBody MD_PursuitProbability updatedPursuitProbability) {
+        if (updatedPursuitProbability.getId() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Updated Pursuit Probability ID cannot be null. Please provide valid data."));
+        }
+
+        Optional<MD_PursuitProbability> pursuitProbabilityOptional = pursuitProbabilityRepo.findById(updatedPursuitProbability.getId());
+        if (!pursuitProbabilityOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        // Update the existing entry with the provided details
-        MD_PursuitProbability updatedPursuitProbability = MD_PursuitProbabilityrepo.save(pursuitProbability);
+
+        if (updatedPursuitProbability.getPursuitStatus() == null || updatedPursuitProbability.getPursuitStatus().isEmpty() ||
+                updatedPursuitProbability.getType() == null || updatedPursuitProbability.getType().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Pursuit Status and Type cannot be null or empty. Please provide valid data."));
+        }
+
+        Optional<MD_PursuitProbability> duplicatePursuitProbability = pursuitProbabilityRepo.findByPursuitStatusAndType(updatedPursuitProbability.getPursuitStatus(), updatedPursuitProbability.getType());
+        if (duplicatePursuitProbability.isPresent() && !duplicatePursuitProbability.get().getId().equals(updatedPursuitProbability.getId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Duplicate entry: Pursuit Status '" + updatedPursuitProbability.getPursuitStatus() + "' and Type '" + updatedPursuitProbability.getType() + "' already exists."));
+        }
+
+        MD_PursuitProbability existingPursuitProbability = pursuitProbabilityOptional.get();
+        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+
+        if (!existingPursuitProbability.getPursuitStatus().equals(updatedPursuitProbability.getPursuitStatus())) {
+            updateMessage.append("Pursuit Status changed from '")
+                    .append(existingPursuitProbability.getPursuitStatus())
+                    .append("' to '")
+                    .append(updatedPursuitProbability.getPursuitStatus())
+                    .append("'. ");
+            existingPursuitProbability.setPursuitStatus(updatedPursuitProbability.getPursuitStatus());
+        }
+
+        if (!existingPursuitProbability.getType().equals(updatedPursuitProbability.getType())) {
+            updateMessage.append("Type changed from '")
+                    .append(existingPursuitProbability.getType())
+                    .append("' to '")
+                    .append(updatedPursuitProbability.getType())
+                    .append("'. ");
+            existingPursuitProbability.setType(updatedPursuitProbability.getType());
+        }
+
+        if (existingPursuitProbability.getProbability() != updatedPursuitProbability.getProbability()) {
+            updateMessage.append("Probability changed from '")
+                    .append(existingPursuitProbability.getProbability())
+                    .append("' to '")
+                    .append(updatedPursuitProbability.getProbability())
+                    .append("'. ");
+            existingPursuitProbability.setProbability(updatedPursuitProbability.getProbability());
+        }
+
+        if (!existingPursuitProbability.getStage().equals(updatedPursuitProbability.getStage())) {
+            updateMessage.append("Stage changed from '")
+                    .append(existingPursuitProbability.getStage())
+                    .append("' to '")
+                    .append(updatedPursuitProbability.getStage())
+                    .append("'. ");
+            existingPursuitProbability.setStage(updatedPursuitProbability.getStage());
+        }
+
+        MD_PursuitProbability updatedPursuitProbabilityEntity = pursuitProbabilityRepo.save(existingPursuitProbability);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Updated successfully");
-        return ResponseEntity.ok(updatedPursuitProbability);
+        response.put("message", updateMessage.toString());
+        response.put("updatedPursuitProbability", updatedPursuitProbabilityEntity);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deletePursuitProbabilities(@RequestBody List<Integer> ids) {
-        // Convert list of IDs to a list of MD_PursuitProbability entities for validation
-        List<MD_PursuitProbability> pursuitProbabilitiesToDelete = ids.stream()
-                .map(id -> {
-                    Optional<MD_PursuitProbability> optionalPursuitProbability = MD_PursuitProbabilityrepo.findById(id);
-                    return optionalPursuitProbability.orElse(null); // If ID not found, return null
-                })
-                .filter(pp -> pp != null) // Filter out null elements (non-existent IDs)
-                .collect(Collectors.toList());
+    public ResponseEntity<String> deletePursuitProbabilitiesByIds(@RequestBody List<Integer> ids) {
+        List<Integer> notFoundIds = new ArrayList<>();
+        List<String> deletedPursuitProbabilityDetails = new ArrayList<>();
 
-        if (pursuitProbabilitiesToDelete.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        for (Integer id : ids) {
+            Optional<MD_PursuitProbability> pursuitProbabilityOptional = pursuitProbabilityRepo.findById(id);
+            if (!pursuitProbabilityOptional.isPresent()) {
+                notFoundIds.add(id);
+            } else {
+                MD_PursuitProbability pursuitProbability = pursuitProbabilityOptional.get();
+                deletedPursuitProbabilityDetails.add("ID: " + id + ", Pursuit Status: " + pursuitProbability.getPursuitStatus() + ", Type: " + pursuitProbability.getType());
+                pursuitProbabilityRepo.deleteById(id);
+            }
         }
-        MD_PursuitProbabilityrepo.deleteAll(pursuitProbabilitiesToDelete);
-        return ResponseEntity.ok("Pursuit probabilities deleted successfully");
-    }
 
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No pursuit probabilities found with IDs: " + notFoundIds.toString());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Pursuit Probabilities " + deletedPursuitProbabilityDetails + " deleted successfully");
+    }
 }
