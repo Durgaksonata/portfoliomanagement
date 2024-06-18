@@ -1,10 +1,6 @@
 package com.sonata.portfoliomanagement.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.sonata.portfoliomanagement.interfaces.MD_RolesRepository;
 import com.sonata.portfoliomanagement.interfaces.MD_UsersRepository;
@@ -79,16 +75,20 @@ public class MD_UsersController {
 
         // Update the existing user with the new values
         MD_Users existingUser = userOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
+
 
         // Example: Check and update the first name
         if (!existingUser.getFirstName().equals(updatedUser.getFirstName())) {
-            updateMessage.append("First name changed from '")
+            updateMessage.append("First name updated from '")
                     .append(existingUser.getFirstName())
                     .append("' to '")
                     .append(updatedUser.getFirstName())
                     .append("'. ");
             existingUser.setFirstName(updatedUser.getFirstName());
+            isUpdated = true;
+
         }
 
         // Example: Check and update the last name
@@ -99,6 +99,11 @@ public class MD_UsersController {
                     .append(updatedUser.getLastName())
                     .append("'. ");
             existingUser.setLastName(updatedUser.getLastName());
+            isUpdated = true;
+
+        }
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
         // Example: Check and update the role or other fields as needed

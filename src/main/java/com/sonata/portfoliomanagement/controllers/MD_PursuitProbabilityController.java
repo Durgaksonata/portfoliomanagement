@@ -72,15 +72,17 @@ public class MD_PursuitProbabilityController {
         }
 
         MD_PursuitProbability existingPursuitProbability = pursuitProbabilityOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
 
         if (!existingPursuitProbability.getPursuitStatus().equals(updatedPursuitProbability.getPursuitStatus())) {
-            updateMessage.append("Pursuit Status changed from '")
+            updateMessage.append("Pursuit Status updated from '")
                     .append(existingPursuitProbability.getPursuitStatus())
                     .append("' to '")
                     .append(updatedPursuitProbability.getPursuitStatus())
                     .append("'. ");
             existingPursuitProbability.setPursuitStatus(updatedPursuitProbability.getPursuitStatus());
+            isUpdated = true;
         }
 
         if (!existingPursuitProbability.getType().equals(updatedPursuitProbability.getType())) {
@@ -90,6 +92,7 @@ public class MD_PursuitProbabilityController {
                     .append(updatedPursuitProbability.getType())
                     .append("'. ");
             existingPursuitProbability.setType(updatedPursuitProbability.getType());
+            isUpdated = true;
         }
 
         if (existingPursuitProbability.getProbability() != updatedPursuitProbability.getProbability()) {
@@ -99,6 +102,7 @@ public class MD_PursuitProbabilityController {
                     .append(updatedPursuitProbability.getProbability())
                     .append("'. ");
             existingPursuitProbability.setProbability(updatedPursuitProbability.getProbability());
+            isUpdated = true;
         }
 
         if (!existingPursuitProbability.getStage().equals(updatedPursuitProbability.getStage())) {
@@ -108,6 +112,10 @@ public class MD_PursuitProbabilityController {
                     .append(updatedPursuitProbability.getStage())
                     .append("'. ");
             existingPursuitProbability.setStage(updatedPursuitProbability.getStage());
+            isUpdated = true;
+        }
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
         MD_PursuitProbability updatedPursuitProbabilityEntity = pursuitProbabilityRepo.save(existingPursuitProbability);
@@ -130,7 +138,7 @@ public class MD_PursuitProbabilityController {
                 notFoundIds.add(id);
             } else {
                 MD_PursuitProbability pursuitProbability = pursuitProbabilityOptional.get();
-                deletedPursuitProbabilityDetails.add("ID: " + id + ", Pursuit Status: " + pursuitProbability.getPursuitStatus() + ", Type: " + pursuitProbability.getType());
+                deletedPursuitProbabilityDetails.add("Pursuit Status: " + pursuitProbability.getPursuitStatus() + ", Type: " + pursuitProbability.getType());
                 pursuitProbabilityRepo.deleteById(id);
             }
         }

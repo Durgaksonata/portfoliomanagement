@@ -41,7 +41,7 @@ public class MD_ProjectController {
         }
 
         MD_Project createdProject = projectRepository.save(project);
-        String responseMessage = "Data added: Project '" + createdProject.getProject() + "' added successfully.";
+        String responseMessage = "Project '" + createdProject.getProject() + "' added successfully.";
         return new ResponseEntity<>(Collections.singletonMap("message", responseMessage), HttpStatus.CREATED);
     }
 
@@ -61,18 +61,24 @@ public class MD_ProjectController {
         }
 
         MD_Project existingProject = projectRepository.findById(updatedProject.getId()).get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
+
 
         // Example: Check and update the project name
         if (!existingProject.getProject().equals(updatedProject.getProject())) {
-            updateMessage.append("Project name changed from '")
+            updateMessage.append("Project name updated from '")
                     .append(existingProject.getProject())
                     .append("' to '")
                     .append(updatedProject.getProject())
                     .append("'. ");
             existingProject.setProject(updatedProject.getProject());
+            isUpdated = true;
         }
 
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
+        }
         // Save the updated project
         MD_Project updatedProjectEntity = projectRepository.save(existingProject);
 

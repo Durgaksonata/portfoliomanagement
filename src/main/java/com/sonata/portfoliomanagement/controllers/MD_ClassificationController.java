@@ -82,15 +82,20 @@ public class MD_ClassificationController {
 
         // Update the existing classification with the new values
         MD_Classification existingClassification = classificationOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
 
         if (!existingClassification.getClassification().equals(updatedClassification.getClassification())) {
-            updateMessage.append("Classification name changed from '")
+            updateMessage.append("Classification name updated from '")
                     .append(existingClassification.getClassification())
                     .append("' to '")
                     .append(updatedClassification.getClassification())
                     .append("'. ");
             existingClassification.setClassification(updatedClassification.getClassification());
+            isUpdated = true;
+        }
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
         // Save the updated classification

@@ -86,16 +86,22 @@ public class MD_VerticalController {
 
         // Update the existing vertical with the new values
         MD_Vertical existingVertical = existingVerticalOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
 
         // Example: Check and update the vertical name
         if (!existingVertical.getVertical().equals(updatedVertical.getVertical())) {
-            updateMessage.append("Vertical name changed from '")
+            updateMessage.append("Vertical name updated from '")
                     .append(existingVertical.getVertical())
                     .append("' to '")
                     .append(updatedVertical.getVertical())
                     .append("'. ");
             existingVertical.setVertical(updatedVertical.getVertical());
+            isUpdated = true;
+
+        }
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
         // Save the updated vertical

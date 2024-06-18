@@ -85,10 +85,11 @@ public class MD_RateConversionController {
 
         // Check and update values only if they differ
         boolean isUpdated = false;
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+
 
         if (!existingRateConversion.getFinancialYear().equals(updatedRateConversion.getFinancialYear())) {
-            updateMessage.append("Financial year changed from '")
+            updateMessage.append("Financial year updated from '")
                     .append(existingRateConversion.getFinancialYear())
                     .append("' to '")
                     .append(updatedRateConversion.getFinancialYear())
@@ -139,7 +140,7 @@ public class MD_RateConversionController {
 
         // If no changes are detected, return a custom message
         if (!isUpdated) {
-            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected. The provided data is identical to the current record."));
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected."));
         }
 
         // Save the updated rate conversion

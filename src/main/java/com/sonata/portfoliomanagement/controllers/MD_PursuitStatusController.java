@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/mdpursuit")
 public class MD_PursuitStatusController {
@@ -77,16 +77,21 @@ public class MD_PursuitStatusController {
 
         // Update the existing pursuit status with the new values
         MD_PursuitStatus existingPursuitStatus = existingPursuitStatusOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
 
         // Example: Check and update the pursuit status name
         if (!existingPursuitStatus.getPursuitStatus().equals(updatedPursuitStatus.getPursuitStatus())) {
-            updateMessage.append("Pursuit Status name changed from '")
+            updateMessage.append("Pursuit Status name updated from '")
                     .append(existingPursuitStatus.getPursuitStatus())
                     .append("' to '")
                     .append(updatedPursuitStatus.getPursuitStatus())
                     .append("'. ");
             existingPursuitStatus.setPursuitStatus(updatedPursuitStatus.getPursuitStatus());
+            isUpdated = true;
+        }
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
         // Save the updated pursuit status

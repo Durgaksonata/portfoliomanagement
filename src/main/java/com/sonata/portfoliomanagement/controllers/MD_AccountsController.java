@@ -74,12 +74,12 @@ public class MD_AccountsController {
                     .body(Collections.singletonMap("message", "Account with name '" + updatedAccount.getAccounts() + "' already exists."));
         }
 
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
         boolean isUpdated = false;
 
         // Update fields if they differ
         if (!existingAccount.getAccounts().equals(updatedAccount.getAccounts())) {
-            updateMessage.append("Account name changed from '")
+            updateMessage.append("Account name updated from '")
                     .append(existingAccount.getAccounts())
                     .append("' to '")
                     .append(updatedAccount.getAccounts())
@@ -89,7 +89,7 @@ public class MD_AccountsController {
         }
 
         if (!isUpdated) {
-            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected. The provided data is identical to the current record."));
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected."));
         }
 
         MD_Accounts updatedAccountEntity = accountsRepo.save(existingAccount);

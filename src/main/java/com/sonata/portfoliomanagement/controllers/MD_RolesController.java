@@ -79,12 +79,12 @@ public class MD_RolesController {
                     .body(Collections.singletonMap("message", "Role with name '" + updatedRole.getRole() + "' already exists."));
         }
 
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
         boolean isUpdated = false;
 
         // Update role name if it is different
         if (!existingRole.getRole().equals(updatedRole.getRole())) {
-            updateMessage.append("Role name changed from '")
+            updateMessage.append("Role name updated from '")
                     .append(existingRole.getRole())
                     .append("' to '")
                     .append(updatedRole.getRole())
@@ -94,7 +94,7 @@ public class MD_RolesController {
         }
 
         if (!isUpdated) {
-            logger.info("No changes detected. The provided data is identical to the current record.");
+            logger.info("No changes detected.");
             return ResponseEntity.ok(Collections.singletonMap("message", "Duplicate Entry: '"+ updatedRole.getRole() + " ' already exists."));
         }
 

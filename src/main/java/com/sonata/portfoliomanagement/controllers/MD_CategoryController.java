@@ -67,18 +67,22 @@ public class MD_CategoryController {
 
         // Update the existing category with the new values
         MD_Category existingCategory = categoryOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        StringBuilder updateMessage = new StringBuilder();
+        boolean isUpdated = false;
 
         // Example: Check and update the category name
         if (!existingCategory.getCategory().equals(updatedCategory.getCategory())) {
-            updateMessage.append("Category name changed from '")
+            updateMessage.append("Category name updated from '")
                     .append(existingCategory.getCategory())
                     .append("' to '")
                     .append(updatedCategory.getCategory())
                     .append("'. ");
             existingCategory.setCategory(updatedCategory.getCategory());
+            isUpdated = true;
         }
-
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected."));
+        }
 
         // Save the updated category
         MD_Category updatedCategoryEntity = categoryRepo.save(existingCategory);
