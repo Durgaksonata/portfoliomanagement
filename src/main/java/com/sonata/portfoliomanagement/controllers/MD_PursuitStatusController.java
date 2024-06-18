@@ -29,16 +29,33 @@ public class MD_PursuitStatusController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<MD_PursuitStatus> createMdPursuitStatus(@RequestBody MD_PursuitStatus mdMdPursuitStatus) {
-        MD_PursuitStatus createdPursuitStatus = pursuitRepo.save(mdMdPursuitStatus);
+    public ResponseEntity<Object> createMdPursuitStatus(@RequestBody MD_PursuitStatus mdPursuitStatus) {
+        // Check if a pursuit status with the same name already exists
+        Optional<MD_PursuitStatus> existingPursuitStatus = pursuitRepo.findByPursuitStatus(mdPursuitStatus.getPursuitStatus());
+        if (existingPursuitStatus.isPresent()) {
+            // If a duplicate pursuit status exists, return a conflict response
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Duplicate entry: PursuitStatus '" + mdPursuitStatus.getPursuitStatus() + "' already exists.");
+        }
+
+        // Save the new pursuit status
+        MD_PursuitStatus createdPursuitStatus = pursuitRepo.save(mdPursuitStatus);
         return new ResponseEntity<>(createdPursuitStatus, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<MD_PursuitStatus> updateMdPursuitStatus(@RequestBody MD_PursuitStatus updatedPursuitStatus) {
+    public ResponseEntity<Map<String, Object>> updateMdPursuitStatus(@RequestBody MD_PursuitStatus updatedPursuitStatus) {
         Optional<MD_PursuitStatus> existingPursuitStatus = pursuitRepo.findById(updatedPursuitStatus.getId());
         if (existingPursuitStatus.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+
+        // Check for duplicate pursuit status names
+        Optional<MD_PursuitStatus> duplicatePursuitStatus = pursuitRepo.findByPursuitStatus(updatedPursuitStatus.getPursuitStatus());
+        if (duplicatePursuitStatus.isPresent() && duplicatePursuitStatus.get().getId() != updatedPursuitStatus.getId()) {
+            // If a duplicate pursuit status exists and it's not the current pursuit status, return a conflict response
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Duplicate entry: PursuitStatus '" + updatedPursuitStatus.getPursuitStatus() + "' already exists."));
         }
 
         // Update the existing entity with new data
@@ -51,7 +68,7 @@ public class MD_PursuitStatusController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Updated successfully");
         response.put("updatedPursuitStatus", savedEntity);
-        return ResponseEntity.ok(savedEntity);
+        return ResponseEntity.ok(response);
     }
 
 

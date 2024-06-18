@@ -50,6 +50,14 @@ public class MD_CategoryController {
             return ResponseEntity.notFound().build();
         }
 
+        // Check for duplicate category names
+        Optional<MD_Category> duplicateCategory = categoryRepo.findByCategory(updatedCategory.getCategory());
+        if (duplicateCategory.isPresent() && duplicateCategory.get().getId() != (updatedCategory.getId())) {
+            // If a duplicate category exists and it's not the current category, return a conflict response
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Duplicate entry: Category '" + updatedCategory.getCategory() + "' already exists."));
+        }
+
         // Update the existing category with the new values
         MD_Category existingCategory = categoryOptional.get();
         StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
@@ -98,6 +106,6 @@ public class MD_CategoryController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Categories deleted successfully: " + String.join(", ", deletedCategoryNames));
+                .body("Categories" + " " +  deletedCategoryNames +" " +"deleted successfully");
     }
 }
