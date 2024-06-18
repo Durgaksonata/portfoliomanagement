@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 @Table(name = "md_PursuitStatus")
 public class MD_PursuitStatus {
 
-    public MD_PursuitStatus(Integer id, String PursuitStatus) {
+    public MD_PursuitStatus(int id, String pursuitStatus) {
         this.id = id;
-        this.PursuitStatus = PursuitStatus;
+        this.pursuitStatus = pursuitStatus;
     }
 
     public MD_PursuitStatus() {}
@@ -18,7 +18,7 @@ public class MD_PursuitStatus {
     private int id;
 
     @Column(name = "PursuitStatus")
-    private String PursuitStatus;
+    private String pursuitStatus;
 
     public int getId() {
         return id;
@@ -29,10 +29,10 @@ public class MD_PursuitStatus {
     }
 
     public String getPursuitStatus() {
-        return PursuitStatus;
+        return pursuitStatus;
     }
 
     public void setPursuitStatus(String pursuitStatus) {
-        PursuitStatus = pursuitStatus;
+        this.pursuitStatus = pursuitStatus;
     }
 }

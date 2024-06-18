@@ -25,65 +25,77 @@ public class MD_DeliveryDirectorController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Object> createDeliveryDirector(@RequestBody MD_DeliveryDirector deliveryDirector) {
+    public ResponseEntity<Object> createMdDeliveryDirector(@RequestBody MD_DeliveryDirector mdDeliveryDirector) {
+        // Check if the provided MD_DeliveryDirector object is null
+        if (mdDeliveryDirector == null) {
+            return ResponseEntity.badRequest().body("MD Delivery Director object cannot be null. Please provide valid data.");
+        }
+
+        // Check if delivery director name is null or empty
+        if (mdDeliveryDirector.getDeliveryDirector() == null || mdDeliveryDirector.getDeliveryDirector().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Delivery Director name cannot be null or empty. Please provide a valid name.");
+        }
+
         // Check if a delivery director with the same name already exists
-        Optional<MD_DeliveryDirector> existingDirector = deliveryDirectorRepo.findByDeliveryDirector(deliveryDirector.getDeliveryDirector());
-        if (existingDirector.isPresent()) {
-            // If a duplicate delivery director exists, return a conflict response
+        Optional<MD_DeliveryDirector> existingDeliveryDirector = deliveryDirectorRepo.findByDeliveryDirector(mdDeliveryDirector.getDeliveryDirector());
+        if (existingDeliveryDirector.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate entry: Delivery Director '" + deliveryDirector.getDeliveryDirector() + "' already exists.");
+                    .body("Duplicate entry: Delivery Director '" + mdDeliveryDirector.getDeliveryDirector() + "' already exists.");
         }
 
         // Save the new delivery director
-        MD_DeliveryDirector createdDirector = deliveryDirectorRepo.save(deliveryDirector);
-        return new ResponseEntity<>(createdDirector, HttpStatus.CREATED);
-    }
+        MD_DeliveryDirector createdDeliveryDirector = deliveryDirectorRepo.save(mdDeliveryDirector);
+        if (createdDeliveryDirector == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save delivery director. Please try again later.");
+        }
 
+        String responseMessage = "Data added: Delivery Director '" + createdDeliveryDirector.getDeliveryDirector() + "' added successfully.";
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseMessage);
+    }
 
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateDeliveryDirector(@RequestBody MD_DeliveryDirector updatedDirector) {
-        // Check if the delivery director with the given ID exists
-        Optional<MD_DeliveryDirector> directorOptional = deliveryDirectorRepo.findById(updatedDirector.getId());
-
-        if (!directorOptional.isPresent()) {
-            // If delivery director with the given ID is not found, return 404 Not Found
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Object> updateMdDeliveryDirector(@RequestBody MD_DeliveryDirector mdDeliveryDirector) {
+        // Check if the provided MD_DeliveryDirector object is null
+        if (mdDeliveryDirector == null) {
+            return ResponseEntity.badRequest().body("MD Delivery Director object cannot be null. Please provide valid data.");
         }
 
-        // Check for duplicate delivery director names
-        Optional<MD_DeliveryDirector> duplicateDirector = deliveryDirectorRepo.findByDeliveryDirector(updatedDirector.getDeliveryDirector());
-        if (duplicateDirector.isPresent() && !duplicateDirector.get().getId().equals(updatedDirector.getId())) {
-            // If a duplicate delivery director exists and it's not the current director, return a conflict response
+        // Check if delivery director name is null or empty
+        if (mdDeliveryDirector.getDeliveryDirector() == null || mdDeliveryDirector.getDeliveryDirector().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Delivery Director name cannot be null or empty. Please provide a valid name.");
+        }
+
+        // Check if the provided ID is null or <= 0
+        if (mdDeliveryDirector.getId() == null || mdDeliveryDirector.getId() <= 0) {
+            return ResponseEntity.badRequest().body("Invalid Delivery Director ID. Please provide a valid ID.");
+        }
+
+        // Check if a delivery director with the same name already exists
+        Optional<MD_DeliveryDirector> existingDeliveryDirector = deliveryDirectorRepo.findByDeliveryDirector(mdDeliveryDirector.getDeliveryDirector());
+        if (existingDeliveryDirector.isPresent() && !existingDeliveryDirector.get().getId().equals(mdDeliveryDirector.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "Duplicate entry: Delivery Director '" + updatedDirector.getDeliveryDirector() + "' already exists."));
+                    .body("Duplicate entry: Delivery Director '" + mdDeliveryDirector.getDeliveryDirector() + "' already exists.");
         }
 
-        // Update the existing delivery director with the new values
-        MD_DeliveryDirector existingDirector = directorOptional.get();
-        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
-
-
-        if (!existingDirector.getDeliveryDirector().equals(updatedDirector.getDeliveryDirector())) {
-            updateMessage.append("Delivery Director name changed from '")
-                    .append(existingDirector.getDeliveryDirector())
-                    .append("' to '")
-                    .append(updatedDirector.getDeliveryDirector())
-                    .append("'. ");
-            existingDirector.setDeliveryDirector(updatedDirector.getDeliveryDirector());
+        // Check if the delivery director with the provided ID exists
+        Optional<MD_DeliveryDirector> optionalDeliveryDirector = deliveryDirectorRepo.findById(mdDeliveryDirector.getId());
+        if (!optionalDeliveryDirector.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Delivery Director with ID '" + mdDeliveryDirector.getId() + "' not found.");
         }
 
-        // Save the updated delivery director
-        MD_DeliveryDirector updatedDirectorEntity = deliveryDirectorRepo.save(existingDirector);
+        // Update the delivery director
+        MD_DeliveryDirector updatedDeliveryDirector = deliveryDirectorRepo.save(mdDeliveryDirector);
+        if (updatedDeliveryDirector == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update delivery director. Please try again later.");
+        }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", updateMessage.toString());
-        response.put("updatedDeliveryDirector", updatedDirectorEntity);
-
-
-        return ResponseEntity.ok(response);
+        String responseMessage = "Data updated: Delivery Director '" + updatedDeliveryDirector.getDeliveryDirector() + "' updated successfully.";
+        return ResponseEntity.ok(responseMessage);
     }
-
 
 
     @DeleteMapping("/delete")
