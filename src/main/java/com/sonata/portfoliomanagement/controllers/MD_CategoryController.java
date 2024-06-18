@@ -25,19 +25,26 @@ public class MD_CategoryController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Object> createMdCategory(@RequestBody MD_Category mdCategory) {
+    public ResponseEntity<Map<String, Object>> createMdCategory(@RequestBody MD_Category mdCategory) {
         // Check if a category with the same name already exists
         Optional<MD_Category> existingCategory = categoryRepo.findByCategory(mdCategory.getCategory());
         if (existingCategory.isPresent()) {
             // If a duplicate category exists, return a conflict response
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate entry: Category '" + mdCategory.getCategory() + "' already exists.");
+                    .body(Map.of("message", "Duplicate entry: Category '" + mdCategory.getCategory() + "' already exists."));
         }
 
         // Save the new category
         MD_Category createdCategory = categoryRepo.save(mdCategory);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+
+        // Prepare the response with a success message and the created category
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Category '" + createdCategory.getCategory() + "' saved successfully.");
+        response.put("createdCategory", createdCategory);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
 
     @PutMapping("/update")

@@ -47,7 +47,6 @@ public class MD_PursuitProbabilityController {
         return ResponseEntity.ok(updatedPursuitProbability);
     }
 
-
     @DeleteMapping("/delete")
     public ResponseEntity<String> deletePursuitProbabilities(@RequestBody List<Integer> ids) {
         // Convert list of IDs to a list of MD_PursuitProbability entities for validation
