@@ -1,9 +1,6 @@
 package com.sonata.portfoliomanagement.controllers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.sonata.portfoliomanagement.interfaces.MD_CategoryRepository;
@@ -28,13 +25,23 @@ public class MD_CategoryController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<MD_Category> createMdCategory(@RequestBody MD_Category mdcategory) {
-        MD_Category createdcategory = categoryRepo.save(mdcategory);
-        return new ResponseEntity<>(createdcategory, HttpStatus.CREATED);
+    public ResponseEntity<Object> createMdCategory(@RequestBody MD_Category mdCategory) {
+        // Check if a category with the same name already exists
+        Optional<MD_Category> existingCategory = categoryRepo.findByCategory(mdCategory.getCategory());
+        if (existingCategory.isPresent()) {
+            // If a duplicate category exists, return a conflict response
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Duplicate entry: Category '" + mdCategory.getCategory() + "' already exists.");
+        }
+
+        // Save the new category
+        MD_Category createdCategory = categoryRepo.save(mdCategory);
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
+
     @PutMapping("/update")
-    public ResponseEntity<MD_Category> updateMdCategory(@RequestBody MD_Category updatedCategory) {
+    public ResponseEntity<Map<String, Object>> updateMdCategory(@RequestBody MD_Category updatedCategory) {
         // Check if the category with the given ID exists
         Optional<MD_Category> categoryOptional = categoryRepo.findById(updatedCategory.getId());
 
@@ -45,30 +52,45 @@ public class MD_CategoryController {
 
         // Update the existing category with the new values
         MD_Category existingCategory = categoryOptional.get();
-        existingCategory.setCategory(updatedCategory.getCategory());  // Example: Update other fields similarly
+        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+
+        // Example: Check and update the category name
+        if (!existingCategory.getCategory().equals(updatedCategory.getCategory())) {
+            updateMessage.append("Category name changed from '")
+                    .append(existingCategory.getCategory())
+                    .append("' to '")
+                    .append(updatedCategory.getCategory())
+                    .append("'. ");
+            existingCategory.setCategory(updatedCategory.getCategory());
+        }
+
 
         // Save the updated category
         MD_Category updatedCategoryEntity = categoryRepo.save(existingCategory);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Updated successfully");
+        response.put("message", updateMessage.toString());
+        response.put("updatedCategory", updatedCategoryEntity);
 
         // Return the updated category with 200 OK status
-        return ResponseEntity.ok(updatedCategoryEntity);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteCategoriesByIds(@RequestBody List<Integer> ids) {
-        List<Integer> notFoundIds = ids.stream()
-                .filter(id -> {
-                    Optional<MD_Category> category = categoryRepo.findById(id);
-                    if (category.isEmpty()) {
-                        return true;
-                    }
-                    categoryRepo.deleteById(id);
-                    return false;
-                })
-                .collect(Collectors.toList());
+        List<Integer> notFoundIds = new ArrayList<>();
+        List<String> deletedCategoryNames = new ArrayList<>();
+
+        for (Integer id : ids) {
+            Optional<MD_Category> categoryOptional = categoryRepo.findById(id);
+            if (categoryOptional.isEmpty()) {
+                notFoundIds.add(id);
+            } else {
+                MD_Category category = categoryOptional.get();
+                deletedCategoryNames.add(category.getCategory());
+                categoryRepo.deleteById(id);
+            }
+        }
 
         if (!notFoundIds.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -76,8 +98,6 @@ public class MD_CategoryController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Categories have been deleted succesfully.");
+                .body("Categories deleted successfully: " + String.join(", ", deletedCategoryNames));
     }
-
-
 }

@@ -65,7 +65,6 @@ public class MD_PursuitProbabilityController {
         if (pursuitProbabilitiesToDelete.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
         MD_PursuitProbabilityrepo.deleteAll(pursuitProbabilitiesToDelete);
         return ResponseEntity.ok("Pursuit probabilities deleted successfully");
     }
