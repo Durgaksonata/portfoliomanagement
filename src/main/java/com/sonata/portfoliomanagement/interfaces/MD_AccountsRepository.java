@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface MD_AccountsRepository extends JpaRepository<MD_Accounts, Integer> {
-    List<MD_Accounts> findByAccountsIn(List<String> accounts);
 
-    List<MD_Accounts> findByDeliveryManagerIn(List<String> deliveryManager);
+    List<MD_Accounts> findByAccounts(String accounts);
+
 }

@@ -1,7 +1,11 @@
 package com.sonata.portfoliomanagement.controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,83 +25,107 @@ import org.springframework.web.bind.annotation.*;
 public class MD_AccountsController {
 
     @Autowired
-    MD_AccountsRepository acntRepo;
+    MD_AccountsRepository accountsRepo;
 
     @GetMapping("/get")
-    public ResponseEntity<List<MD_Accounts>> getAllData() {
-        List<MD_Accounts> mdAcnts = acntRepo.findAll();
-        return ResponseEntity.ok(mdAcnts);
+    public ResponseEntity<List<MD_Accounts>> getAllAccounts() {
+        List<MD_Accounts> accounts = accountsRepo.findAll();
+        return ResponseEntity.ok(accounts);
     }
+
     @PostMapping("/save")
-    public ResponseEntity<MD_Accounts> createMdAcnts(@RequestBody MD_Accounts mdAcnts) {
-        MD_Accounts createdAcnts = acntRepo.save(mdAcnts);
-        return new ResponseEntity<>(createdAcnts, HttpStatus.CREATED);
+    public ResponseEntity<Map<String, Object>> createAccount(@RequestBody MD_Accounts newAccount) {
+        // Check for existing accounts with the same name
+        List<MD_Accounts> existingAccounts = accountsRepo.findByAccounts(newAccount.getAccounts());
+
+        if (!existingAccounts.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Collections.singletonMap("message", "Account with name '" + newAccount.getAccounts() + "' already exists."));
+        }
+
+        // Save the new account
+        MD_Accounts createdAccount = accountsRepo.save(newAccount);
+
+        // Prepare response
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Account created successfully with name '" + createdAccount.getAccounts() + "'.");
+        response.put("createdAccount", createdAccount);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<MD_Accounts> updateMdAcnts(@RequestBody MD_Accounts updatedMdAcnts) {
-        int id = updatedMdAcnts.getId();
+    public ResponseEntity<Map<String, Object>> updateAccount(@RequestBody MD_Accounts updatedAccount) {
+        Optional<MD_Accounts> accountOptional = accountsRepo.findById(updatedAccount.getId());
 
-        // Check if MD_Accounts with the given id exists
-        if (!acntRepo.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (!accountOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Account with ID '" + updatedAccount.getId() + "' not found."));
         }
 
-        // Save the updated MD_Accounts
-        MD_Accounts updatedAccount = acntRepo.save(updatedMdAcnts);
-        return ResponseEntity.ok(updatedAccount);
-    }
+        MD_Accounts existingAccount = accountOptional.get();
 
-    @PostMapping("/accountbydm")
-    public ResponseEntity<Set<String>> getAccountByDM(@RequestBody MD_AccountsDTO dmList) {
-        List<String> dmNames = dmList.getDmList();
-        Set<String> distinctAccounts = new HashSet<>(); // Use a Set to collect distinct account names
-        List<MD_Accounts> acnt = acntRepo.findByDeliveryManagerIn(dmNames);
+        // Check for duplicates excluding the current record
+        List<MD_Accounts> accountsWithSameName = accountsRepo.findByAccounts(updatedAccount.getAccounts());
+        accountsWithSameName.removeIf(account -> account.getId().equals(updatedAccount.getId()));
 
-        for (MD_Accounts acnts : acnt) {
-            // Add the account name to the Set
-            distinctAccounts.add(acnts.getAccounts());
+        if (!accountsWithSameName.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Collections.singletonMap("message", "Account with name '" + updatedAccount.getAccounts() + "' already exists."));
         }
 
-        return ResponseEntity.ok(distinctAccounts);
+        StringBuilder updateMessage = new StringBuilder("Updated successfully: ");
+        boolean isUpdated = false;
+
+        // Update fields if they differ
+        if (!existingAccount.getAccounts().equals(updatedAccount.getAccounts())) {
+            updateMessage.append("Account name changed from '")
+                    .append(existingAccount.getAccounts())
+                    .append("' to '")
+                    .append(updatedAccount.getAccounts())
+                    .append("'. ");
+            existingAccount.setAccounts(updatedAccount.getAccounts());
+            isUpdated = true;
+        }
+
+        if (!isUpdated) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected. The provided data is identical to the current record."));
+        }
+
+        MD_Accounts updatedAccountEntity = accountsRepo.save(existingAccount);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", updateMessage.toString());
+        response.put("updatedAccount", updatedAccountEntity);
+
+        return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAccountsByIds(@RequestBody List<Integer> ids) {
-        List<Integer> notFoundIds = ids.stream()
-                .filter(id -> {
-                    Optional<MD_Accounts> account = acntRepo.findById(id);
-                    if (account.isEmpty()) {
-                        return true;
-                    }
-                    acntRepo.deleteById(id);
-                    return false;
-                })
-                .collect(Collectors.toList());
+        List<Integer> notFoundIds = new ArrayList<>();
+        List<String> deletedAccountNames = new ArrayList<>();
+
+        for (Integer id : ids) {
+            Optional<MD_Accounts> accountOptional = accountsRepo.findById(id);
+            if (accountOptional.isEmpty()) {
+                notFoundIds.add(id);
+            } else {
+                MD_Accounts account = accountOptional.get();
+                deletedAccountNames.add(account.getAccounts());
+                accountsRepo.deleteById(id);
+            }
+        }
 
         if (!notFoundIds.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No accounts found with IDs: " + notFoundIds.toString());
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Accounts with specified IDs have been deleted.");
+        return ResponseEntity.ok("Accounts " + deletedAccountNames + " deleted successfully.");
     }
 
-    @PostMapping("/dmbyacnt")
-    public ResponseEntity<Set<String>> getDMByAccount(@RequestBody MD_AccountsDTO accountList) {
-        List<String> accountNames = accountList.getAccountList();
-        Set<String> distinctDMs = new HashSet<>(); // Use a Set to collect distinct account names
 
-        List<MD_Accounts> dm = acntRepo.findByAccountsIn(accountNames);
-
-        for (MD_Accounts dms : dm) {
-            // Add the account name to the Set
-            distinctDMs.add(dms.getDeliveryManager());
-        }
-
-        return ResponseEntity.ok(distinctDMs);
-    }
 
 
 }

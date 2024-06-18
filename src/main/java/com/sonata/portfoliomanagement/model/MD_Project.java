@@ -1,5 +1,4 @@
 package com.sonata.portfoliomanagement.model;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -10,12 +9,13 @@ public class MD_Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String project;
-    private String account;
 
-    public MD_Project() {}
+
+    public MD_Project() {
+    }
 
     public MD_Project(String account, String project, Integer id) {
-        this.account = account;
+
         this.project = project;
         this.id = id;
     }
@@ -36,11 +36,4 @@ public class MD_Project {
         this.project = project;
     }
 
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
 }
