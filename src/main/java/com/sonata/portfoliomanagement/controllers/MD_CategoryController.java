@@ -1,6 +1,8 @@
 package com.sonata.portfoliomanagement.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,9 @@ public class MD_CategoryController {
 
         // Save the updated category
         MD_Category updatedCategoryEntity = categoryRepo.save(existingCategory);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Updated successfully");
 
         // Return the updated category with 200 OK status
         return ResponseEntity.ok(updatedCategoryEntity);
