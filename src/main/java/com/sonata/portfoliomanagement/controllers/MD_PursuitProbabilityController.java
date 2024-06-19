@@ -46,6 +46,11 @@ public class MD_PursuitProbabilityController {
         }
 
         MD_PursuitProbability createdPursuitProbability = pursuitProbabilityRepo.save(pursuitProbability);
+        String successMessage = "Pursuit Probability saved successfully";
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", successMessage);
+        response.put("data", createdPursuitProbability);
         return new ResponseEntity<>(createdPursuitProbability, HttpStatus.CREATED);
     }
 

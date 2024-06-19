@@ -49,21 +49,7 @@ public class Md_UserService {
                     break;
                 default:
                     break;
-                // Assign user ID to related entities based on role
-//        switch (user.getRoles()) {
-//            case "DeliveryDirector":
-//            	MD_DeliveryDirector deliveryDirector = new MD_DeliveryDirector();
-//                // Set other fields as needed for delivery director
-//                createdUser.setDeliveryDirector(deliveryDirector);	                break;
-//            case "DeliveryManager":
-//                createdUser.setDeliveryManager(deliveryManagerRepository.save(new MD_DeliveryManager(createdUser)));
-//                break;
-//            case "ProjectManager":
-//                createdUser.setProjectManager(projectManagerRepository.save(new MD_ProjectManager(createdUser)));
-//                break;
-//            // Add cases for other roles as needed
-//            default:
-//                break;
+
             }
         }
 
@@ -92,6 +78,39 @@ public class Md_UserService {
         MD_ProjectManager projectManager = new MD_ProjectManager();
         projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
 
+        projectManagerRepository.save(projectManager);
+    }
+
+    public boolean existsDeliveryDirector(int userId) {
+        return deliveryDirectorRepository.existsById(userId);
+    }
+
+    @Transactional
+    public void updateDeliveryDirector(MD_Users user) {
+        MD_DeliveryDirector deliveryDirector = deliveryDirectorRepository.findById(user.getId()).orElseThrow();
+        deliveryDirector.setDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+        deliveryDirectorRepository.save(deliveryDirector);
+    }
+
+    public boolean existsDeliveryManager(int userId) {
+        return deliveryManagerRepository.existsById(userId);
+    }
+
+    @Transactional
+    public void updateDeliveryManager(MD_Users user) {
+        MD_DeliveryManager deliveryManager = deliveryManagerRepository.findById(user.getId()).orElseThrow();
+        deliveryManager.setDelivery_Managers(user.getFirstName() + " " + user.getLastName());
+        deliveryManagerRepository.save(deliveryManager);
+    }
+
+    public boolean existsProjectManager(int userId) {
+        return projectManagerRepository.existsById(userId);
+    }
+
+    @Transactional
+    public void updateProjectManager(MD_Users user) {
+        MD_ProjectManager projectManager = projectManagerRepository.findById(user.getId()).orElseThrow();
+        projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
         projectManagerRepository.save(projectManager);
     }
 
@@ -125,6 +144,101 @@ public class Md_UserService {
     public void deleteProjectManager(String projectManager) {
         projectManagerRepository.deleteByProjectManager(projectManager);
     }
+
+
+    @Transactional
+    public void updateRoles(MD_Users existingUser, MD_Users updatedUser) {
+        List<String> existingRoles = existingUser.getRole();
+        List<String> updatedRoles = updatedUser.getRole();
+
+        // Remove roles that are no longer assigned
+        for (String role : existingRoles) {
+            if (!updatedRoles.contains(role)) {
+                switch (role) {
+                    case "DeliveryDirector":
+                        deleteDeliveryDirector(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        break;
+                    case "DeliveryManager":
+                        deleteDeliveryManager(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        break;
+                    case "ProjectManager":
+                        deleteProjectManager(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // Add new roles
+        for (String role : updatedRoles) {
+            if (!existingRoles.contains(role)) {
+                switch (role) {
+                    case "DeliveryDirector":
+                        createDeliveryDirector(updatedUser);
+                        break;
+                    case "DeliveryManager":
+                        createDeliveryManager(updatedUser);
+                        break;
+                    case "ProjectManager":
+                        createProjectManager(updatedUser);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+
+    @Transactional
+    public void updateRoleEntities(MD_Users user) {
+        List<String> roles = user.getRole();
+        for (String role : roles) {
+            switch (role) {
+                case "DeliveryDirector":
+                    updateDeliveryDirectorName(user);
+                    break;
+                case "DeliveryManager":
+                    updateDeliveryManagerName(user);
+                    break;
+                case "ProjectManager":
+                    updateProjectManagerName(user);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Transactional
+    public void updateDeliveryDirectorName(MD_Users user) {
+        List<MD_DeliveryDirector> deliveryDirectors = deliveryDirectorRepository.findByDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+        for (MD_DeliveryDirector deliveryDirector : deliveryDirectors) {
+            deliveryDirector.setDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+            deliveryDirectorRepository.save(deliveryDirector);
+        }
+    }
+
+    @Transactional
+    public void updateDeliveryManagerName(MD_Users user) {
+        List<MD_DeliveryManager> deliveryManagers = deliveryManagerRepository.findByDeliveryManagers(user.getFirstName() + " " + user.getLastName());
+        for (MD_DeliveryManager deliveryManager : deliveryManagers) {
+            deliveryManager.setDelivery_Managers(user.getFirstName() + " " + user.getLastName());
+            deliveryManagerRepository.save(deliveryManager);
+        }
+    }
+
+    @Transactional
+    public void updateProjectManagerName(MD_Users user) {
+        List<MD_ProjectManager> projectManagers = projectManagerRepository.findByProjectManager(user.getFirstName() + " " + user.getLastName());
+        for (MD_ProjectManager projectManager : projectManagers) {
+            projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
+            projectManagerRepository.save(projectManager);
+        }
+    }
+
+
 
 
 }
