@@ -6,6 +6,7 @@ import com.sonata.portfoliomanagement.interfaces.MD_RolesRepository;
 import com.sonata.portfoliomanagement.interfaces.MD_UsersRepository;
 import com.sonata.portfoliomanagement.model.MD_Accounts;
 import com.sonata.portfoliomanagement.model.MD_Users;
+import com.sonata.portfoliomanagement.services.Md_UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,8 @@ public class MD_UsersController {
     @Autowired
     private MD_UsersRepository usersRepo;
 
-    //
+    private Md_UserService userService;
+
     @PostMapping("/save")
     public ResponseEntity<Object> createUser(@RequestBody MD_Users user) {
         List<MD_Users> existingUsers = usersRepo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
@@ -35,6 +37,25 @@ public class MD_UsersController {
 
         // Save the new user if no conflicts are found
         MD_Users createdUser = usersRepo.save(user);
+
+        //switch (user.getRole()) {
+        for (String role : user.getRole()) {
+            switch (role) {
+                case "DeliveryDirector":
+                    userService.createDeliveryDirector(user);
+                    break;
+                case "DeliveryManager":
+                    userService.createDeliveryManager(user);
+                    break;
+                case "ProjectManager":
+                    userService.createProjectManager(user);
+                    break;
+                // Add more cases as needed for other roles
+                default:
+                    break;
+            }
+        }
+
         // Prepare the response with a success message and the created user
         Map<String, Object> response = new HashMap<>();
         response.put("message", "User with name " + createdUser.getFirstName() + " " + createdUser.getLastName() + " saved successfully.");
@@ -120,30 +141,30 @@ public class MD_UsersController {
 
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUsersByIds(@RequestBody List<Integer> ids) {
-        List<Integer> notFoundIds = new ArrayList<>();
-        List<String> deletedUserNames = new ArrayList<>();
-
-        for (Integer id : ids) {
-            Optional<MD_Users> userOptional = usersRepo.findById(id);
-            if (userOptional.isEmpty()) {
-                notFoundIds.add(id);
-            } else {
-                MD_Users user = userOptional.get();
-                deletedUserNames.add(user.getFirstName() + " " + user.getLastName());
-                usersRepo.deleteById(id);
-            }
-        }
-
-        if (!notFoundIds.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No users found with IDs: " + notFoundIds.toString());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Users: " + deletedUserNames + " deleted successfully");
-    }
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<String> deleteUsersByIds(@RequestBody List<Integer> ids) {
+//        List<Integer> notFoundIds = new ArrayList<>();
+//        List<String> deletedUserNames = new ArrayList<>();
+//
+//        for (Integer id : ids) {
+//            Optional<MD_Users> userOptional = usersRepo.findById(id);
+//            if (userOptional.isEmpty()) {
+//                notFoundIds.add(id);
+//            } else {
+//                MD_Users user = userOptional.get();
+//                deletedUserNames.add(user.getFirstName() + " " + user.getLastName());
+//                usersRepo.deleteById(id);
+//            }
+//        }
+//
+//        if (!notFoundIds.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("No users found with IDs: " + notFoundIds.toString());
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body("Users: " + deletedUserNames + " deleted successfully");
+//    }
 
 
 }

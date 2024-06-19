@@ -155,6 +155,13 @@ public class PursuitTrackerController {
             if (optionalPursuitTracker.isPresent()) {
                 PursuitTracker existingPursuitTracker = optionalPursuitTracker.get();
 
+                // Check for duplicate ProjectorPursuit
+                if (!Objects.equals(existingPursuitTracker.getProjectorPursuit(), pursuitTrackerDetails.getProjectorPursuit())) {
+                    if (pursuitTrackerRepository.existsByProjectorPursuit(pursuitTrackerDetails.getProjectorPursuit())) {
+                        response.put("message", "The ProjectorPursuit name is already exist cannot be updated");
+                        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+                    }
+                }
                 // Check if any fields have been changed
                 Map<String, Object> changes = new HashMap<>();
                 boolean updated = false;

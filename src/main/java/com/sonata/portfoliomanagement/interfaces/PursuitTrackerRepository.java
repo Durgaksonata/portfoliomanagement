@@ -32,4 +32,6 @@ Optional<PursuitTracker> findByProjectorPursuit(String projectorPursuit);
 
 
     List<PursuitTracker> findByPursuitid(int pursuitId);
+
+    boolean existsByProjectorPursuit(String projectorPursuit);
 }
