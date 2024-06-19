@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface MD_DeliveryDirectorRepository extends JpaRepository<MD_DeliveryDirector, Integer>{
     Optional<MD_DeliveryDirector> findByDeliveryDirector(String deliveryDirector);
 
+    void deleteByDeliveryDirector(String deliveryDirector);
+
     //MD_DeliveryDirector findByUser(MD_Users user);
 }

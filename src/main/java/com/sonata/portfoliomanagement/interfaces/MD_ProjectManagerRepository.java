@@ -10,6 +10,8 @@ import java.util.List;
 public interface MD_ProjectManagerRepository extends JpaRepository<MD_ProjectManager, Integer> {
     List<MD_ProjectManager> findAllByProjectManagerIn(List<String> pmNames);
 
-   // MD_ProjectManager findByUser(MD_Users user);
+    void deleteByProjectManager(String projectManager);
+
+    // MD_ProjectManager findByUser(MD_Users user);
    // MD_ProjectManager findByUser(MD_Users user);
 }

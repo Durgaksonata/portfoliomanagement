@@ -20,7 +20,7 @@ public class MD_UsersController {
 
     @Autowired
     private MD_UsersRepository usersRepo;
-
+    @Autowired
     private Md_UserService userService;
 
     @PostMapping("/save")
@@ -141,30 +141,34 @@ public class MD_UsersController {
 
     }
 
-//    @DeleteMapping("/delete")
-//    public ResponseEntity<String> deleteUsersByIds(@RequestBody List<Integer> ids) {
-//        List<Integer> notFoundIds = new ArrayList<>();
-//        List<String> deletedUserNames = new ArrayList<>();
-//
-//        for (Integer id : ids) {
-//            Optional<MD_Users> userOptional = usersRepo.findById(id);
-//            if (userOptional.isEmpty()) {
-//                notFoundIds.add(id);
-//            } else {
-//                MD_Users user = userOptional.get();
-//                deletedUserNames.add(user.getFirstName() + " " + user.getLastName());
-//                usersRepo.deleteById(id);
-//            }
-//        }
-//
-//        if (!notFoundIds.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("No users found with IDs: " + notFoundIds.toString());
-//        }
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body("Users: " + deletedUserNames + " deleted successfully");
-//    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUsersByIds(@RequestBody List<Integer> ids) {
+        List<Integer> notFoundIds = new ArrayList<>();
+        List<String> deletedUserNames = new ArrayList<>();
+
+        for (Integer id : ids) {
+            Optional<MD_Users> userOptional = usersRepo.findById(id);
+            if (userOptional.isEmpty()) {
+                notFoundIds.add(id);
+            } else {
+                MD_Users user = userOptional.get();
+
+                deletedUserNames.add(user.getFirstName() + " " + user.getLastName());
+                userService.deleteRelatedEntities(user);
+                usersRepo.deleteById(id);
+            }
+        }
+
+        if (!notFoundIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No users found with IDs: " + notFoundIds.toString());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Users: " + deletedUserNames + " deleted successfully");
+    }
+
 
 
 }

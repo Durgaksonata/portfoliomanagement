@@ -51,7 +51,13 @@ public class MD_RateConversionController {
 
         // Save the new rate conversion
         MD_RateConversion createdRateConversion = rateConversionRepository.save(newRateConversion);
-        return new ResponseEntity<>(createdRateConversion, HttpStatus.CREATED);
+
+        // Prepare the response with a message
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Rate conversion created successfully.");
+        response.put("createdRateConversion", createdRateConversion);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 

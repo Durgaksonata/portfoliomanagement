@@ -46,7 +46,6 @@ public class MD_ProjectManagerController {
                     if (existingManager.isPresent()) {
                         MD_ProjectManager managerToUpdate = existingManager.get();
                         managerToUpdate.setProjectManager(manager.getProjectManager());
-                        managerToUpdate.setProject(manager.getProject());
                         projectManagerRepository.save(managerToUpdate);
                         return false;
                     } else {

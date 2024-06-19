@@ -94,25 +94,37 @@ public class Md_UserService {
 
         projectManagerRepository.save(projectManager);
     }
-//    @Transactional
-//    public void deleteDeliveryDirector(MD_Users user) {
-//        // Example: Fetch and delete MD_DeliveryDirector entity related to user
-//        MD_DeliveryDirector deliveryDirector = deliveryDirectorRepository.findByUser(user);
-//        deliveryDirectorRepository.delete(deliveryDirector);
-//    }
-//
-//    @Transactional
-//    public void deleteDeliveryManager(MD_Users user) {
-//        // Example: Fetch and delete MD_DeliveryManager entity related to user
-//        MD_DeliveryManager deliveryManager = deliveryManagerRepository.findByUser(user);
-//        deliveryManagerRepository.delete(deliveryManager);
-//    }
-//
-//    @Transactional
-//    public void deleteProjectManager(MD_Users user) {
-//        // Example: Fetch and delete MD_ProjectManager entity related to user
-//        MD_ProjectManager projectManager = projectManagerRepository.findByUser(user);
-//        projectManagerRepository.delete(projectManager);
-//    }
+
+
+    @Transactional
+    public void deleteRelatedEntities(MD_Users user) {
+        List<String> roles = user.getRole();
+        for (String role : roles) {
+            if ("DeliveryDirector".equals(role)) {
+                deleteDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+            } else if ("DeliveryManager".equals(role)) {
+                deleteDeliveryManager(user.getFirstName() + " " + user.getLastName());
+            } else if ("ProjectManager".equals(role)) {
+                deleteProjectManager(user.getFirstName() + " " + user.getLastName());
+            }
+            // Add more if-else statements as needed for other roles
+        }
+    }
+
+    @Transactional
+    public void deleteDeliveryDirector(String deliveryDirector) {
+        deliveryDirectorRepository.deleteByDeliveryDirector(deliveryDirector);
+    }
+
+    @Transactional
+    public void deleteDeliveryManager(String deliveryManager) {
+        deliveryManagerRepository.deleteByDeliveryManagers(deliveryManager);
+    }
+
+    @Transactional
+    public void deleteProjectManager(String projectManager) {
+        projectManagerRepository.deleteByProjectManager(projectManager);
+    }
+
 
 }
