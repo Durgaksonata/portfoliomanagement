@@ -137,13 +137,14 @@ public class UserController {
 
 
     @PutMapping("/users/{email}")
-    public ResponseEntity<String> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
+    public ResponseEntity<Map<String, String>> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
         try {
             // Retrieve the user by email
             User existingUser = userService.getUserByEmail(email);
 
             if (existingUser == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Collections.singletonMap("response", "User with the provided email does not exist"));
             }
 
             // Get the old and new passwords from the request body
@@ -155,12 +156,14 @@ public class UserController {
 
             // Check if the provided old password matches the decrypted password from the database
             if (!Objects.equals(oldPassword, decryptedPasswordFromDB)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Collections.singletonMap("response", "The old password provided is incorrect"));
             }
 
             // Check if the new password is the same as the old password
             if (Objects.equals(newPassword, oldPassword)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New password cannot be the same as the old password");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("response", "The new password cannot be the same as the old password"));
             }
 
             // Encrypt the new password and update the user's password
@@ -168,11 +171,14 @@ public class UserController {
             existingUser.setPassword(newEncryptedPassword);
             userService.saveUser(existingUser);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Collections.singletonMap("response", "Password updated successfully"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("response", "Failed to update password: " + e.getMessage()));
         }
     }
+
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
