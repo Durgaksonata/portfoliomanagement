@@ -162,7 +162,6 @@ public class MD_UsersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Collections.singletonMap("message", "User not found"));
         }
-
         // Check for duplicates
         List<MD_Users> duplicateUsers = usersRepo.findByFirstNameAndLastName(updatedUser.getFirstName(), updatedUser.getLastName());
         for (MD_Users user : duplicateUsers) {
@@ -177,16 +176,12 @@ public class MD_UsersController {
         StringBuilder updateMessage = new StringBuilder();
         boolean isUpdated = false;
 
+
+
         String oldFullName = existingUser.getFirstName() + " " + existingUser.getLastName();
         String newFullName = updatedUser.getFirstName() + " " + updatedUser.getLastName();
 
-        // Update roles first using the old full name
-        if (!existingUser.getRole().equals(updatedUser.getRole())) {
-            userService.updateRoles(existingUser, updatedUser);
-            existingUser.setRole(updatedUser.getRole());
-            isUpdated = true;
-            updateMessage.append("Roles updated. ");
-        }
+
 
         // Update the user name if changed
         if (!existingUser.getFirstName().equals(updatedUser.getFirstName()) ||
@@ -197,14 +192,28 @@ public class MD_UsersController {
             isUpdated = true;
         }
 
+        // Update roles first using the old full name
+        if (!existingUser.getRole().equals(updatedUser.getRole())) {
+
+            userService.updateRoles(existingUser, updatedUser);
+            existingUser.setRole(updatedUser.getRole());
+
+            updateMessage.append("Roles updated.");
+            isUpdated = true;
+        }
+
+
+
         if (isUpdated) {
             // Save the updated user
             usersRepo.save(existingUser);
             // Update role entities with the new name
             userService.updateRoleEntities(existingUser, oldFullName, newFullName);
+
         } else {
             return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
+
 
         // Prepare response
         Map<String, Object> response = new HashMap<>();
