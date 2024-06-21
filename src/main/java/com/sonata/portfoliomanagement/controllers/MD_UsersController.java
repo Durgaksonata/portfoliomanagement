@@ -41,11 +41,11 @@ public class MD_UsersController {
 
         // Handle role assignments
         for (String role : user.getRole()) {
-            if (role.equals("DeliveryDirector")) {
+            if (role.equals("Delivery Director")) {
                 userService.createDeliveryDirector(user);
-            } else if (role.equals("DeliveryManager")) {
+            } else if (role.equals("Delivery Manager")) {
                 userService.createDeliveryManager(user);
-            } else if (role.equals("ProjectManager")) {
+            } else if (role.equals("Project Manager")) {
                 userService.createProjectManager(user);
             }
             // Handle other roles if necessary
