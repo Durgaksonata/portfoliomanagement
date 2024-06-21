@@ -102,13 +102,13 @@ public class Md_UserService {
         for (String role : existingRoles) {
             if (!updatedRoles.contains(role)) {
                 switch (role) {
-                    case "DeliveryDirector":
+                    case "Delivery Director":
                         deleteDeliveryDirector(oldFullName);
                         break;
-                    case "DeliveryManager":
+                    case "Delivery Manager":
                         deleteDeliveryManager(oldFullName);
                         break;
-                    case "ProjectManager":
+                    case "Project Manager":
                         deleteProjectManager(oldFullName);
                         break;
                     default:
@@ -121,13 +121,13 @@ public class Md_UserService {
         for (String role : updatedRoles) {
             if (!existingRoles.contains(role)) {
                 switch (role) {
-                    case "DeliveryDirector":
+                    case "Delivery Director":
                         createDeliveryDirector(updatedUser);
                         break;
-                    case "DeliveryManager":
+                    case "Delivery Manager":
                         createDeliveryManager(updatedUser);
                         break;
-                    case "ProjectManager":
+                    case "Project Manager":
                         createProjectManager(updatedUser);
                         break;
                     default:
@@ -142,13 +142,13 @@ public class Md_UserService {
         List<String> roles = user.getRole();
         for (String role : roles) {
             switch (role) {
-                case "DeliveryDirector":
+                case "Delivery Director":
                     updateDeliveryDirectorName(oldFullName, newFullName);
                     break;
-                case "DeliveryManager":
+                case "Delivery Manager":
                     updateDeliveryManagerName(oldFullName, newFullName);
                     break;
-                case "ProjectManager":
+                case "Project Manager":
                     updateProjectManagerName(oldFullName, newFullName);
                     break;
                 default:
@@ -190,13 +190,13 @@ public class Md_UserService {
         String fullName = user.getFirstName() + " " + user.getLastName();
         for (String role : roles) {
             switch (role) {
-                case "DeliveryDirector":
+                case "Delivery Director":
                     deleteDeliveryDirector(fullName);
                     break;
-                case "DeliveryManager":
+                case "Delivery Manager":
                     deleteDeliveryManager(fullName);
                     break;
-                case "ProjectManager":
+                case "Project Manager":
                     deleteProjectManager(fullName);
                     break;
                 default:
