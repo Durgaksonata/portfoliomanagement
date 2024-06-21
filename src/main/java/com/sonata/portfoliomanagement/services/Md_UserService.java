@@ -91,23 +91,25 @@ public class Md_UserService {
         projectManagerRepository.deleteByProjectManager(projectManager);
     }
 
+
     @Transactional
     public void updateRoles(MD_Users existingUser, MD_Users updatedUser) {
         List<String> existingRoles = existingUser.getRole();
         List<String> updatedRoles = updatedUser.getRole();
+        String oldFullName = existingUser.getFirstName() + " " + existingUser.getLastName();
 
         // Remove roles that are no longer assigned
         for (String role : existingRoles) {
             if (!updatedRoles.contains(role)) {
                 switch (role) {
                     case "DeliveryDirector":
-                        deleteDeliveryDirector(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        deleteDeliveryDirector(oldFullName);
                         break;
                     case "DeliveryManager":
-                        deleteDeliveryManager(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        deleteDeliveryManager(oldFullName);
                         break;
                     case "ProjectManager":
-                        deleteProjectManager(existingUser.getFirstName() + " " + existingUser.getLastName());
+                        deleteProjectManager(oldFullName);
                         break;
                     default:
                         break;
@@ -202,4 +204,5 @@ public class Md_UserService {
             }
         }
     }
+
 }
