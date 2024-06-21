@@ -22,6 +22,12 @@ public class MD_UsersController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody MD_Users user) {
+        // Validate input
+        if ((user.getFirstName() == null || user.getFirstName().trim().isEmpty()) &&
+                (user.getLastName() == null || user.getLastName().trim().isEmpty())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "At least one of first name or last name must be provided"));
+        }
         List<MD_Users> existingUsers = usersRepo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
 
         if (!existingUsers.isEmpty()) {
@@ -156,6 +162,12 @@ public class MD_UsersController {
 
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateMdUser(@RequestBody MD_Users updatedUser) {
+        // Validate input
+        if ((updatedUser.getFirstName() == null || updatedUser.getFirstName().trim().isEmpty()) &&
+                (updatedUser.getLastName() == null || updatedUser.getLastName().trim().isEmpty())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "At least one of first name or last name must be provided"));
+        }
         Optional<MD_Users> userOptional = usersRepo.findById(updatedUser.getId());
 
         if (!userOptional.isPresent()) {
@@ -191,7 +203,6 @@ public class MD_UsersController {
             updateMessage.append("Name updated from '").append(oldFullName).append("' to '").append(newFullName).append("'. ");
             isUpdated = true;
         }
-
 
 
         // Update roles first using the old full name
