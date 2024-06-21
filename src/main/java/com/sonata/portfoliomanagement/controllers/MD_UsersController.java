@@ -2,9 +2,7 @@ package com.sonata.portfoliomanagement.controllers;
 
 import java.util.*;
 
-import com.sonata.portfoliomanagement.interfaces.MD_RolesRepository;
 import com.sonata.portfoliomanagement.interfaces.MD_UsersRepository;
-import com.sonata.portfoliomanagement.model.MD_Accounts;
 import com.sonata.portfoliomanagement.model.MD_Users;
 import com.sonata.portfoliomanagement.services.Md_UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-@CrossOrigin(origins = "http://localhost:5173" )
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/users")
 public class MD_UsersController {
@@ -24,13 +21,13 @@ public class MD_UsersController {
     private Md_UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<Object> createUser(@RequestBody MD_Users user) {
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody MD_Users user) {
         List<MD_Users> existingUsers = usersRepo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
 
         if (!existingUsers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate entries: Users with first name '" + user.getFirstName() +
-                            "' and last name '" + user.getLastName() + "' already exist.");
+                    .body(Collections.singletonMap("message", "Duplicate entries: Users with first name '"
+                            + user.getFirstName() + "' and last name '" + user.getLastName() + "' already exist."));
         }
 
         // Save the new user if no conflicts are found
@@ -44,20 +41,17 @@ public class MD_UsersController {
                 userService.createDeliveryManager(user);
             } else if (role.equals("ProjectManager")) {
                 userService.createProjectManager(user);
-            } else {
-                // Handle other roles if necessary
             }
+            // Handle other roles if necessary
         }
 
         // Prepare the response with a success message and the created user
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "User with name " + createdUser.getFirstName() + " " + createdUser.getLastName() + " saved successfully.");
-      //  response.put("createdUser", createdUser);
+        response.put("message", "User with name " + createdUser.getFirstName() + " " + createdUser.getLastName() +
+                " and roles: " + createdUser.getRole() + " saved successfully.");
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
-
 
     @GetMapping("/get")
     public ResponseEntity<List<MD_Users>> getAllUsers() {
@@ -65,29 +59,115 @@ public class MD_UsersController {
         return ResponseEntity.ok(allUsers);
     }
 
+//    @PutMapping("/update")
+//    public ResponseEntity<Map<String, Object>> updateMdUser(@RequestBody MD_Users updatedUser) {
+//        Optional<MD_Users> userOptional = usersRepo.findById(updatedUser.getId());
+//
+//        if (!userOptional.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(Collections.singletonMap("message", "User not found"));
+//        }
+//
+//        List<MD_Users> duplicateUsers = usersRepo.findByFirstNameAndLastName(updatedUser.getFirstName(), updatedUser.getLastName());
+//        if (!duplicateUsers.isEmpty()) {
+//            for (MD_Users user : duplicateUsers) {
+//                if (user.getId() != (updatedUser.getId())) {
+//                    return ResponseEntity.status(HttpStatus.CONFLICT)
+//                            .body(Collections.singletonMap("message", "Duplicate entry: User with first name '"
+//                                    + updatedUser.getFirstName() + "' and last name '" + updatedUser.getLastName() + "' already exists."));
+//                }
+//            }
+//        }
+//
+//        MD_Users existingUser = userOptional.get();
+//        StringBuilder updateMessage = new StringBuilder();
+//        boolean isUpdated = false;
+//
+//        if (!existingUser.getFirstName().equals(updatedUser.getFirstName()) ||
+//                !existingUser.getLastName().equals(updatedUser.getLastName())) {
+//
+//            String oldFullName = existingUser.getFirstName() + " " + existingUser.getLastName();
+//            String newFullName = updatedUser.getFirstName() + " " + updatedUser.getLastName();
+//
+//            if (!existingUser.getFirstName().equals(updatedUser.getFirstName())) {
+//                updateMessage.append("First name updated from '")
+//                        .append(existingUser.getFirstName())
+//                        .append("' to '")
+//                        .append(updatedUser.getFirstName())
+//                        .append("'. ");
+//                existingUser.setFirstName(updatedUser.getFirstName());
+//                isUpdated = true;
+//            }
+//
+//            if (!existingUser.getLastName().equals(updatedUser.getLastName())) {
+//                updateMessage.append("Last name changed from '")
+//                        .append(existingUser.getLastName())
+//                        .append("' to '")
+//                        .append(updatedUser.getLastName())
+//                        .append("'. ");
+//                existingUser.setLastName(updatedUser.getLastName());
+//                isUpdated = true;
+//            }
+//
+//            // Update names in role-related entities
+//            userService.updateRoleEntities(existingUser, oldFullName, newFullName);
+//        }
+//
+//
+//        // Check for role updates and handle accordingly
+//        if (!existingUser.getRole().equals(updatedUser.getRole())) {
+//            updateMessage.append("Roles updated. ");
+//            userService.updateRoles(existingUser, updatedUser);
+//            existingUser.setRole(updatedUser.getRole());
+//            isUpdated = true;
+//        }
+//
+//        if (!isUpdated) {
+//            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
+//        }
+//
+//
+//
+//        MD_Users updatedUserEntity = usersRepo.save(existingUser);
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", updateMessage.toString());
+//        response.put("updatedUser", updatedUserEntity);
+//
+//        return ResponseEntity.ok(response);
+//    }
+
+
+
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateMdUser(@RequestBody MD_Users updatedUser) {
         Optional<MD_Users> userOptional = usersRepo.findById(updatedUser.getId());
 
         if (!userOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "User not found"));
         }
 
+        // Check for duplicates
         List<MD_Users> duplicateUsers = usersRepo.findByFirstNameAndLastName(updatedUser.getFirstName(), updatedUser.getLastName());
-        if (!duplicateUsers.isEmpty()) {
-            for (MD_Users user : duplicateUsers) {
-                if (user.getId() != updatedUser.getId()) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(Map.of("message", "Duplicate entry: User with first name '" + updatedUser.getFirstName()
-                                    + "' and last name '" + updatedUser.getLastName() + "' already exists."));
-                }
+        for (MD_Users user : duplicateUsers) {
+            if (user.getId() !=(updatedUser.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Collections.singletonMap("message", "Duplicate entry: User with first name '"
+                                + updatedUser.getFirstName() + "' and last name '" + updatedUser.getLastName() + "' already exists."));
             }
         }
 
         MD_Users existingUser = userOptional.get();
         StringBuilder updateMessage = new StringBuilder();
-        boolean isUpdated = false;
+        boolean isFirstNameUpdated = false;
+        boolean isLastNameUpdated = false;
+        boolean areRolesUpdated = false;
 
+        String oldFirstName = existingUser.getFirstName();
+        String oldLastName = existingUser.getLastName();
+        List<String> oldRoles = new ArrayList<>(existingUser.getRole());
+
+        // Check for first name update
         if (!existingUser.getFirstName().equals(updatedUser.getFirstName())) {
             updateMessage.append("First name updated from '")
                     .append(existingUser.getFirstName())
@@ -95,9 +175,10 @@ public class MD_UsersController {
                     .append(updatedUser.getFirstName())
                     .append("'. ");
             existingUser.setFirstName(updatedUser.getFirstName());
-            isUpdated = true;
+            isFirstNameUpdated = true;
         }
 
+        // Check for last name update
         if (!existingUser.getLastName().equals(updatedUser.getLastName())) {
             updateMessage.append("Last name changed from '")
                     .append(existingUser.getLastName())
@@ -105,33 +186,54 @@ public class MD_UsersController {
                     .append(updatedUser.getLastName())
                     .append("'. ");
             existingUser.setLastName(updatedUser.getLastName());
-            isUpdated = true;
+            isLastNameUpdated = true;
         }
 
-        // Check for role updates and handle accordingly
-        if (!existingUser.getRole().equals(updatedUser.getRole())) {
+        // Save name updates first
+        if (isFirstNameUpdated || isLastNameUpdated) {
+            existingUser = usersRepo.save(existingUser);
+        }
+
+        // Check for role updates
+        if (!oldRoles.containsAll(updatedUser.getRole()) || !updatedUser.getRole().containsAll(oldRoles)) {
             updateMessage.append("Roles updated. ");
             userService.updateRoles(existingUser, updatedUser);
             existingUser.setRole(updatedUser.getRole());
-            isUpdated = true;
+            areRolesUpdated = true;
         }
 
-        if (!isUpdated) {
+        // Save role updates
+        if (areRolesUpdated) {
+            userService.updateRoles(existingUser, updatedUser);
+            existingUser.setRole(updatedUser.getRole());
+            existingUser = usersRepo.save(existingUser);
+        }
+
+        // If no updates detected, return "No changes detected" message
+        if (!isFirstNameUpdated && !isLastNameUpdated && !areRolesUpdated) {
             return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
 
-        MD_Users updatedUserEntity = usersRepo.save(existingUser);
+        // If the name was updated, update the role entities with the new name
+        if (isFirstNameUpdated || isLastNameUpdated) {
+            String oldFullName = oldFirstName + " " + oldLastName;
+            String newFullName = updatedUser.getFirstName() + " " + updatedUser.getLastName();
+            userService.updateRoleEntities(existingUser, oldFullName, newFullName);
+        }
+
+        // Prepare response
         Map<String, Object> response = new HashMap<>();
         response.put("message", updateMessage.toString());
-        response.put("updatedUser", updatedUserEntity);
+        response.put("updatedUser", existingUser);
 
         return ResponseEntity.ok(response);
     }
 
 
 
+
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUsersByIds(@RequestBody List<Integer> ids) {
+    public ResponseEntity<Map<String, Object>> deleteUsersByIds(@RequestBody List<Integer> ids) {
         List<Integer> notFoundIds = new ArrayList<>();
         List<String> deletedUserNames = new ArrayList<>();
 
@@ -141,22 +243,19 @@ public class MD_UsersController {
                 notFoundIds.add(id);
             } else {
                 MD_Users user = userOptional.get();
-
                 deletedUserNames.add(user.getFirstName() + " " + user.getLastName());
                 userService.deleteRelatedEntities(user);
                 usersRepo.deleteById(id);
             }
         }
 
+        Map<String, Object> response = new HashMap<>();
         if (!notFoundIds.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No users found with IDs: " + notFoundIds.toString());
+            response.put("message", "No users found with IDs: " + notFoundIds.toString());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Users: " + deletedUserNames + " deleted successfully");
+        response.put("message", "Users: " + String.join(", ", deletedUserNames) + " deleted successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-
-
 }

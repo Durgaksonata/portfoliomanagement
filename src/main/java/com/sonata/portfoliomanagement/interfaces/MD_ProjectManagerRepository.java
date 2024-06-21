@@ -14,6 +14,5 @@ public interface MD_ProjectManagerRepository extends JpaRepository<MD_ProjectMan
 
     List<MD_ProjectManager> findByProjectManager(String projectManager);
 
-    // MD_ProjectManager findByUser(MD_Users user);
-   // MD_ProjectManager findByUser(MD_Users user);
+
 }

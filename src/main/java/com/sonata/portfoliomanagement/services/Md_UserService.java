@@ -15,8 +15,10 @@ import com.sonata.portfoliomanagement.model.MD_ProjectManager;
 import com.sonata.portfoliomanagement.model.MD_Users;
 
 import jakarta.transaction.Transactional;
+
 @Service
 public class Md_UserService {
+
     @Autowired
     private MD_UsersRepository usersRepository;
 
@@ -34,10 +36,8 @@ public class Md_UserService {
         MD_Users createdUser = usersRepository.save(user);
         List<String> roles = user.getRole();
 
-
-        //switch (user.getRole())
         for (String role : roles) {
-            switch (role){
+            switch (role) {
                 case "DeliveryDirector":
                     createDeliveryDirector(user);
                     break;
@@ -49,15 +49,11 @@ public class Md_UserService {
                     break;
                 default:
                     break;
-
             }
         }
 
-
-
         return createdUser;
     }
-
 
     @Transactional
     public void createDeliveryDirector(MD_Users user) {
@@ -77,57 +73,7 @@ public class Md_UserService {
     public void createProjectManager(MD_Users user) {
         MD_ProjectManager projectManager = new MD_ProjectManager();
         projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
-
         projectManagerRepository.save(projectManager);
-    }
-
-    public boolean existsDeliveryDirector(int userId) {
-        return deliveryDirectorRepository.existsById(userId);
-    }
-
-    @Transactional
-    public void updateDeliveryDirector(MD_Users user) {
-        MD_DeliveryDirector deliveryDirector = deliveryDirectorRepository.findById(user.getId()).orElseThrow();
-        deliveryDirector.setDeliveryDirector(user.getFirstName() + " " + user.getLastName());
-        deliveryDirectorRepository.save(deliveryDirector);
-    }
-
-    public boolean existsDeliveryManager(int userId) {
-        return deliveryManagerRepository.existsById(userId);
-    }
-
-    @Transactional
-    public void updateDeliveryManager(MD_Users user) {
-        MD_DeliveryManager deliveryManager = deliveryManagerRepository.findById(user.getId()).orElseThrow();
-        deliveryManager.setDelivery_Managers(user.getFirstName() + " " + user.getLastName());
-        deliveryManagerRepository.save(deliveryManager);
-    }
-
-    public boolean existsProjectManager(int userId) {
-        return projectManagerRepository.existsById(userId);
-    }
-
-    @Transactional
-    public void updateProjectManager(MD_Users user) {
-        MD_ProjectManager projectManager = projectManagerRepository.findById(user.getId()).orElseThrow();
-        projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
-        projectManagerRepository.save(projectManager);
-    }
-
-
-    @Transactional
-    public void deleteRelatedEntities(MD_Users user) {
-        List<String> roles = user.getRole();
-        for (String role : roles) {
-            if ("DeliveryDirector".equals(role)) {
-                deleteDeliveryDirector(user.getFirstName() + " " + user.getLastName());
-            } else if ("DeliveryManager".equals(role)) {
-                deleteDeliveryManager(user.getFirstName() + " " + user.getLastName());
-            } else if ("ProjectManager".equals(role)) {
-                deleteProjectManager(user.getFirstName() + " " + user.getLastName());
-            }
-            // Add more if-else statements as needed for other roles
-        }
     }
 
     @Transactional
@@ -144,7 +90,6 @@ public class Md_UserService {
     public void deleteProjectManager(String projectManager) {
         projectManagerRepository.deleteByProjectManager(projectManager);
     }
-
 
     @Transactional
     public void updateRoles(MD_Users existingUser, MD_Users updatedUser) {
@@ -190,20 +135,19 @@ public class Md_UserService {
         }
     }
 
-
     @Transactional
-    public void updateRoleEntities(MD_Users user) {
+    public void updateRoleEntities(MD_Users user, String oldFullName, String newFullName) {
         List<String> roles = user.getRole();
         for (String role : roles) {
             switch (role) {
                 case "DeliveryDirector":
-                    updateDeliveryDirectorName(user);
+                    updateDeliveryDirectorName(oldFullName, newFullName);
                     break;
                 case "DeliveryManager":
-                    updateDeliveryManagerName(user);
+                    updateDeliveryManagerName(oldFullName, newFullName);
                     break;
                 case "ProjectManager":
-                    updateProjectManagerName(user);
+                    updateProjectManagerName(oldFullName, newFullName);
                     break;
                 default:
                     break;
@@ -212,33 +156,50 @@ public class Md_UserService {
     }
 
     @Transactional
-    public void updateDeliveryDirectorName(MD_Users user) {
-        List<MD_DeliveryDirector> deliveryDirectors = deliveryDirectorRepository.findByDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+    public void updateDeliveryDirectorName(String oldFullName, String newFullName) {
+        List<MD_DeliveryDirector> deliveryDirectors = deliveryDirectorRepository.findByDeliveryDirector(oldFullName);
         for (MD_DeliveryDirector deliveryDirector : deliveryDirectors) {
-            deliveryDirector.setDeliveryDirector(user.getFirstName() + " " + user.getLastName());
+            deliveryDirector.setDeliveryDirector(newFullName);
             deliveryDirectorRepository.save(deliveryDirector);
         }
     }
 
     @Transactional
-    public void updateDeliveryManagerName(MD_Users user) {
-        List<MD_DeliveryManager> deliveryManagers = deliveryManagerRepository.findByDeliveryManagers(user.getFirstName() + " " + user.getLastName());
+    public void updateDeliveryManagerName(String oldFullName, String newFullName) {
+        List<MD_DeliveryManager> deliveryManagers = deliveryManagerRepository.findByDeliveryManagers(oldFullName);
         for (MD_DeliveryManager deliveryManager : deliveryManagers) {
-            deliveryManager.setDelivery_Managers(user.getFirstName() + " " + user.getLastName());
+            deliveryManager.setDelivery_Managers(newFullName);
             deliveryManagerRepository.save(deliveryManager);
         }
     }
 
     @Transactional
-    public void updateProjectManagerName(MD_Users user) {
-        List<MD_ProjectManager> projectManagers = projectManagerRepository.findByProjectManager(user.getFirstName() + " " + user.getLastName());
+    public void updateProjectManagerName(String oldFullName, String newFullName) {
+        List<MD_ProjectManager> projectManagers = projectManagerRepository.findByProjectManager(oldFullName);
         for (MD_ProjectManager projectManager : projectManagers) {
-            projectManager.setProjectManager(user.getFirstName() + " " + user.getLastName());
+            projectManager.setProjectManager(newFullName);
             projectManagerRepository.save(projectManager);
         }
     }
 
-
-
-
+    @Transactional
+    public void deleteRelatedEntities(MD_Users user) {
+        List<String> roles = user.getRole();
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        for (String role : roles) {
+            switch (role) {
+                case "DeliveryDirector":
+                    deleteDeliveryDirector(fullName);
+                    break;
+                case "DeliveryManager":
+                    deleteDeliveryManager(fullName);
+                    break;
+                case "ProjectManager":
+                    deleteProjectManager(fullName);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
