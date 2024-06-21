@@ -192,17 +192,17 @@ public class MD_UsersController {
             isUpdated = true;
         }
 
+
+
         // Update roles first using the old full name
         if (!existingUser.getRole().equals(updatedUser.getRole())) {
 
             userService.updateRoles(existingUser, updatedUser);
             existingUser.setRole(updatedUser.getRole());
 
-            updateMessage.append("Roles updated.");
-            isUpdated = true;
+            updateMessage.append("user updated.");
+          //  isUpdated = true;
         }
-
-
 
         if (isUpdated) {
             // Save the updated user
@@ -213,6 +213,9 @@ public class MD_UsersController {
         } else {
             return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
         }
+
+
+
 
 
         // Prepare response
