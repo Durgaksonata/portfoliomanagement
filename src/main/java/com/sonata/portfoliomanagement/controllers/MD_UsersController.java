@@ -204,7 +204,6 @@ public class MD_UsersController {
             isUpdated = true;
         }
 
-
         // Update roles first using the old full name
         if (!existingUser.getRole().equals(updatedUser.getRole())) {
 
@@ -212,7 +211,7 @@ public class MD_UsersController {
             existingUser.setRole(updatedUser.getRole());
 
             updateMessage.append("user updated.");
-          //  isUpdated = true;
+            isUpdated = true;
         }
 
         if (isUpdated) {
