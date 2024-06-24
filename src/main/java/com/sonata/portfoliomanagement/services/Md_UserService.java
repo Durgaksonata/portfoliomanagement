@@ -38,13 +38,13 @@ public class Md_UserService {
 
         for (String role : roles) {
             switch (role) {
-                case "DeliveryDirector":
+                case "Delivery Director":
                     createDeliveryDirector(user);
                     break;
-                case "DeliveryManager":
+                case "Delivery Manager":
                     createDeliveryManager(user);
                     break;
-                case "ProjectManager":
+                case "Project Manager":
                     createProjectManager(user);
                     break;
                 default:
@@ -90,7 +90,6 @@ public class Md_UserService {
     public void deleteProjectManager(String projectManager) {
         projectManagerRepository.deleteByProjectManager(projectManager);
     }
-
 
     @Transactional
     public void updateRoles(MD_Users existingUser, MD_Users updatedUser) {
