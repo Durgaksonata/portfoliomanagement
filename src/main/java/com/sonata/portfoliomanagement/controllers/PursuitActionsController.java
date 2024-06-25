@@ -64,6 +64,81 @@ public class PursuitActionsController {
     }
 
 
+//    @PostMapping("/save")
+//    public ResponseEntity<?> createPursuitActions(@RequestBody List<PursuitActions> pursuitActionsList) {
+//        List<String> errors = new ArrayList<>();
+//        List<PursuitActions> createdPursuits = new ArrayList<>();
+//
+//        for (PursuitActions pursuitAction : pursuitActionsList) {
+//            // Validate mandatory fields
+//            if (pursuitAction.getActionItemNumber() == null || pursuitAction.getActionItemNumber().trim().isEmpty()) {
+//                errors.add("ActionItemNumber cannot be empty for pursuit: " + pursuitAction.getPursuit());
+//                continue;
+//            }
+//            if (pursuitAction.getActionDescription() == null || pursuitAction.getActionDescription().trim().isEmpty()) {
+//                errors.add("ActionDescription cannot be empty for pursuit: " + pursuitAction.getPursuit());
+//                continue;
+//            }
+//            // Check if the pursuit exists in the PursuitTracker table
+//            PursuitTracker pursuitTracker = PursuitTrackerRepo.findByProjectorPursuit(pursuitAction.getPursuit())
+//                    .orElse(null);
+//
+//            // If no matching PursuitTracker entry is found, add an error message and continue
+//            if (pursuitTracker == null) {
+//                errors.add("No matching Pursuits entry found in pursuit tracker: " + pursuitAction.getPursuit());
+//                continue;
+//            }
+//
+//            // Check if the project_or_pursuit matches the pursuit field in the PursuitTracker entry
+//            if (!pursuitAction.getPursuit().equals(pursuitTracker.getProjectorPursuit())) {
+//                errors.add("project_or_pursuit does not match the pursuit field in PursuitTracker for pursuit: " + pursuitAction.getPursuit());
+//                continue;
+//            }
+//
+//            // Generate the pursuitid for PursuitActions
+//            int pursuitid = pursuitTracker.getPursuitid();
+//            pursuitAction.setPursuitid(pursuitid);
+//
+//            // Check for duplicate entry
+//            List<PursuitActions> existingEntries = pursuitActionRepo.findByDeliveryManagerAndDeliveryDirectorAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(
+//                    pursuitAction.getDeliveryManager(),
+//                    pursuitAction.getDeliveryDirector(),
+//                    pursuitAction.getAccount(),
+//                    pursuitAction.getPursuit(),
+//                    pursuitAction.getActionItemNumber(),
+//                    pursuitAction.getActionDescription(),
+//                    pursuitAction.getActionType(),
+//                    pursuitAction.getStatus(),
+//                    pursuitAction.getActionOwner(),
+//                    pursuitAction.getDueDate(),
+//                    pursuitAction.getDependentActionItem(),
+//                    pursuitAction.getRemarks()
+//            );
+//
+//            if (!existingEntries.isEmpty()) {
+//                errors.add("Duplicate entry exists for pursuit: " + pursuitAction.getPursuit());
+//                continue;
+//            }
+//
+//            // Save the pursuitAction object to the database
+//            PursuitActions createdPursuit = pursuitActionRepo.save(pursuitAction);
+//            createdPursuits.add(createdPursuit);
+//        }
+//
+//        if (!errors.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
+//        }
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "Data saved successfully.");
+//       // response.put("data", createdPursuits);
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
+
+
+
+
+
     @PostMapping("/save")
     public ResponseEntity<?> createPursuitActions(@RequestBody List<PursuitActions> pursuitActionsList) {
         List<String> errors = new ArrayList<>();
@@ -79,46 +154,26 @@ public class PursuitActionsController {
                 errors.add("ActionDescription cannot be empty for pursuit: " + pursuitAction.getPursuit());
                 continue;
             }
-            // Check if the pursuit exists in the PursuitTracker table
-            PursuitTracker pursuitTracker = PursuitTrackerRepo.findByProjectorPursuit(pursuitAction.getPursuit())
-                    .orElse(null);
 
-            // If no matching PursuitTracker entry is found, add an error message and continue
-            if (pursuitTracker == null) {
+            // Check if the pursuit exists in the PursuitTracker table
+            Optional<PursuitTracker> pursuitTrackerOptional = PursuitTrackerRepo.findByProjectorPursuit(pursuitAction.getPursuit());
+            if (pursuitTrackerOptional.isEmpty()) {
                 errors.add("No matching Pursuits entry found in pursuit tracker: " + pursuitAction.getPursuit());
                 continue;
             }
 
-            // Check if the project_or_pursuit matches the pursuit field in the PursuitTracker entry
-            if (!pursuitAction.getPursuit().equals(pursuitTracker.getProjectorPursuit())) {
-                errors.add("project_or_pursuit does not match the pursuit field in PursuitTracker for pursuit: " + pursuitAction.getPursuit());
+            PursuitTracker pursuitTracker = pursuitTrackerOptional.get();
+
+            // Check for duplicate entry based on ActionItemNumber and Pursuit
+            if (isDuplicateEntries(pursuitAction)) {
+                errors.add("Duplicate entry: Pursuits with '" + pursuitAction.getPursuit() +
+                        "' and ActionItemNumber '" + pursuitAction.getActionItemNumber() + " is already exist");
                 continue;
             }
 
             // Generate the pursuitid for PursuitActions
             int pursuitid = pursuitTracker.getPursuitid();
             pursuitAction.setPursuitid(pursuitid);
-
-            // Check for duplicate entry
-            List<PursuitActions> existingEntries = pursuitActionRepo.findByDeliveryManagerAndDeliveryDirectorAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(
-                    pursuitAction.getDeliveryManager(),
-                    pursuitAction.getDeliveryDirector(),
-                    pursuitAction.getAccount(),
-                    pursuitAction.getPursuit(),
-                    pursuitAction.getActionItemNumber(),
-                    pursuitAction.getActionDescription(),
-                    pursuitAction.getActionType(),
-                    pursuitAction.getStatus(),
-                    pursuitAction.getActionOwner(),
-                    pursuitAction.getDueDate(),
-                    pursuitAction.getDependentActionItem(),
-                    pursuitAction.getRemarks()
-            );
-
-            if (!existingEntries.isEmpty()) {
-                errors.add("Duplicate entry exists for pursuit: " + pursuitAction.getPursuit());
-                continue;
-            }
 
             // Save the pursuitAction object to the database
             PursuitActions createdPursuit = pursuitActionRepo.save(pursuitAction);
@@ -128,12 +183,25 @@ public class PursuitActionsController {
         if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
         }
+
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Data saved successfully.");
-       // response.put("data", createdPursuits);
+        // response.put("data", createdPursuits);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    private boolean isDuplicateEntries(PursuitActions pursuitAction) {
+        // Check if there is an existing entry with the same ActionItemNumber for the given Pursuit
+        List<PursuitActions> existingEntries = pursuitActionRepo.findByPursuitAndActionItemNumber(
+                pursuitAction.getPursuit(), pursuitAction.getActionItemNumber());
+
+        // Exclude the current pursuitAction object from the existing entries check
+        existingEntries.removeIf(existing -> existing.getId() == pursuitAction.getId());
+
+        return !existingEntries.isEmpty();
+    }
+
 
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updatePursuitActionsByActionItemNumber(@RequestBody List<PursuitActions> updatedPursuitActionsList) {
@@ -278,22 +346,43 @@ public class PursuitActionsController {
     }
 
 
+
+
+
+
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deletePursuitActionsByIds(@RequestBody List<Integer> ids) {
+    public ResponseEntity<Map<String, Object>> deletePursuitActionsByIds(@RequestBody List<Integer> ids) {
+        Map<String, Object> response = new HashMap<>();
+        List<String> deletedActionItemNumbers = new ArrayList<>();
+        List<Integer> notFoundIds = new ArrayList<>();
+
         for (int id : ids) {
             Optional<PursuitActions> pursuitActionOptional = pursuitActionsService.findById(id);
 
-            if (!pursuitActionOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No PursuitActions found with ID: " + id);
-            }
+            if (pursuitActionOptional.isPresent()) {
+                PursuitActions pursuitAction = pursuitActionOptional.get();
+                String actionItemNumber = pursuitAction.getActionItemNumber();
 
-            pursuitActionsService.delete(pursuitActionOptional.get());
+                pursuitActionsService.delete(pursuitAction);
+                deletedActionItemNumbers.add(actionItemNumber);
+            } else {
+                notFoundIds.add(id);
+            }
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("PursuitActions with specified IDs have been deleted.");
+        String actionItemNumbersString = String.join(", ", deletedActionItemNumbers);
+
+        if (!notFoundIds.isEmpty()) {
+            response.put("message", "entries not found.");
+            response.put("notFoundIds", notFoundIds);
+            response.put("deletedActionItemNumbers", actionItemNumbersString);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        response.put("message", "PursuitActions with specified actionItemNumbers: " + actionItemNumbersString + " have been deleted.");
+        response.put("deletedActionItemNumbers", actionItemNumbersString);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
 
 
 

@@ -21,4 +21,6 @@ public interface PursuitActionsRepository extends JpaRepository<PursuitActions, 
     List<PursuitActions> findByDeliveryManagerAndDeliveryDirectorAndAccountAndPursuitAndActionItemNumberAndActionDescriptionAndActionTypeAndStatusAndActionOwnerAndDueDateAndDependentActionItemAndRemarks(String deliveryManager, String deliveryDirector, String account, String pursuit, String actionItemNumber, String actionDescription, String actionType, String status, String actionOwner, Date dueDate, String dependentActionItem, String remarks);
 
     List<PursuitActions> findByPursuit(String projectOrPursuit);
+
+    List<PursuitActions> findByPursuitAndActionItemNumber(String pursuit, String actionItemNumber);
 }

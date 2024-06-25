@@ -1,18 +1,19 @@
 package com.sonata.portfoliomanagement.services;
 
-import com.sonata.portfoliomanagement.model.User;
+import com.sonata.portfoliomanagement.model.MD_Users;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface UserService {
-    void saveUser(User user);
+    void saveUser(MD_Users user);
 
-    User getUserById(Integer id);
+    MD_Users getUserById(Integer id);
 
-    User getUserByEmail(String email);
-    List<User> getAllUsers();
+    MD_Users getUserByEmail(String email);
+    List<MD_Users> getAllUsers();
 
     boolean userExistsByEmailAndPassword(String email, String password);
 

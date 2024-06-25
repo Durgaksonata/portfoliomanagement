@@ -56,7 +56,8 @@ public class PursuitActions {
     @Column(name="action_Owner")
     private String actionOwner;
     @Column(name="due_Date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    @Temporal(TemporalType.DATE)
     private Date dueDate;
     @Column(name="dependent_Action_Item")
     private String dependentActionItem;
