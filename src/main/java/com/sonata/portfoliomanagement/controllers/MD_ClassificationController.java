@@ -19,10 +19,32 @@ public class MD_ClassificationController {
     @Autowired
     MD_ClassificationRepository classificationRepo;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_Classification>> getAllData() {
         List<MD_Classification> mdClassifications = classificationRepo.findAll();
         return ResponseEntity.ok(mdClassifications);
+    }
+
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_Classification> mdClassifications = classificationRepo.findAll();
+
+        Set<String> uniqueClassificationsSet = new HashSet<>();
+        List<String> uniqueMdClassifications = new ArrayList<>();
+
+        for (MD_Classification classification : mdClassifications) {
+            if (uniqueClassificationsSet.add(classification.getClassification())) {
+                uniqueMdClassifications.add(classification.getClassification());
+            }
+        }
+
+        if (!uniqueMdClassifications.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdClassifications);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique classifications found.");
+        }
     }
 
 

@@ -27,10 +27,31 @@ public class MD_AccountsController {
     @Autowired
     MD_AccountsRepository accountsRepo;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_Accounts>> getAllAccounts() {
         List<MD_Accounts> accounts = accountsRepo.findAll();
         return ResponseEntity.ok(accounts);
+    }
+
+    // New GET method to retrieve unique account names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_Accounts> mdAccounts = accountsRepo.findAll();
+        Set<String> uniqueAccountsSet = new HashSet<>();
+        List<String> uniqueMdAccounts = new ArrayList<>();
+
+        for (MD_Accounts account : mdAccounts) {
+            if (uniqueAccountsSet.add(account.getAccounts())) {
+                uniqueMdAccounts.add(account.getAccounts());
+            }
+        }
+
+        if (!uniqueMdAccounts.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdAccounts);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique accounts found.");
+        }
     }
 
     @PostMapping("/save")

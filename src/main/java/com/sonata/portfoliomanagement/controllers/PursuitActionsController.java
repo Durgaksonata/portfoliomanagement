@@ -243,6 +243,7 @@ public class PursuitActionsController {
                 changes.put("deliveryManager", updatedPursuitActions.getDeliveryManager());
                 updated = true;
             }
+
             if (!Objects.equals(existingPursuitActions.getAccount(), updatedPursuitActions.getAccount())) {
                 existingPursuitActions.setAccount(updatedPursuitActions.getAccount());
                 changes.put("account", updatedPursuitActions.getAccount());
@@ -280,16 +281,26 @@ public class PursuitActionsController {
                 updated = true;
             }
 
+            if (!Objects.equals(existingPursuitActions.getDueDate(), updatedPursuitActions.getDueDate())) {
+                existingPursuitActions.setDueDate(updatedPursuitActions.getDueDate());
+                changes.put("dueDate", updatedPursuitActions.getDueDate());
+                updated = true;
+            }
+
+
             if (!Objects.equals(existingPursuitActions.getDependentActionItem(), updatedPursuitActions.getDependentActionItem())) {
                 existingPursuitActions.setDependentActionItem(updatedPursuitActions.getDependentActionItem());
                 changes.put("dependentActionItem", updatedPursuitActions.getDependentActionItem());
                 updated = true;
             }
+
+
             if (!Objects.equals(existingPursuitActions.getRemarks(), updatedPursuitActions.getRemarks())) {
                 existingPursuitActions.setRemarks(updatedPursuitActions.getRemarks());
                 changes.put("remarks", updatedPursuitActions.getRemarks());
                 updated = true;
             }
+
 
 
             // Check for duplicate entry

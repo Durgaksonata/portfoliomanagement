@@ -19,10 +19,27 @@ public class MD_ProjectManagerController {
     @Autowired
     private MD_ProjectManagerRepository projectManagerRepository;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_ProjectManager>> getAllProjectManagers() {
         List<MD_ProjectManager> projectManagers = projectManagerRepository.findAll();
         return ResponseEntity.ok(projectManagers);
+    }
+
+
+    // New GET method to retrieve unique project manager names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<List<String>> getUniqueProjectManagers() {
+        List<MD_ProjectManager> projectManagers = projectManagerRepository.findAll();
+        Set<String> uniqueProjectManagersSet = new HashSet<>();
+        List<String> uniqueProjectManagers = new ArrayList<>();
+
+        for (MD_ProjectManager projectManager : projectManagers) {
+            if (uniqueProjectManagersSet.add(projectManager.getProjectManager())) {
+                uniqueProjectManagers.add(projectManager.getProjectManager());
+            }
+        }
+
+        return ResponseEntity.ok(uniqueProjectManagers);
     }
     @PostMapping("/save")
     public ResponseEntity<List<MD_ProjectManager>> createProjectManagers(@RequestBody List<MD_ProjectManager> projectManagerList) {

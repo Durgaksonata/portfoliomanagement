@@ -18,7 +18,7 @@ public class MD_VerticalController {
     private MD_VerticalRepository verticalRepo;
 
     // Handles GET requests to retrieve all MD_Vertical records
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<?> getAllData() {
         List<MD_Vertical> mdVerticals = verticalRepo.findAll();
         if (!mdVerticals.isEmpty()) {
@@ -26,6 +26,28 @@ public class MD_VerticalController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No verticals found.");
+        }
+    }
+
+
+    // New GET method to retrieve unique vertical names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_Vertical> mdVerticals = verticalRepo.findAll();
+        Set<String> uniqueverticalsSet = new HashSet<>();
+        List<String> uniqueMdVerticals = new ArrayList<>();
+
+        for (MD_Vertical vertical : mdVerticals) {
+            if (uniqueverticalsSet.add(vertical.getVertical())) {
+                uniqueMdVerticals.add(vertical.getVertical());
+            }
+        }
+
+        if (!uniqueMdVerticals.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdVerticals);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique Vertical found.");
         }
     }
 

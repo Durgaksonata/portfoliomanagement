@@ -18,10 +18,32 @@ public class MD_DeliveryDirectorController {
     @Autowired
     MD_DeliveryDirectorRepository deliveryDirectorRepo;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_DeliveryDirector>> getAllData() {
         List<MD_DeliveryDirector> deliveryDirectors = deliveryDirectorRepo.findAll();
         return ResponseEntity.ok(deliveryDirectors);
+    }
+
+
+    // New GET method to retrieve unique deliveryDirector names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_DeliveryDirector> mdDeliveryDirectors = deliveryDirectorRepo.findAll();
+        Set<String> uniquedeliveryDirectorSet = new HashSet<>();
+        List<String> uniqueMdDeliveryDirectors = new ArrayList<>();
+
+        for (MD_DeliveryDirector deliveryDirector : mdDeliveryDirectors) {
+            if (uniquedeliveryDirectorSet.add(deliveryDirector.getDeliveryDirector())) {
+                uniqueMdDeliveryDirectors.add(deliveryDirector.getDeliveryDirector());
+            }
+        }
+
+        if (!uniqueMdDeliveryDirectors.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdDeliveryDirectors);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique DeliveryDirectors found.");
+        }
     }
 
 //    @PostMapping("/save")

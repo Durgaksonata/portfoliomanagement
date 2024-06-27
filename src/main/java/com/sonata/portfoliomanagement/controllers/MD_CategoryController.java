@@ -18,10 +18,32 @@ public class MD_CategoryController {
     @Autowired
     MD_CategoryRepository categoryRepo;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_Category>> getAllData() {
         List<MD_Category> mdcategory = categoryRepo.findAll();
         return ResponseEntity.ok(mdcategory);
+    }
+
+
+    // New GET method to retrieve unique category names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_Category> mdcategory = categoryRepo.findAll();
+        Set<String> uniquecategorysSet = new HashSet<>();
+        List<String> uniqueMdCategory = new ArrayList<>();
+
+        for (MD_Category category : mdcategory) {
+            if (uniquecategorysSet.add(category.getCategory())) {
+                uniqueMdCategory.add(category.getCategory());
+            }
+        }
+
+        if (!uniqueMdCategory.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdCategory);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique category found.");
+        }
     }
 
     @PostMapping("/save")

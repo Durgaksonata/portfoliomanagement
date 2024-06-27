@@ -1,6 +1,9 @@
 package com.sonata.portfoliomanagement.controllers;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.sonata.portfoliomanagement.interfaces.MD_DeliveryManagerRepository;
 import com.sonata.portfoliomanagement.model.MD_DeliveryManager;
@@ -18,10 +21,32 @@ public class MD_DeliveryManagerController {
     @Autowired
     MD_DeliveryManagerRepository dmRepo;
 
-    @GetMapping("/get")
+    @GetMapping("/getall")
     public ResponseEntity<List<MD_DeliveryManager>> getAllData() {
         List<MD_DeliveryManager> mdDm = dmRepo.findAll();
         return ResponseEntity.ok(mdDm);
+    }
+
+
+    // New GET method to retrieve unique deliveryManager names without repetition
+    @GetMapping("/get")
+    public ResponseEntity<?> getUniqueData() {
+        List<MD_DeliveryManager> mdDeliveryManagers = dmRepo.findAll();
+        Set<String> uniquedeliveryManagersSet = new HashSet<>();
+        List<String> uniqueMdDeliveryManagers = new ArrayList<>();
+
+        for (MD_DeliveryManager deliveryManager : mdDeliveryManagers) {
+            if (uniquedeliveryManagersSet.add(deliveryManager.getDelivery_Managers())) {
+                uniqueMdDeliveryManagers.add(deliveryManager.getDelivery_Managers());
+            }
+        }
+
+        if (!uniqueMdDeliveryManagers.isEmpty()) {
+            return ResponseEntity.ok(uniqueMdDeliveryManagers);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No unique deliveryManager found.");
+        }
     }
     @PostMapping("/save")
     public ResponseEntity<MD_DeliveryManager> createMdDm(@RequestBody MD_DeliveryManager mdDms) {
