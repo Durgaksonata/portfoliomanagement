@@ -13,10 +13,8 @@ public class MD_Admin {
         private String firstName;
         @Column(name="last_name")
         private String lastName;
-
-        @ElementCollection
         @Column(name = "role")
-        private List<String> role;
+        private String role;
 
 
         @Column(name="email",nullable = false,length = 100,unique = false)
@@ -40,7 +38,7 @@ public class MD_Admin {
         public MD_Admin() {}
 
 
-        public MD_Admin(int id, String firstName, String lastName, List<String> role, String email, String password, boolean isFirstLogin) {
+        public MD_Admin(int id, String firstName, String lastName, String role, String email, String password, boolean isFirstLogin) {
             this.id = id;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -73,11 +71,11 @@ public class MD_Admin {
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
-        public List<String> getRole() {
+        public String getRole() {
             return role;
         }
 
-        public void setRole(List<String> role) {
+        public void setRole(String role) {
             this.role = role;
         }
 

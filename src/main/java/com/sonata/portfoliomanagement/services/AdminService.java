@@ -1,19 +1,18 @@
 package com.sonata.portfoliomanagement.services;
 
-import com.sonata.portfoliomanagement.model.MD_Users;
-
+import com.sonata.portfoliomanagement.model.MD_Admin;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
-public interface UserService {
-    void saveUser(MD_Users user);
+public interface AdminService {
 
-    MD_Users getUserById(Integer id);
+    void saveUser(MD_Admin user);
 
-    MD_Users getUserByEmail(String email);
-    List<MD_Users> getAllUsers();
+    MD_Admin getUserById(Integer id);
+
+    MD_Admin getUserByEmail(String email);
+    List<MD_Admin> getAllUsers();
 
     boolean userExistsByEmailAndPassword(String email, String password);
 
@@ -23,7 +22,5 @@ public interface UserService {
 
 
     void updateFirstLogin(String email, String password, boolean isFirstLogin);
-
-
 
 }

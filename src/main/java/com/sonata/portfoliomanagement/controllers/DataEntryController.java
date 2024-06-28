@@ -377,6 +377,10 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
                 return new ResponseEntity<>(response, HttpStatus.CONFLICT);
             }
 
+            // Ensure value and budget are set to 0 if not provided
+            float value = dataEntryDTO.getValue() != null ? dataEntryDTO.getValue() : 0.0f;
+            float budget = dataEntryDTO.getBudget() != null ? dataEntryDTO.getBudget() : 0.0f;
+
             // Create DataEntry entity from DTO
             DataEntry dataEntry = new DataEntry(
                     dataEntryDTO.getId(),
@@ -390,7 +394,7 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
                     dataEntryDTO.getProjectName(),
                     dataEntryDTO.getCategory(),
                     dataEntryDTO.getAnnuityorNonAnnuity(),
-                    dataEntryDTO.getValue(),
+                    value,
                     null, // Type will be calculated
                     dataEntryDTO.getFinancialYear(),
                     dataEntryDTO.getQuarter(),
@@ -407,7 +411,7 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
                     0, // Offshore Project Manager will be calculated
                     0, // Onsite Project Manager will be calculated
                     0, // Billable Project Manager will be calculated
-                    dataEntryDTO.getBudget()
+                    budget
             );
 
             // Perform calculations

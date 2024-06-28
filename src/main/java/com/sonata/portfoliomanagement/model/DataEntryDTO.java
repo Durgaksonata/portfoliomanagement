@@ -22,14 +22,14 @@ public class DataEntryDTO {
     private String deliveryDirector;
     private String category;
     private String annuityorNonAnnuity;
-    private float value;
-    private float budget;
+    private Float value;
+    private Float budget;
 
 
     public DataEntryDTO() {
     }
 
-    public DataEntryDTO(Integer id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, float value, float budget) {
+    public DataEntryDTO(Integer id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, Float value, Float budget) {
        this.id = id;
         this.vertical = vertical;
         this.classification = classification;
