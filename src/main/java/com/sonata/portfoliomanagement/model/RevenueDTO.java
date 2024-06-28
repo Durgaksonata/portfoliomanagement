@@ -11,8 +11,6 @@ import java.util.List;
 @Component
 public class RevenueDTO {
 
-
-
     private List<String> projectList;
     private List<String> dmList;
     private List<String> accountList;
