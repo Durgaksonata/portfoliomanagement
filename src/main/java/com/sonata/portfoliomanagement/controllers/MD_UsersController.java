@@ -30,72 +30,7 @@ public class MD_UsersController {
     @Autowired
     private Md_UserService userService;
 
-//    @PostMapping("/save")
-//    public ResponseEntity<Map<String, Object>> createUser(@RequestBody MD_Users user) {
-//        // Validate input
-//        if ((user.getFirstName() == null || user.getFirstName().trim().isEmpty()) &&
-//                (user.getLastName() == null || user.getLastName().trim().isEmpty())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(Collections.singletonMap("message", "At least one of first name or last name must be provided"));
-//        }
-//        List<MD_Users> existingUsers = usersRepo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
-//
-//        if (!existingUsers.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT)
-//                    .body(Collections.singletonMap("message", "Duplicate entries: Users with first name '"
-//                            + user.getFirstName() + "' and last name '" + user.getLastName() + "' already exist."));
-//        }
-//
-//        // Save the new user if no conflicts are found
-//        MD_Users createdUser = usersRepo.save(user);
-//
-//        // Handle role assignments
-//        for (String role : user.getRole()) {
-//            if (role.equals("Delivery Director")) {
-//                userService.createDeliveryDirector(user);
-//            } else if (role.equals("Delivery Manager")) {
-//                userService.createDeliveryManager(user);
-//            } else if (role.equals("Project Manager")) {
-//                userService.createProjectManager(user);
-//            }
-//            // Handle other roles if necessary
-//        }
-//
-//        // Prepare the response with a success message and the created user
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "User with name " + createdUser.getFirstName() + " " + createdUser.getLastName() +
-//                " and roles: " + createdUser.getRole() + " saved successfully.");
-//
-//        return new ResponseEntity<>(response, HttpStatus.CREATED);
-//    }
-//
-//
-//    @PostMapping("/users")
-//    public ResponseEntity<String> createUsers(@RequestBody MD_Users user) {
-//        try {
-//            // Check if a user with the same email already exists
-//            if (userServices.userExistsByEmail(user.getEmail())) {
-//                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists with email: " + user.getEmail());
-//            }
-//
-//            // Set isFirstLogin based on the provided value or default it to true
-//            boolean isFirstLogin = user.isFirstLogin();
-//            if (!user.isFirstLogin()) {
-//                isFirstLogin = true; // Defaulting isFirstLogin to true if not provided
-//            }
-//
-//            // Set the isFirstLogin value in the user object
-//            user.setFirstLogin(isFirstLogin);
-//
-//            // Save the user
-//            userServices.saveUser(user);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create user: " + e.getMessage());
-//        }
-//    }
-//
+
 
 
     @PostMapping("/save")
@@ -115,7 +50,7 @@ public class MD_UsersController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
-//            // Set isFirstLogin based on the provided value or default it to true
+           // Set isFirstLogin based on the provided value or default it to true
             boolean isFirstLogin = user.isFirstLogin();
             if (!user.isFirstLogin()) {
                 isFirstLogin = true; // Defaulting isFirstLogin to true if not provided
@@ -180,79 +115,6 @@ public class MD_UsersController {
 
 
 
-
-//    @PutMapping("/update")
-//    public ResponseEntity<Map<String, Object>> updateMdUser(@RequestBody MD_Users updatedUser) {
-//        // Validate input
-//        if ((updatedUser.getFirstName() == null || updatedUser.getFirstName().trim().isEmpty()) &&
-//                (updatedUser.getLastName() == null || updatedUser.getLastName().trim().isEmpty())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(Collections.singletonMap("message", "At least one of first name or last name must be provided"));
-//        }
-//        Optional<MD_Users> userOptional = usersRepo.findById(updatedUser.getId());
-//
-//        if (!userOptional.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(Collections.singletonMap("message", "User not found"));
-//        }
-//        // Check for duplicates
-//        List<MD_Users> duplicateUsers = usersRepo.findByFirstNameAndLastName(updatedUser.getFirstName(), updatedUser.getLastName());
-//        for (MD_Users user : duplicateUsers) {
-//            if (user.getId() !=(updatedUser.getId())) {
-//                return ResponseEntity.status(HttpStatus.CONFLICT)
-//                        .body(Collections.singletonMap("message", "Duplicate entry: User with first name '"
-//                                + updatedUser.getFirstName() + "' and last name '" + updatedUser.getLastName() + "' already exists."));
-//            }
-//        }
-//
-//        MD_Users existingUser = userOptional.get();
-//        StringBuilder updateMessage = new StringBuilder();
-//        boolean isUpdated = false;
-//
-//        String oldFullName = existingUser.getFirstName() + " " + existingUser.getLastName();
-//        String newFullName = updatedUser.getFirstName() + " " + updatedUser.getLastName();
-//
-//
-//        // Update the user name if changed
-//        if (!existingUser.getFirstName().equals(updatedUser.getFirstName()) ||
-//                !existingUser.getLastName().equals(updatedUser.getLastName())) {
-//            existingUser.setFirstName(updatedUser.getFirstName());
-//            existingUser.setLastName(updatedUser.getLastName());
-//            updateMessage.append("Name updated from '").append(oldFullName).append("' to '").append(newFullName).append("'. ");
-//            isUpdated = true;
-//        }
-//
-//        // Update roles first using the old full name
-//        if (!existingUser.getRole().equals(updatedUser.getRole())) {
-//
-//            userService.updateRoles(existingUser, updatedUser);
-//            existingUser.setRole(updatedUser.getRole());
-//
-//            updateMessage.append("user updated.");
-//            isUpdated = true;
-//        }
-//
-//        if (isUpdated) {
-//            // Save the updated user
-//            usersRepo.save(existingUser);
-//            // Update role entities with the new name
-//            userService.updateRoleEntities(existingUser, oldFullName, newFullName);
-//
-//        } else {
-//            return ResponseEntity.ok(Collections.singletonMap("message", "No changes detected"));
-//        }
-//
-//
-//
-//
-//
-//        // Prepare response
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", updateMessage.toString());
-//        response.put("updatedUser", existingUser);
-//
-//        return ResponseEntity.ok(response);
-//    }
 
 
 
@@ -389,6 +251,7 @@ public class MD_UsersController {
             if (passwordCorrect) {
                 // Check if isFirstLogin is true
                 boolean isFirstLogin = existingUser.isFirstLogin();
+                String fullName = existingUser.getFirstName() + " " + existingUser.getLastName();
                 //System.out.println(isFirstLogin);
                 if (isFirstLogin) {
                     // Update isFirstLogin to false and save the user
@@ -397,13 +260,14 @@ public class MD_UsersController {
 
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "Email provided is correct");
+                    response.put("response", "Welcome " + fullName + "! please create a new password");
                     response.put("isFirstLogin", true); // Indicate that it was the first login
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // isFirstLogin is already false
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "Email provided is correct");
+                    response.put("response", "logged in successfully");
+                    response.put("fullname", fullName);
                     response.put("isFirstLogin", false); // Indicate that it is not the first login
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
@@ -419,8 +283,6 @@ public class MD_UsersController {
                     .body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
         }
     }
-
-
 
 
     @PutMapping("/{email}")
