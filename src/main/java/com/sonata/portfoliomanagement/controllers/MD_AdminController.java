@@ -198,7 +198,7 @@ public class MD_AdminController {
 
 
 
-    @PostMapping("/checkUserAndReturnResponse")
+    @PostMapping("/checkAdminAndReturnResponse")
     public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody MD_Admin user) {
         try {
             String email = user.getEmail();
@@ -296,7 +296,6 @@ public class MD_AdminController {
                     .body(Collections.singletonMap("response", "Failed to update password: " + e.getMessage()));
         }
     }
-
 
 
 

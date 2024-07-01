@@ -394,7 +394,7 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
                     dataEntryDTO.getProjectName(),
                     dataEntryDTO.getCategory(),
                     dataEntryDTO.getAnnuityorNonAnnuity(),
-                    value,
+                    dataEntryDTO.getValue(),
                     null, // Type will be calculated
                     dataEntryDTO.getFinancialYear(),
                     dataEntryDTO.getQuarter(),
@@ -411,7 +411,7 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
                     0, // Offshore Project Manager will be calculated
                     0, // Onsite Project Manager will be calculated
                     0, // Billable Project Manager will be calculated
-                    budget
+                    dataEntryDTO.getBudget()
             );
 
             // Perform calculations
