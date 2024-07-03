@@ -112,6 +112,54 @@ public class RevenueDTO {
         return classificationList;
     }
 
+    public List<String> getProjectList() {
+        return projectList;
+    }
+
+    public void setProjectList(List<String> projectList) {
+        this.projectList = projectList;
+    }
+
+    public List<String> getAccountList() {
+        return accountList;
+    }
+
+    public void setAccountList(List<String> accountList) {
+        this.accountList = accountList;
+    }
+
+    public List<String> getPmList() {
+        return pmList;
+    }
+
+    public void setPmList(List<String> pmList) {
+        this.pmList = pmList;
+    }
+
+    public List<Integer> getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(List<Integer> financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public List<String> getQuarterList() {
+        return quarterList;
+    }
+
+    public void setQuarterList(List<String> quarterList) {
+        this.quarterList = quarterList;
+    }
+
+    public void setGetanotherList(List<Integer> getanotherList) {
+        this.getanotherList = getanotherList;
+    }
+
+    public void setProjectNames(List<String> projectNames) {
+        this.projectNames = projectNames;
+    }
+
     public void setClassificationList(List<String> classificationList) {
         this.classificationList = classificationList;
     }

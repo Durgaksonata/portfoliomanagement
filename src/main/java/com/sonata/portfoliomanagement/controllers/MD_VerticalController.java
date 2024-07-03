@@ -166,4 +166,6 @@ public class MD_VerticalController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Verticals '" + deletedVerticalNames + "' deleted successfully.");
     }
+
+
 }

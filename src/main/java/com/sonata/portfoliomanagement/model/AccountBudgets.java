@@ -1,57 +1,52 @@
 package com.sonata.portfoliomanagement.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+@Entity
+@Table(name = "account_budgets")
+public class AccountBudgets {
 
-@Getter
-@Setter
-public class DataEntryDTO {
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String vertical;
     private String classification;
+    @Column(name="Delivery_Director")
+    private String deliveryDirector;
+    @Column(name="Delivery_Manager")
     private String deliveryManager;
     private String account;
+    @Column(name="Project_Manager")
     private String projectManager;
+    @Column(name="Project_Name")
     private String projectName;
+    @Column(name="Financial_Year")
     private int financialYear;
     private String quarter;
-    private String month;
-    private String deliveryDirector;
-    private String category;
-    private String annuityorNonAnnuity;
-    private Float value;
-    private Float budget;
+    private float budget;
 
 
-    public DataEntryDTO() {
-    }
-
-    public DataEntryDTO(Integer id, String vertical, String classification, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month, String deliveryDirector, String category, String annuityorNonAnnuity, Float value, Float budget) {
-       this.id = id;
+    public AccountBudgets(int id, String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget) {
+        this.id = id;
         this.vertical = vertical;
         this.classification = classification;
+        this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
         this.projectManager = projectManager;
         this.projectName = projectName;
         this.financialYear = financialYear;
         this.quarter = quarter;
-        this.month = month;
-        this.deliveryDirector = deliveryDirector;
-        this.category = category;
-        this.annuityorNonAnnuity = annuityorNonAnnuity;
-        this.value = value;
         this.budget = budget;
     }
 
-    public Integer getId() {
+    public AccountBudgets(){}
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -69,6 +64,14 @@ public class DataEntryDTO {
 
     public void setClassification(String classification) {
         this.classification = classification;
+    }
+
+    public String getDeliveryDirector() {
+        return deliveryDirector;
+    }
+
+    public void setDeliveryDirector(String deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
     }
 
     public String getDeliveryManager() {
@@ -119,51 +122,11 @@ public class DataEntryDTO {
         this.quarter = quarter;
     }
 
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public String getDeliveryDirector() {
-        return deliveryDirector;
-    }
-
-    public void setDeliveryDirector(String deliveryDirector) {
-        this.deliveryDirector = deliveryDirector;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getAnnuityorNonAnnuity() {
-        return annuityorNonAnnuity;
-    }
-
-    public void setAnnuityorNonAnnuity(String annuityorNonAnnuity) {
-        this.annuityorNonAnnuity = annuityorNonAnnuity;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-    public Float getBudget() {
+    public float getBudget() {
         return budget;
     }
 
-    public void setBudget(Float budget) {
+    public void setBudget(float budget) {
         this.budget = budget;
     }
 }
