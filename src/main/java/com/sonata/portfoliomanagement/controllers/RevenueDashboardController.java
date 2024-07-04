@@ -9,10 +9,8 @@ import com.sonata.portfoliomanagement.model.BaseLine_RevenueGrowthSummary;
 import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -37,13 +35,12 @@ public class RevenueDashboardController {
     @Autowired
     private BaseLine_RevenueGrowthSummaryRepository baseLineRevenueGrowthSummaryRepository;
 
-    @GetMapping("/baseline-data")
+    @GetMapping("/baselinedata")
     public String createBaselineData() {
         LocalDate currentTimestamp = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         String currentFormattedDate = currentTimestamp.format(formatter);
         int currentFinancialYear = getCurrentFinancialYear();
-
 
         // Check for existing timestamps in Baseline Revenue Budget
         List<BaseLine_RevenueBudgetSummary> existingBaselineRevenueBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findAll();
@@ -105,6 +102,9 @@ public class RevenueDashboardController {
             return year - 1;
         }
     }
+
+
+
 
 
 }

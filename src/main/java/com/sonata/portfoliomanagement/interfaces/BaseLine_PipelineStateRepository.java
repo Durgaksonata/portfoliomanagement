@@ -1,7 +1,7 @@
 package com.sonata.portfoliomanagement.interfaces;
 
-import com.sonata.portfoliomanagement.model.BaseLine_PipelineState;
+import com.sonata.portfoliomanagement.model.PipelineState;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BaseLine_PipelineStateRepository extends JpaRepository<BaseLine_PipelineState, Integer> {
+public interface BaseLine_PipelineStateRepository extends JpaRepository<PipelineState, Integer> {
 }

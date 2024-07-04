@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 @CrossOrigin(origins = "http://localhost:5173" )
 
 @RestController
@@ -19,8 +21,8 @@ public class MD_LinkController {
     private MD_LinkService linkService;
 
     @GetMapping("/getAllUniqueData")
-    public ResponseEntity<Map<String, List<String>>> getAllUniqueData() {
-        Map<String, List<String>> uniqueData = linkService.getAllUniqueData();
-        return ResponseEntity.ok(uniqueData);
+    public CompletableFuture<ResponseEntity<Map<String, List<String>>>> getAllUniqueData() {
+        return linkService.getAllUniqueDataAsync()
+                .thenApply(ResponseEntity::ok);
     }
 }

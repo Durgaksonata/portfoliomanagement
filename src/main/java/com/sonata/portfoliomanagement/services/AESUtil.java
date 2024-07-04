@@ -21,13 +21,7 @@ public class AESUtil {
     private static final int KEY_SIZE = 256;
     private static final int ITERATIONS = 65536;
 
-    // the approach usde here is to use a combination of a master key and
-    // a randomly generated salt.
-    // The salt is unique for each encryption operation
-    // and is used to derive a unique key for each encryption.
-    // The salt and the encrypted data are then stored together,
-    // while the master key is kept secure
-    // (e.g., in an environment variable or a secure vault)
+
     private static final String MASTER_KEY = "SuperSecretMasterKey"; // Ensure this key is securely stored
     private static final Logger LOGGER = Logger.getLogger(AESUtil.class.getName());
 
