@@ -4,10 +4,7 @@ import com.sonata.portfoliomanagement.interfaces.BaseLine_RevenueBudgetSummaryRe
 import com.sonata.portfoliomanagement.interfaces.BaseLine_RevenueGrowthSummaryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueBudgetSummaryRepository;
 import com.sonata.portfoliomanagement.interfaces.RevenueGrowthSummaryRepository;
-import com.sonata.portfoliomanagement.model.BaseLine_RevenueBudgetSummary;
-import com.sonata.portfoliomanagement.model.BaseLine_RevenueGrowthSummary;
-import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
-import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
+import com.sonata.portfoliomanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +50,7 @@ public class RevenueDashboardController {
                 .anyMatch(b -> b.getBaselineTimestamp().format(formatter).equals(currentFormattedDate));
 
         if (budgetTimestampExists || growthTimestampExists) {
-            return "Data for the provided Timestamp already exists";
+            return "Data for the current Timestamp already exists";
         }
 
         // Copy Revenue Budget data to Baseline Revenue Budget
@@ -104,6 +101,28 @@ public class RevenueDashboardController {
     }
 
 
+    //get data by datestamp
+
+    @PostMapping("/data")
+    public Baseline_RevenueDataDTO getDataByBaselineTimestamp(@RequestBody Baseline_RevenueDataDTO request) {
+        LocalDate baselineTimestamp = request.getTimestamp();
+
+        // Retrieve data from Baseline Revenue Budget Summary table
+        List<BaseLine_RevenueBudgetSummary> revenueBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findAll().stream()
+                .filter(rbs -> rbs.getBaselineTimestamp().equals(baselineTimestamp))
+                .collect(Collectors.toList());
+
+        // Retrieve data from Baseline Revenue Growth Summary table
+        List<BaseLine_RevenueGrowthSummary> revenueGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findAll().stream()
+                .filter(rgs -> rgs.getBaselineTimestamp().equals(baselineTimestamp))
+                .collect(Collectors.toList());
+
+        // Set the data in the request DTO and return
+        request.setRevenueBudget(revenueBudgetSummaries);
+        request.setRevenueGrowth(revenueGrowthSummaries);
+
+        return request;
+    }
 
 
 

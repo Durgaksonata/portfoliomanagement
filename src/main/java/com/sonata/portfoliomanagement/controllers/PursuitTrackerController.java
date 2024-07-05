@@ -112,7 +112,11 @@ public class PursuitTrackerController {
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
-        response.put("message", "Data Saved Successfully!");
+        List<String> savedProjectorPursuits = savedPursuitTrackers.stream()
+                .map(PursuitTracker::getProjectorPursuit)
+                .collect(Collectors.toList());
+
+        response.put("message", "Data with ProjectorPursuits: " + savedProjectorPursuits + " saved Successfully!");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
