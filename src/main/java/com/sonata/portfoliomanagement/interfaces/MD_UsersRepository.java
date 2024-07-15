@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 public interface MD_UsersRepository extends JpaRepository<MD_Users, Integer> {
 
     List<MD_Users> findByFirstNameAndLastName(String firstName,String lastName);
+    MD_Users findFirstByFirstNameAndLastName(String firstName, String lastName);
 
 
     MD_Users findByEmail(String email);

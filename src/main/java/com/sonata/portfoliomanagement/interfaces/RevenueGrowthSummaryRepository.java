@@ -5,6 +5,8 @@ import com.sonata.portfoliomanagement.model.RevenueBudgetSummary;
 import com.sonata.portfoliomanagement.model.RevenueDTO;
 import com.sonata.portfoliomanagement.model.RevenueGrowthSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -74,4 +76,29 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
     RevenueGrowthSummary findByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarter(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter);
 
     boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month);
+
+
+    List<RevenueGrowthSummary> findByDeliveryManager(String deliveryManager);
+    List<RevenueGrowthSummary> findByDeliveryManagerAndAccount(String deliveryManager, String account);
+    @Query("SELECT DISTINCT r.account FROM RevenueGrowthSummary r WHERE r.deliveryManager = :deliveryManager")
+    List<String> findAccountsByDeliveryManager(@Param("deliveryManager") String deliveryManager);
+
+    List<RevenueGrowthSummary> findByAccountAndDeliveryManager(String account, String deliveryManager);
+    @Query("SELECT DISTINCT r.deliveryManager FROM RevenueGrowthSummary r WHERE r.account = :account")
+    List<String> findDeliveryManagersByAccount(@Param("account") String account);
+
+    List<RevenueGrowthSummary> findByDeliveryDirector(String deliveryDirector);
+
+    //List<RevenueGrowthSummary> findByDeliveryManager(String deliveryManager);
+    // List<RevenueGrowthSummary> findByDeliveryManagerAndAccount(String deliveryManager, String account);
+    //@Query("SELECT DISTINCT r.account FROM RevenueGrowthSummary r WHERE r.deliveryManager = :deliveryManager")
+    //List<String> findAccountsByDeliveryManager(@Param("deliveryManager") String deliveryManager);
+    List<RevenueGrowthSummary> findByDeliveryDirectorAndAccount(String deliveryDirector, String account);
+    @Query("SELECT DISTINCT r.account FROM RevenueGrowthSummary r WHERE r.deliveryDirector = :deliveryDirector")
+    List<String> findAccountsByDeliveryDirector(@Param("deliveryDirector") String deliveryDirector);
+
+    List<RevenueGrowthSummary> findAllByDeliveryManager(String deliveryManager);
+
+
+    List<RevenueGrowthSummary> findByFinancialYearIn(List<Integer> currentYear);
 }

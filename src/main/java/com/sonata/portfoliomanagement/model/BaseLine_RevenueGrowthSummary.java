@@ -1,20 +1,23 @@
 package com.sonata.portfoliomanagement.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-
 public class BaseLine_RevenueGrowthSummary {
     public BaseLine_RevenueGrowthSummary() {
     }
 
-    public BaseLine_RevenueGrowthSummary(int id, String deliveryDirector, String deliveryManager, String account, float accountExpected, float forecast, float gap, LocalDate baselineTimestamp) {
+    public BaseLine_RevenueGrowthSummary(int id, String deliveryDirector, String deliveryManager, String account, int financialYear, String quarter, float accountExpected, float forecast, float gap, LocalDate baselineTimestamp) {
         this.id = id;
         this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
+        this.financialYear = financialYear;
+        this.quarter = quarter;
         this.accountExpected = accountExpected;
         this.forecast = forecast;
         this.gap = gap;
@@ -32,6 +35,11 @@ public class BaseLine_RevenueGrowthSummary {
     private String deliveryManager;
 
     private String account;
+
+    @Column(name="Financial_Year")
+    private int financialYear;
+
+    private String quarter;
 
     @Column(name = "Account_Expected")
     private float accountExpected;
@@ -106,5 +114,22 @@ public class BaseLine_RevenueGrowthSummary {
 
     public void setBaselineTimestamp(LocalDate baselineTimestamp) {
         this.baselineTimestamp = baselineTimestamp;
+    }
+
+
+    public int getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(int financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public String getQuarter() {
+        return quarter;
+    }
+
+    public void setQuarter(String quarter) {
+        this.quarter = quarter;
     }
 }

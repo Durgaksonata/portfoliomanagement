@@ -44,4 +44,14 @@ public interface DataEntryRepository extends JpaRepository<DataEntry,Integer> {
 
 
     List<DataEntry> findAllByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget, String month);
+
+
+
+    @Query("SELECT DISTINCT d.account, d.financialYear, d.quarter FROM DataEntry d WHERE d.projectsOrPursuitStage <> 'confirmed'")
+    List<Object[]> findDistinctAccountYearQuarter();
+
+    @Query("SELECT d FROM DataEntry d WHERE d.account = :account AND d.financialYear = :financialYear AND d.quarter = :quarter AND d.projectsOrPursuitStage <> 'confirmed'")
+    List<DataEntry> findByAccountAndYearAndQuarter(String account, int financialYear, String quarter);
+
+
 }

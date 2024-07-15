@@ -252,7 +252,10 @@ public class MD_UsersController {
                 // Check if isFirstLogin is true
                 boolean isFirstLogin = existingUser.isFirstLogin();
                 String fullName = existingUser.getFirstName() + " " + existingUser.getLastName();
+                List<String> roles = existingUser.getRole();
                 //System.out.println(isFirstLogin);
+
+
                 if (isFirstLogin) {
                     // Update isFirstLogin to false and save the user
                     existingUser.setFirstLogin(false);
@@ -260,15 +263,20 @@ public class MD_UsersController {
 
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "Welcome " + fullName + "! please create a new password");
-                    response.put("isFirstLogin", true); // Indicate that it was the first login
+                    response.put("fullName", fullName);
+                    response.put("email", email);
+                    response.put("role", roles);
+                    response.put("isFirstLogin", true);
+                    response.put("response", "Welcome " + fullName + "! Please create a new password");
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 } else {
                     // isFirstLogin is already false
                     Map<String, Object> response = new HashMap<>();
-                    response.put("response", "logged in successfully");
-                    response.put("fullname", fullName);
-                    response.put("isFirstLogin", false); // Indicate that it is not the first login
+                    response.put("fullName", fullName);
+                    response.put("email", email);
+                    response.put("role", roles);
+                    response.put("isFirstLogin", false);
+                    response.put("response", "Logged in successfully");
                     return ResponseEntity.status(HttpStatus.OK).body(response);
                 }
             } else {

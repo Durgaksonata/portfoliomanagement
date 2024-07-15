@@ -1,6 +1,8 @@
 package com.sonata.portfoliomanagement.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -20,6 +22,11 @@ public class BaseLine_PipelineState {
 
     private String account;
 
+    @Column(name="Financial_Year")
+    private int financialYear;
+
+    private String quarter;
+
     @Column(name = "Sum of Pipeline Opportunity")
     private float SumOfPipeline_opportunity;
     @Column(name = "Sum of Pipeline Shaping")
@@ -35,11 +42,13 @@ public class BaseLine_PipelineState {
     private LocalDate baselineTimestamp;
 
 
-    public BaseLine_PipelineState(int id, String deliveryDirector, String deliveryManager, String account, float sumOfPipeline_opportunity, float sumOfPipeline_shaping, float sumOfPipeline_pitch, float sumOfPipeline_total, LocalDate baselineTimestamp) {
+    public BaseLine_PipelineState(int id, String deliveryDirector, String deliveryManager, String account, int financialYear, String quarter, float sumOfPipeline_opportunity, float sumOfPipeline_shaping, float sumOfPipeline_pitch, float sumOfPipeline_total, LocalDate baselineTimestamp) {
         this.id = id;
         this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
         this.account = account;
+        this.financialYear = financialYear;
+        this.quarter = quarter;
         SumOfPipeline_opportunity = sumOfPipeline_opportunity;
         SumOfPipeline_shaping = sumOfPipeline_shaping;
         SumOfPipeline_pitch = sumOfPipeline_pitch;
@@ -118,5 +127,21 @@ public class BaseLine_PipelineState {
 
     public void setBaselineTimestamp(LocalDate baselineTimestamp) {
         this.baselineTimestamp = baselineTimestamp;
+    }
+
+    public int getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(int financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public String getQuarter() {
+        return quarter;
+    }
+
+    public void setQuarter(String quarter) {
+        this.quarter = quarter;
     }
 }

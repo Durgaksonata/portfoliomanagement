@@ -73,5 +73,28 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
 
     boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndBudgetAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, float budget, String month);
 
+
     boolean existsByVerticalAndClassificationAndDeliveryDirectorAndDeliveryManagerAndAccountAndProjectManagerAndProjectNameAndFinancialYearAndQuarterAndMonth(String vertical, String classification, String deliveryDirector, String deliveryManager, String account, String projectManager, String projectName, int financialYear, String quarter, String month);
+    List<RevenueBudgetSummary> findByDeliveryManagerAndAccount(String deliveryManager, String account);
+    @Query("SELECT DISTINCT r.account FROM RevenueBudgetSummary r WHERE r.deliveryManager = :deliveryManager")
+    List<String> findAccountsByDeliveryManager(@Param("deliveryManager") String deliveryManager);
+
+    List<RevenueBudgetSummary> findByAccountAndDeliveryManager(String account, String deliveryManager);
+    @Query("SELECT DISTINCT r.deliveryManager FROM RevenueBudgetSummary r WHERE r.account = :account")
+    List<String> findDeliveryManagersByAccount(@Param("account") String account);
+    List<RevenueBudgetSummary> findByDeliveryDirector(String deliveryDirector);
+
+
+    List<RevenueBudgetSummary> findByDeliveryDirectorAndAccount(String deliveryDirector, String account);
+    @Query("SELECT DISTINCT r.account FROM RevenueBudgetSummary r WHERE r.deliveryDirector = :deliveryDirector")
+    List<String> findAccountsByDeliveryDirector(@Param("deliveryDirector") String deliveryDirector);
+    List<RevenueBudgetSummary> findAllByDeliveryManager(String deliveryManager);
+
+
+    List<RevenueBudgetSummary> findByFinancialYearIn(List<Integer> currentYear);
+
+
+    @Query("SELECT MAX(r.financialYear) FROM RevenueBudgetSummary r")
+    Integer findMaxFinancialYear();
+
 }

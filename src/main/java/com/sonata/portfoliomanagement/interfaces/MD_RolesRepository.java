@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface MD_RolesRepository extends JpaRepository<MD_Role,Integer>{
 
-
+    MD_Role findFirstByRole(String role);
     List<MD_Role> findByRole(String role);
 }
