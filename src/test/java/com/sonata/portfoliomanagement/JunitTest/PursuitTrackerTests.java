@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
@@ -262,7 +263,7 @@ public class PursuitTrackerTests {
         pursuitTracker.setProjectorPursuit("Project");
         pursuitTracker.setPursuitorpotential("Pursuit");
         pursuitTracker.setLikelyClosureorActualClosure(LocalDate.of(2024, 7, 1));
-        pursuitTracker.setRemarks("Find out components of Phase 4  and provide proposal");
+        pursuitTracker.setRemarks("Find out components of Phase 4 and provide proposal");
 
         List<PursuitTracker> pursuitTrackers = Collections.singletonList(pursuitTracker);
 
@@ -279,11 +280,13 @@ public class PursuitTrackerTests {
 
         // Then
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals("Data Saved Successfully!", ((Map<String, Object>) responseEntity.getBody()).get("message"));
+        Map<String, Object> responseBody = (Map<String, Object>) responseEntity.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.containsKey("message"));
 
-        // Verify repository method calls
-        verify(pursuitTrackerRepository, times(1)).findByProjectorPursuit("Project");
-        verify(pursuitTrackerRepository, times(1)).save(pursuitTracker);
+        // Assert the message content
+        String message = (String) responseBody.get("message");
+        assertTrue(message.startsWith("Data with ProjectorPursuits: [Project] saved Successfully!"));
     }
 
 

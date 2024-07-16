@@ -305,6 +305,56 @@ public class RevenueGrowthSummarySteps {
         }
 
         @Override
+        public List<RevenueGrowthSummary> findByDeliveryManager(String deliveryManager) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findByDeliveryManagerAndAccount(String deliveryManager, String account) {
+            return null;
+        }
+
+        @Override
+        public List<String> findAccountsByDeliveryManager(String deliveryManager) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findByAccountAndDeliveryManager(String account, String deliveryManager) {
+            return null;
+        }
+
+        @Override
+        public List<String> findDeliveryManagersByAccount(String account) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findByDeliveryDirector(String deliveryDirector) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findByDeliveryDirectorAndAccount(String deliveryDirector, String account) {
+            return null;
+        }
+
+        @Override
+        public List<String> findAccountsByDeliveryDirector(String deliveryDirector) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findAllByDeliveryManager(String deliveryManager) {
+            return null;
+        }
+
+        @Override
+        public List<RevenueGrowthSummary> findByFinancialYearIn(List<Integer> currentYear) {
+            return null;
+        }
+
+        @Override
         public List<RevenueGrowthSummary> findByFinancialYear(Integer year) {
             return null;
         }
