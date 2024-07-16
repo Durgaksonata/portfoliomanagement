@@ -60,12 +60,7 @@ public class BaselineController {
     private BaseLineService baseLineService;
 
 
-//
-//    @PostMapping("/deliveryManagersData")
-//    public ResponseEntity<List<DeliveryManagerDataDTO>> getDeliveryManagersData(@RequestBody List<String> deliveryManagerNames) {
-//        List<DeliveryManagerDataDTO> data = baseLineService.getDeliveryManagerData(deliveryManagerNames);
-//        return new ResponseEntity<>(data, HttpStatus.OK);
-//    }
+
 
     @PostMapping("/deliveryManagersData")
     public ResponseEntity<Map<String, Object>> getDeliveryManagersData(@RequestBody List<String> deliveryManagerNames) {
@@ -75,14 +70,12 @@ public class BaselineController {
 
 
     @PostMapping("/accountData")
-    public ResponseEntity<List<DeliveryManagerDataDTO>> getAccountData(@RequestBody List<String> accountNames) {
-        List<DeliveryManagerDataDTO> data = baseLineService.getAccountData(accountNames);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+    public List<DeliveryManagerDataDTO> getAccountData(@RequestBody List<String> accountNames) {
+        return baseLineService.getAccountData(accountNames);
     }
-
     @PostMapping("/deliveryDirectorData")
-    public ResponseEntity<List<DeliveryManagerDataDTO>> getDeliverydirectorsData(@RequestBody List<String> deliveryDirectorNames) {
-        List<DeliveryManagerDataDTO> data = baseLineService.getDeliveryDirectorData(deliveryDirectorNames);
+    public ResponseEntity<Map<String, Object>> getDeliveryDirectorsData(@RequestBody List<String> deliveryDirectorNames) {
+        Map<String, Object> data = baseLineService.getDeliveryDirectorData(deliveryDirectorNames);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

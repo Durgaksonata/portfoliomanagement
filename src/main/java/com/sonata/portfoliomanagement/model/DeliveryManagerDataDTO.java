@@ -11,33 +11,27 @@ public class DeliveryManagerDataDTO {
 
     public DeliveryManagerDataDTO() { }
 
-    public DeliveryManagerDataDTO(String dd, String dm, String account, List<DataDTO> previous, List<DataDTO> current) {
-        this.dd = dd;
-        this.dm = dm;
+    public DeliveryManagerDataDTO(String deliveryDirector, String account, List<DataDTO> previous, List<DataDTO> current, List<String> deliveryManager) {
+        this.deliveryDirector = deliveryDirector;
         this.account = account;
         this.previous = previous;
         this.current = current;
+        this.deliveryManager = deliveryManager;
     }
 
-    private String dd;
-    private String dm;
+    private String deliveryDirector;
     private String account;
     private List<DataDTO> previous;
     private List<DataDTO> current;
-    public String getDd() {
-        return dd;
+    private List<String> deliveryManager;
+
+
+    public String getDeliveryDirector() {
+        return deliveryDirector;
     }
 
-    public void setDd(String dd) {
-        this.dd = dd;
-    }
-
-    public String getDm() {
-        return dm;
-    }
-
-    public void setDm(String dm) {
-        this.dm = dm;
+    public void setDeliveryDirector(String deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
     }
 
     public String getAccount() {
@@ -64,6 +58,11 @@ public class DeliveryManagerDataDTO {
         this.current = current;
     }
 
+    public List<String> getDeliveryManager() {
+        return deliveryManager;
+    }
 
-
+    public void setDeliveryManager(List<String> deliveryManager) {
+        this.deliveryManager = deliveryManager;
+    }
 }
