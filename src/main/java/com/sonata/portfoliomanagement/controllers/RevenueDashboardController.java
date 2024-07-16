@@ -192,8 +192,8 @@ public class RevenueDashboardController {
 //getting list data of baseline_tables for revenue dashboard
 
     @GetMapping("/all-baseline-summaries")
-    public RevenueDashboardListDTO getAllBaselineSummaries() {
-        RevenueDashboardListDTO responseDTO = new RevenueDashboardListDTO();
+    public RevBaselineListDTO getAllBaselineSummaries() {
+        RevBaselineListDTO responseDTO = new RevBaselineListDTO();
 
         // Collect data from BaseLine_RevenueBudgetSummary table
         List<BaseLine_RevenueBudgetSummary> budgetSummaries = baseLineRevenueBudgetSummaryRepository.findAll();
@@ -206,9 +206,7 @@ public class RevenueDashboardController {
         Set<String> accounts = budgetSummaries.stream()
                 .map(BaseLine_RevenueBudgetSummary::getAccount)
                 .collect(Collectors.toSet());
-        Set<Integer> financialYears = budgetSummaries.stream()
-                .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
-                .collect(Collectors.toSet());
+
 
         // Collect data from BaseLine_RevenueGrowthSummary table
         List<BaseLine_RevenueGrowthSummary> growthSummaries = baseLineRevenueGrowthSummaryRepository.findAll();
@@ -220,9 +218,6 @@ public class RevenueDashboardController {
                 .collect(Collectors.toSet()));
         accounts.addAll(growthSummaries.stream()
                 .map(BaseLine_RevenueGrowthSummary::getAccount)
-                .collect(Collectors.toSet()));
-        financialYears.addAll(growthSummaries.stream()
-                .map(BaseLine_RevenueGrowthSummary::getFinancialYear)
                 .collect(Collectors.toSet()));
 
         // Collect data from BaseLine_PipelineState table
@@ -236,14 +231,12 @@ public class RevenueDashboardController {
         accounts.addAll(pipelineStates.stream()
                 .map(BaseLine_PipelineState::getAccount)
                 .collect(Collectors.toSet()));
-        financialYears.addAll(pipelineStates.stream()
-                .map(BaseLine_PipelineState::getFinancialYear)
-                .collect(Collectors.toSet()));
+
 
         responseDTO.setDeliveryDirectors(List.copyOf(deliveryDirectors));
         responseDTO.setDeliveryManagers(List.copyOf(deliveryManagers));
         responseDTO.setAccounts(List.copyOf(accounts));
-        responseDTO.setFinancialYears(List.copyOf(financialYears));
+
 
         return responseDTO;
     }
