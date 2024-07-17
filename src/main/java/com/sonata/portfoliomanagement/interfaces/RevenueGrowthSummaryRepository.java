@@ -101,4 +101,8 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
 
 
     List<RevenueGrowthSummary> findByFinancialYearIn(List<Integer> currentYear);
+
+
+    @Query("SELECT MAX(r.financialYear) FROM RevenueGrowthSummary r")
+    Integer findMaxFinancialYear();
 }

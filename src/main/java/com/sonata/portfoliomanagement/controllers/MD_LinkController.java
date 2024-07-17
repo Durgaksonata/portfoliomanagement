@@ -25,4 +25,9 @@ public class MD_LinkController {
         return linkService.getAllUniqueDataAsync()
                 .thenApply(ResponseEntity::ok);
     }
+
+    @GetMapping("/maxYear")
+    public Integer getMaxFinancialYear() {
+        return linkService.getMaxFinancialYear();
+    }
 }

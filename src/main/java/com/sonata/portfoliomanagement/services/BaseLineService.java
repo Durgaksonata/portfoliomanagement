@@ -177,29 +177,29 @@ public class BaseLineService {
     }
 
 
-
-
-    public List<DeliveryManagerDataDTO> getAccountData(List<String> accountNames) {
-        List<DeliveryManagerDataDTO> responseList = new ArrayList<>();
-
-        // Temporary set to find the maximum year
+    public Map<String, Object> getAccountData(List<String> accountNames) {
+        Set<String> deliveryDirectors = new HashSet<>();
+        Set<String> deliveryManagers = new HashSet<>();
+        Map<String, DataDTO> previousDataMap = new HashMap<>();
+        Map<String, DataDTO> currentDataMap = new HashMap<>();
         Set<Integer> allYears = new HashSet<>();
 
         for (String accountName : accountNames) {
             // Fetch all unique delivery managers for the account
-            Set<String> deliveryManagers = new HashSet<>();
-            deliveryManagers.addAll(revenueBudgetSummaryRepository.findDeliveryManagersByAccount(accountName));
-            deliveryManagers.addAll(revenueGrowthSummaryRepository.findDeliveryManagersByAccount(accountName));
-            deliveryManagers.addAll(pipelineStateRepository.findDeliveryManagersByAccount(accountName));
+            Set<String> deliveryManagerSet = new HashSet<>();
+            deliveryManagerSet.addAll(revenueBudgetSummaryRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagerSet.addAll(revenueGrowthSummaryRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagerSet.addAll(pipelineStateRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagers.addAll(deliveryManagerSet);
 
-            for (String deliveryManager : deliveryManagers) {
-                // Fetch data for the current delivery manager and account
-                List<RevenueBudgetSummary> currentRevenueBudget = revenueBudgetSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<RevenueGrowthSummary> currentRevenueGrowth = revenueGrowthSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<PipelineState> currentPipelineState = pipelineStateRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_RevenueBudgetSummary> previousRevenueBudget = baseLineRevenueBudgetSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_RevenueGrowthSummary> previousRevenueGrowth = baseLineRevenueGrowthSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_PipelineState> previousPipelineState = baseLinePipelineStateRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
+            for (String deliveryManager : deliveryManagerSet) {
+                // Fetch data for the current account and DM
+                List<RevenueBudgetSummary> currentRevenueBudget = revenueBudgetSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<RevenueGrowthSummary> currentRevenueGrowth = revenueGrowthSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<PipelineState> currentPipelineState = pipelineStateRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_RevenueBudgetSummary> previousRevenueBudget = baseLineRevenueBudgetSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_RevenueGrowthSummary> previousRevenueGrowth = baseLineRevenueGrowthSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_PipelineState> previousPipelineState = baseLinePipelineStateRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
 
                 // Add years to the set
                 currentRevenueBudget.forEach(rbs -> allYears.add(rbs.getFinancialYear()));
@@ -216,24 +216,20 @@ public class BaseLineService {
         int previousYear = currentYear - 1;
 
         for (String accountName : accountNames) {
-            Map<String, DeliveryManagerDataDTO> accountDataMap = new HashMap<>();
+            Set<String> deliveryManagerSet = new HashSet<>();
+            deliveryManagerSet.addAll(revenueBudgetSummaryRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagerSet.addAll(revenueGrowthSummaryRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagerSet.addAll(pipelineStateRepository.findDeliveryManagersByAccount(accountName));
+            deliveryManagers.addAll(deliveryManagerSet);
 
-            // Fetch all unique delivery managers for the account
-            Set<String> deliveryManagers = new HashSet<>();
-            deliveryManagers.addAll(revenueBudgetSummaryRepository.findDeliveryManagersByAccount(accountName));
-            deliveryManagers.addAll(revenueGrowthSummaryRepository.findDeliveryManagersByAccount(accountName));
-            deliveryManagers.addAll(pipelineStateRepository.findDeliveryManagersByAccount(accountName));
+            for (String deliveryManager : deliveryManagerSet) {
+                List<RevenueBudgetSummary> currentRevenueBudget = revenueBudgetSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<RevenueGrowthSummary> currentRevenueGrowth = revenueGrowthSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<PipelineState> currentPipelineState = pipelineStateRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_RevenueBudgetSummary> previousRevenueBudget = baseLineRevenueBudgetSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_RevenueGrowthSummary> previousRevenueGrowth = baseLineRevenueGrowthSummaryRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
+                List<BaseLine_PipelineState> previousPipelineState = baseLinePipelineStateRepository.findByDeliveryManagerAndAccount(deliveryManager, accountName);
 
-            for (String deliveryManager : deliveryManagers) {
-                // Fetch data for the current delivery manager and account
-                List<RevenueBudgetSummary> currentRevenueBudget = revenueBudgetSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<RevenueGrowthSummary> currentRevenueGrowth = revenueGrowthSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<PipelineState> currentPipelineState = pipelineStateRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_RevenueBudgetSummary> previousRevenueBudget = baseLineRevenueBudgetSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_RevenueGrowthSummary> previousRevenueGrowth = baseLineRevenueGrowthSummaryRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-                List<BaseLine_PipelineState> previousPipelineState = baseLinePipelineStateRepository.findByAccountAndDeliveryManager(accountName, deliveryManager);
-
-                // Extract DD name from current data
                 String dd = "";
                 if (!currentRevenueBudget.isEmpty()) {
                     dd = currentRevenueBudget.get(0).getDeliveryDirector();
@@ -242,24 +238,17 @@ public class BaseLineService {
                 } else if (!currentPipelineState.isEmpty()) {
                     dd = currentPipelineState.get(0).getDeliveryDirector();
                 }
+                if (!dd.isEmpty()) {
+                    deliveryDirectors.add(dd);
+                }
 
-                DeliveryManagerDataDTO accountData = accountDataMap.getOrDefault(dd, new DeliveryManagerDataDTO());
-                accountData.setDeliveryDirector(dd);
-                accountData.setAccount(accountName);
-
-                List<String> dms = accountData.getDeliveryManager() != null ? accountData.getDeliveryManager() : new ArrayList<>();
-                dms.add(deliveryManager);
-                accountData.setDeliveryManager(dms);
-
-                // Aggregating current data
-                Map<String, DataDTO> currentDataMap = new HashMap<>();
                 for (RevenueBudgetSummary rbs : currentRevenueBudget) {
                     if (rbs.getFinancialYear() == currentYear || rbs.getFinancialYear() == previousYear) {
                         String key = rbs.getFinancialYear() + "-" + rbs.getQuarter();
                         DataDTO data = currentDataMap.getOrDefault(key, new DataDTO());
                         data.setFinancialYear(rbs.getFinancialYear());
                         data.setQuarter(rbs.getQuarter());
-                        data.setRvb_Forecast(data.getRvb_Forecast() + rbs.getForecast()); // Summing forecast
+                        data.setRvb_Forecast(data.getRvb_Forecast() + rbs.getForecast());
                         currentDataMap.put(key, data);
                     }
                 }
@@ -270,7 +259,7 @@ public class BaseLineService {
                         DataDTO data = currentDataMap.getOrDefault(key, new DataDTO());
                         data.setFinancialYear(rgs.getFinancialYear());
                         data.setQuarter(rgs.getQuarter());
-                        data.setRvg_Forecast(data.getRvg_Forecast() + rgs.getForecast()); // Summing forecast
+                        data.setRvg_Forecast(data.getRvg_Forecast() + rgs.getForecast());
                         currentDataMap.put(key, data);
                     }
                 }
@@ -286,10 +275,6 @@ public class BaseLineService {
                     }
                 }
 
-                accountData.setCurrent(new ArrayList<>(currentDataMap.values()));
-
-                // Aggregating previous data
-                Map<String, DataDTO> previousDataMap = new HashMap<>();
                 for (BaseLine_RevenueBudgetSummary rbs : previousRevenueBudget) {
                     if (rbs.getFinancialYear() == currentYear || rbs.getFinancialYear() == previousYear) {
                         String key = rbs.getFinancialYear() + "-" + rbs.getQuarter();
@@ -322,16 +307,19 @@ public class BaseLineService {
                         previousDataMap.put(key, data);
                     }
                 }
-
-                accountData.setPrevious(new ArrayList<>(previousDataMap.values()));
-                accountDataMap.put(dd, accountData);
             }
-
-            responseList.addAll(accountDataMap.values());
         }
 
-        return responseList;
+        Map<String, Object> response = new HashMap<>();
+        response.put("deliveryDirector", new ArrayList<>(deliveryDirectors));
+        response.put("deliveryManager", new ArrayList<>(deliveryManagers));
+        response.put("account", accountNames);
+        response.put("previousData", new ArrayList<>(previousDataMap.values()));
+        response.put("currentData", new ArrayList<>(currentDataMap.values()));
+
+        return response;
     }
+
 
 
 

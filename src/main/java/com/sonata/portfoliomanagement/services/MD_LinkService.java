@@ -12,6 +12,13 @@ import java.util.stream.Collectors;
 @Service
 public class MD_LinkService {
 
+
+
+    @Autowired
+    private RevenueBudgetSummaryRepository budgetSummaryRepository;
+
+    @Autowired
+    private RevenueGrowthSummaryRepository growthSummaryRepository;
     @Autowired
     private MD_CategoryRepository categoryRepo;
 
@@ -118,5 +125,15 @@ public class MD_LinkService {
                 .map(MD_Project::getProject)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+
+
+    public Integer getMaxFinancialYear() {
+        Integer maxBudgetYear = budgetSummaryRepository.findMaxFinancialYear();
+        Integer maxGrowthYear = growthSummaryRepository.findMaxFinancialYear();
+
+        return (maxBudgetYear != null && maxGrowthYear != null) ?
+                Math.min(maxBudgetYear, maxGrowthYear) : null;
     }
 }

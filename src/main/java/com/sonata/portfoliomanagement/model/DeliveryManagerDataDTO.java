@@ -11,7 +11,7 @@ public class DeliveryManagerDataDTO {
 
     public DeliveryManagerDataDTO() { }
 
-    public DeliveryManagerDataDTO(String deliveryDirector, String account, List<DataDTO> previous, List<DataDTO> current, List<String> deliveryManager) {
+    public DeliveryManagerDataDTO(List<String> deliveryDirector, List<String> account, List<DataDTO> previous, List<DataDTO> current, List<String> deliveryManager) {
         this.deliveryDirector = deliveryDirector;
         this.account = account;
         this.previous = previous;
@@ -19,26 +19,26 @@ public class DeliveryManagerDataDTO {
         this.deliveryManager = deliveryManager;
     }
 
-    private String deliveryDirector;
-    private String account;
+    private List<String> deliveryDirector;
+    private List<String> account;
     private List<DataDTO> previous;
     private List<DataDTO> current;
     private List<String> deliveryManager;
 
 
-    public String getDeliveryDirector() {
+    public List<String> getDeliveryDirector() {
         return deliveryDirector;
     }
 
-    public void setDeliveryDirector(String deliveryDirector) {
+    public void setDeliveryDirector(List<String> deliveryDirector) {
         this.deliveryDirector = deliveryDirector;
     }
 
-    public String getAccount() {
+    public List<String> getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    public void setAccount(List<String> account) {
         this.account = account;
     }
 

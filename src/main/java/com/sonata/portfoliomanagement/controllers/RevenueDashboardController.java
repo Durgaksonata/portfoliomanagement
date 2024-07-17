@@ -47,16 +47,22 @@ public class RevenueDashboardController {
     private static final Logger logger = LoggerFactory.getLogger(RevenueDashboardController.class);
 
 
-
     @Autowired
     private BaseLine_PipelineStateRepository baseLine_PipelineStateRepository;
-
 
 
     @GetMapping("/baselinedata")
     public String createBaselineData() {
         LocalDate currentTimestamp = LocalDate.now();
-        int currentFinancialYear = getCurrentFinancialYear();
+
+        // Get the maximum financial year from the data
+        Set<Integer> allYears = new HashSet<>();
+        allYears.addAll(revenueBudgetSummaryRepository.findAll().stream().map(RevenueBudgetSummary::getFinancialYear).collect(Collectors.toSet()));
+        allYears.addAll(revenueGrowthSummaryRepository.findAll().stream().map(RevenueGrowthSummary::getFinancialYear).collect(Collectors.toSet()));
+        allYears.addAll(pipelineStateRepository.findAll().stream().map(PipelineState::getFinancialYear).collect(Collectors.toSet()));
+
+        int currentFinancialYear = allYears.stream().max(Integer::compareTo).orElse(getCurrentFinancialYear());
+        int previousFinancialYear = currentFinancialYear - 1;
 
         // Remove existing data in baseline tables for the current timestamp
         baseLineRevenueBudgetSummaryRepository.deleteAll();
@@ -156,10 +162,6 @@ public class RevenueDashboardController {
     }
 
 
-
-
-
-
     //get data by datestamp
     @PostMapping("/databydatestamp")
     public Baseline_RevenueDataDTO getDataByBaselineTimestamp(@RequestBody Baseline_RevenueDataDTO request) {
@@ -242,9 +244,6 @@ public class RevenueDashboardController {
     }
 
 
-
-
-
     //getting list data of Revenue_tables for revenue dashboard
     @GetMapping("/all-revenue-summaries")
     public RevenueDashboardListDTO getAllRevenueSummaries() {
@@ -303,13 +302,6 @@ public class RevenueDashboardController {
         return responseDTO;
     }
 //-----------------------------------------------------------
-
-
-
-
-
-
-
 
 
     public RevenueDashboardController(RevenueBudgetSummaryRepository revenueBudgetSummaryRepository,
@@ -425,8 +417,6 @@ public class RevenueDashboardController {
         accountDataList.add(newAccountData);
         return newAccountData;
     }
-
-
 
 
     @PostMapping("/getRevenueDashboardByDirectors")
@@ -806,9 +796,6 @@ public class RevenueDashboardController {
     }
 
 
-
-
-
     @PostMapping("/getByRoleAndName")
     public ResponseEntity<String> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
         String role = request.getRole();
@@ -847,6 +834,24 @@ public class RevenueDashboardController {
         RevDashboardData response = new RevDashboardData();
         response.setDeliveryDirector(deliveryDirector);
 
+        List<String> deliveryManagers = revenueBudgetSummaries.stream()
+                .map(RevenueBudgetSummary::getDeliveryManager)
+                .distinct()
+                .collect(Collectors.toList());
+        response.setDeliveryManager(deliveryManagers);
+
+        List<String> accountsNames = revenueBudgetSummaries.stream()
+                .map(RevenueBudgetSummary::getAccount)
+                .distinct()
+                .collect(Collectors.toList());
+        response.setAccountsNames(accountsNames);
+
+        List<Integer> financialYears = revenueBudgetSummaries.stream()
+                .map(RevenueBudgetSummary::getFinancialYear)
+                .distinct()
+                .collect(Collectors.toList());
+        response.setFinancialYears(financialYears);
+
         List<RevDashboardData.AccountData> accounts = new ArrayList<>();
         for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
             RevDashboardData.AccountData accountData = new RevDashboardData.AccountData();
@@ -861,11 +866,6 @@ public class RevenueDashboardController {
             accountData.setRevenueBudget(revenueBudget);
 
             accounts.add(accountData);
-
-            // Set delivery manager from RevenueBudgetSummary if not already set
-            if (response.getDeliveryManager() == null || response.getDeliveryManager().isEmpty()) {
-                response.setDeliveryManager(budgetSummary.getDeliveryManager());
-            }
         }
 
         for (RevenueGrowthSummary growthSummary : revenueGrowthSummaries) {
@@ -876,11 +876,6 @@ public class RevenueDashboardController {
                     revenueGrowth.setForecast(growthSummary.getForecast());
                     revenueGrowth.setGap(growthSummary.getGap());
                     accountData.setRevenueGrowth(revenueGrowth);
-
-                    // Set delivery manager from RevenueGrowthSummary if not already set
-                    if (response.getDeliveryManager() == null || response.getDeliveryManager().isEmpty()) {
-                        response.setDeliveryManager(growthSummary.getDeliveryManager());
-                    }
                 }
             }
         }
@@ -910,20 +905,12 @@ public class RevenueDashboardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing response");
         }
 
-        // Prepend the type declaration
-        String fullResponse = "type RevDashboardData = " + jsonResponse;
-        return ResponseEntity.ok(fullResponse);
+        return ResponseEntity.ok(jsonResponse);
     }
 
 
-
-
-
-
-
-
     @GetMapping("/getAllData")
-    public ResponseEntity<Map<String, RevDashboardData>> getDashboardData() {
+    public ResponseEntity<RevenueDashboardData> getDashboardData() {
         Integer currentYear = revenueBudgetSummaryRepository.findMaxFinancialYear();
         if (currentYear == null) {
             return ResponseEntity.noContent().build();
@@ -934,19 +921,19 @@ public class RevenueDashboardController {
         List<RevenueGrowthSummary> revenueGrowths = revenueGrowthSummaryRepository.findByFinancialYearIn(List.of(currentYear, previousYear));
         List<PipelineState> pipelineStates = pipelineStateRepository.findByFinancialYearIn(List.of(currentYear, previousYear));
 
-        Map<String, RevDashboardData.AccountData> accountDataMap = new HashMap<>();
+        Map<String, RevenueDashboardData.AccountData> accountDataMap = new HashMap<>();
 
         revenueBudgets.forEach(revenueBudget -> {
             String key = revenueBudget.getFinancialYear() + "-" + revenueBudget.getQuarter();
 
-            RevDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevDashboardData.AccountData());
+            RevenueDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevenueDashboardData.AccountData());
             accountData.setAccount("all");
             accountData.setFinancialYear(revenueBudget.getFinancialYear());
             accountData.setQuarter(revenueBudget.getQuarter());
 
-            RevDashboardData.RevenueBudget revenueBudgetData = accountData.getRevenueBudget();
+            RevenueDashboardData.RevenueBudget revenueBudgetData = accountData.getRevenueBudget();
             if (revenueBudgetData == null) {
-                revenueBudgetData = new RevDashboardData.RevenueBudget();
+                revenueBudgetData = new RevenueDashboardData.RevenueBudget();
             }
             revenueBudgetData.setBudget(revenueBudgetData.getBudget() + revenueBudget.getBudget());
             revenueBudgetData.setForecast(revenueBudgetData.getForecast() + revenueBudget.getForecast());
@@ -959,14 +946,14 @@ public class RevenueDashboardController {
         revenueGrowths.forEach(revenueGrowth -> {
             String key = revenueGrowth.getFinancialYear() + "-" + revenueGrowth.getQuarter();
 
-            RevDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevDashboardData.AccountData());
+            RevenueDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevenueDashboardData.AccountData());
             accountData.setAccount("all");
             accountData.setFinancialYear(revenueGrowth.getFinancialYear());
             accountData.setQuarter(revenueGrowth.getQuarter());
 
-            RevDashboardData.RevenueGrowth revenueGrowthData = accountData.getRevenueGrowth();
+            RevenueDashboardData.RevenueGrowth revenueGrowthData = accountData.getRevenueGrowth();
             if (revenueGrowthData == null) {
-                revenueGrowthData = new RevDashboardData.RevenueGrowth();
+                revenueGrowthData = new RevenueDashboardData.RevenueGrowth();
             }
             revenueGrowthData.setAccountExpected(revenueGrowthData.getAccountExpected() + revenueGrowth.getAccountExpected());
             revenueGrowthData.setForecast(revenueGrowthData.getForecast() + revenueGrowth.getForecast());
@@ -979,14 +966,14 @@ public class RevenueDashboardController {
         pipelineStates.forEach(pipelineState -> {
             String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
 
-            RevDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevDashboardData.AccountData());
+            RevenueDashboardData.AccountData accountData = accountDataMap.getOrDefault(key, new RevenueDashboardData.AccountData());
             accountData.setAccount("all");
             accountData.setFinancialYear(pipelineState.getFinancialYear());
             accountData.setQuarter(pipelineState.getQuarter());
 
-            RevDashboardData.PipelineState pipelineStateData = accountData.getPipelineState();
+            RevenueDashboardData.PipelineState pipelineStateData = accountData.getPipelineState();
             if (pipelineStateData == null) {
-                pipelineStateData = new RevDashboardData.PipelineState();
+                pipelineStateData = new RevenueDashboardData.PipelineState();
             }
             pipelineStateData.setSumOfPipeline_pitch(pipelineStateData.getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
             pipelineStateData.setSumOfPipeline_opportunity(pipelineStateData.getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
@@ -998,7 +985,7 @@ public class RevenueDashboardController {
         });
 
         // Convert map values to list and sort it
-        List<RevDashboardData.AccountData> accounts = new ArrayList<>(accountDataMap.values());
+        List<RevenueDashboardData.AccountData> accounts = new ArrayList<>(accountDataMap.values());
         accounts.sort((a, b) -> {
             // Prioritize current year over previous year
             int yearComparison = b.getFinancialYear() - a.getFinancialYear();
@@ -1009,16 +996,14 @@ public class RevenueDashboardController {
             return a.getQuarter().compareTo(b.getQuarter());
         });
 
-        Map<String, RevDashboardData> response = new HashMap<>();
-        RevDashboardData dashboardData = new RevDashboardData();
+        RevenueDashboardData dashboardData = new RevenueDashboardData();
         dashboardData.setDeliveryDirector("all");
         dashboardData.setDeliveryManager("all");
         dashboardData.setAccounts(accounts);
-        response.put("type RevDashboardData", dashboardData);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(dashboardData);
     }
 
-
-
 }
+
+

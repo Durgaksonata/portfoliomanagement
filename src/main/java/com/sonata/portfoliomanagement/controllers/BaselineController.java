@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,9 +58,12 @@ public class BaselineController {
     private BaseLine_PipelineStateRepository baseLinePipelineStateRepository;
 
     @Autowired
-    private BaseLineService baseLineService;
+    private final BaseLineService baseLineService;
 
-
+    @Autowired
+    public BaselineController(BaseLineService baseLineService) {
+        this.baseLineService = baseLineService;
+    }
 
 
     @PostMapping("/deliveryManagersData")
@@ -70,15 +74,18 @@ public class BaselineController {
 
 
     @PostMapping("/accountData")
-    public List<DeliveryManagerDataDTO> getAccountData(@RequestBody List<String> accountNames) {
-        return baseLineService.getAccountData(accountNames);
+    public ResponseEntity<Map<String, Object>> getAccountData(@RequestBody List<String> accountNames) {
+        Map<String, Object> data = baseLineService.getAccountData(accountNames);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
+
+
+
     @PostMapping("/deliveryDirectorData")
     public ResponseEntity<Map<String, Object>> getDeliveryDirectorsData(@RequestBody List<String> deliveryDirectorNames) {
         Map<String, Object> data = baseLineService.getDeliveryDirectorData(deliveryDirectorNames);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
-
 
 
     @GetMapping("/baselineSummary")
@@ -97,21 +104,34 @@ public class BaselineController {
         List<RevenueGrowthSummary> currentGrowthSummaries = revenueGrowthSummaryRepository.findAll();
         List<PipelineState> currentPipelineSummaries = pipelineStateRepository.findAll();
 
+        // Find the highest financial year and the previous year
+        Set<Integer> allYears = new HashSet<>();
+        baselineBudgetSummaries.forEach(budgetSummary -> allYears.add(budgetSummary.getFinancialYear()));
+        currentBudgetSummaries.forEach(budgetSummary -> allYears.add(budgetSummary.getFinancialYear()));
+
+        List<Integer> sortedYears = allYears.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        int highestYear = sortedYears.get(0);
+        int previousYear = sortedYears.size() > 1 ? sortedYears.get(1) : highestYear - 1;
+
         // Populate deliveryDirector, deliveryManager, and account lists from baseline and current data
         Set<String> deliveryDirector = new HashSet<>();
         Set<String> deliveryManager = new HashSet<>();
         Set<String> account = new HashSet<>();
 
         baselineBudgetSummaries.forEach(budgetSummary -> {
-            deliveryDirector.add(budgetSummary.getDeliveryDirector());
-            deliveryManager.add(budgetSummary.getDeliveryManager());
-            account.add(budgetSummary.getAccount());
+            if (budgetSummary.getFinancialYear() == highestYear || budgetSummary.getFinancialYear() == previousYear) {
+                deliveryDirector.add(budgetSummary.getDeliveryDirector());
+                deliveryManager.add(budgetSummary.getDeliveryManager());
+                account.add(budgetSummary.getAccount());
+            }
         });
 
         currentBudgetSummaries.forEach(budgetSummary -> {
-            deliveryDirector.add(budgetSummary.getDeliveryDirector());
-            deliveryManager.add(budgetSummary.getDeliveryManager());
-            account.add(budgetSummary.getAccount());
+            if (budgetSummary.getFinancialYear() == highestYear || budgetSummary.getFinancialYear() == previousYear) {
+                deliveryDirector.add(budgetSummary.getDeliveryDirector());
+                deliveryManager.add(budgetSummary.getDeliveryManager());
+                account.add(budgetSummary.getAccount());
+            }
         });
 
         // Populate previousData from baseline summaries
@@ -120,7 +140,9 @@ public class BaselineController {
                 baselineBudgetSummaries,
                 baselineGrowthSummaries,
                 baselinePipelineSummaries,
-                previousDataMap
+                previousDataMap,
+                highestYear,
+                previousYear
         );
 
         previousData.addAll(previousDataMap.values());
@@ -132,7 +154,9 @@ public class BaselineController {
                 currentBudgetSummaries,
                 currentGrowthSummaries,
                 currentPipelineSummaries,
-                currentDataMap
+                currentDataMap,
+                highestYear,
+                previousYear
         );
 
         currentData.addAll(currentDataMap.values());
@@ -151,37 +175,45 @@ public class BaselineController {
             List<BaseLine_RevenueBudgetSummary> budgetSummaries,
             List<BaseLine_RevenueGrowthSummary> growthSummaries,
             List<BaseLine_PipelineState> pipelineSummaries,
-            Map<String, SummaryData> dataMap) {
+            Map<String, SummaryData> dataMap,
+            int highestYear,
+            int previousYear) {
 
         budgetSummaries.forEach(budgetSummary -> {
-            String key = budgetSummary.getFinancialYear() + budgetSummary.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    budgetSummary.getFinancialYear(),
-                    budgetSummary.getQuarter()
-            ));
-            summaryData.setRVB_Forecast(summaryData.getRVB_Forecast() + budgetSummary.getForecast());
-            dataMap.put(key, summaryData);
+            if (budgetSummary.getFinancialYear() == highestYear || budgetSummary.getFinancialYear() == previousYear) {
+                String key = budgetSummary.getFinancialYear() + budgetSummary.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        budgetSummary.getFinancialYear(),
+                        budgetSummary.getQuarter()
+                ));
+                summaryData.setRVB_Forecast(summaryData.getRVB_Forecast() + budgetSummary.getForecast());
+                dataMap.put(key, summaryData);
+            }
         });
 
         growthSummaries.forEach(growthSummary -> {
-            String key = growthSummary.getFinancialYear() + growthSummary.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    growthSummary.getFinancialYear(),
-                    growthSummary.getQuarter()
-            ));
-            summaryData.setRVG_Forecast(summaryData.getRVG_Forecast() + growthSummary.getForecast());
-            dataMap.put(key, summaryData);
+            if (growthSummary.getFinancialYear() == highestYear || growthSummary.getFinancialYear() == previousYear) {
+                String key = growthSummary.getFinancialYear() + growthSummary.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        growthSummary.getFinancialYear(),
+                        growthSummary.getQuarter()
+                ));
+                summaryData.setRVG_Forecast(summaryData.getRVG_Forecast() + growthSummary.getForecast());
+                dataMap.put(key, summaryData);
+            }
         });
 
         pipelineSummaries.forEach(pipelineState -> {
-            String key = pipelineState.getFinancialYear() + pipelineState.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    pipelineState.getFinancialYear(),
-                    pipelineState.getQuarter()
-            ));
-            double pipelineSum = pipelineState.getSumOfPipeline_total();
-            summaryData.setTotalPipelineSum((float) (summaryData.getTotalPipelineSum() + pipelineSum));
-            dataMap.put(key, summaryData);
+            if (pipelineState.getFinancialYear() == highestYear || pipelineState.getFinancialYear() == previousYear) {
+                String key = pipelineState.getFinancialYear() + pipelineState.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        pipelineState.getFinancialYear(),
+                        pipelineState.getQuarter()
+                ));
+                double pipelineSum = pipelineState.getSumOfPipeline_total();
+                summaryData.setTotalPipelineSum((float) (summaryData.getTotalPipelineSum() + pipelineSum));
+                dataMap.put(key, summaryData);
+            }
         });
     }
 
@@ -189,37 +221,45 @@ public class BaselineController {
             List<RevenueBudgetSummary> budgetSummaries,
             List<RevenueGrowthSummary> growthSummaries,
             List<PipelineState> pipelineSummaries,
-            Map<String, SummaryData> dataMap) {
+            Map<String, SummaryData> dataMap,
+            int highestYear,
+            int previousYear) {
 
         budgetSummaries.forEach(budgetSummary -> {
-            String key = budgetSummary.getFinancialYear() + budgetSummary.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    budgetSummary.getFinancialYear(),
-                    budgetSummary.getQuarter()
-            ));
-            summaryData.setRVB_Forecast(summaryData.getRVB_Forecast() + budgetSummary.getForecast());
-            dataMap.put(key, summaryData);
+            if (budgetSummary.getFinancialYear() == highestYear || budgetSummary.getFinancialYear() == previousYear) {
+                String key = budgetSummary.getFinancialYear() + budgetSummary.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        budgetSummary.getFinancialYear(),
+                        budgetSummary.getQuarter()
+                ));
+                summaryData.setRVB_Forecast(summaryData.getRVB_Forecast() + budgetSummary.getForecast());
+                dataMap.put(key, summaryData);
+            }
         });
 
         growthSummaries.forEach(growthSummary -> {
-            String key = growthSummary.getFinancialYear() + growthSummary.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    growthSummary.getFinancialYear(),
-                    growthSummary.getQuarter()
-            ));
-            summaryData.setRVG_Forecast(summaryData.getRVG_Forecast() + growthSummary.getForecast());
-            dataMap.put(key, summaryData);
+            if (growthSummary.getFinancialYear() == highestYear || growthSummary.getFinancialYear() == previousYear) {
+                String key = growthSummary.getFinancialYear() + growthSummary.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        growthSummary.getFinancialYear(),
+                        growthSummary.getQuarter()
+                ));
+                summaryData.setRVG_Forecast(summaryData.getRVG_Forecast() + growthSummary.getForecast());
+                dataMap.put(key, summaryData);
+            }
         });
 
         pipelineSummaries.forEach(pipelineState -> {
-            String key = pipelineState.getFinancialYear() + pipelineState.getQuarter();
-            SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
-                    pipelineState.getFinancialYear(),
-                    pipelineState.getQuarter()
-            ));
-            double pipelineSum = pipelineState.getSumOfPipeline_total();
-            summaryData.setTotalPipelineSum((float) (summaryData.getTotalPipelineSum() + pipelineSum));
-            dataMap.put(key, summaryData);
+            if (pipelineState.getFinancialYear() == highestYear || pipelineState.getFinancialYear() == previousYear) {
+                String key = pipelineState.getFinancialYear() + pipelineState.getQuarter();
+                SummaryData summaryData = dataMap.getOrDefault(key, new SummaryData(
+                        pipelineState.getFinancialYear(),
+                        pipelineState.getQuarter()
+                ));
+                double pipelineSum = pipelineState.getSumOfPipeline_total();
+                summaryData.setTotalPipelineSum((float) (summaryData.getTotalPipelineSum() + pipelineSum));
+                dataMap.put(key, summaryData);
+            }
         });
     }
 
@@ -237,6 +277,7 @@ public class BaselineController {
                 Integer.parseInt(q2.substring(1))
         );
     }
+
 
 
 

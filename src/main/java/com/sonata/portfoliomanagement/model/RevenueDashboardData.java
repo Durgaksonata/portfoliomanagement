@@ -1,18 +1,16 @@
 package com.sonata.portfoliomanagement.model;
-import java.util.List;
-
 
 import java.util.List;
 
-public class RevDashboardData {
+public class RevenueDashboardData {
+
+
+
     private String deliveryDirector;
-    private List<String> deliveryManager;
-    private List<String> accountsNames;
-    private List<Integer> financialYears;
+    private String deliveryManager;
     private List<AccountData> accounts;
 
     // Getters and Setters
-
     public String getDeliveryDirector() {
         return deliveryDirector;
     }
@@ -21,28 +19,12 @@ public class RevDashboardData {
         this.deliveryDirector = deliveryDirector;
     }
 
-    public List<String> getDeliveryManager() {
+    public String getDeliveryManager() {
         return deliveryManager;
     }
 
-    public void setDeliveryManager(List<String> deliveryManager) {
+    public void setDeliveryManager(String deliveryManager) {
         this.deliveryManager = deliveryManager;
-    }
-
-    public List<String> getAccountsNames() {
-        return accountsNames;
-    }
-
-    public void setAccountsNames(List<String> accountsNames) {
-        this.accountsNames = accountsNames;
-    }
-
-    public List<Integer> getFinancialYears() {
-        return financialYears;
-    }
-
-    public void setFinancialYears(List<Integer> financialYears) {
-        this.financialYears = financialYears;
     }
 
     public List<AccountData> getAccounts() {
@@ -62,7 +44,6 @@ public class RevDashboardData {
         private PipelineState pipelineState;
 
         // Getters and Setters
-
         public String getAccount() {
             return account;
         }
@@ -118,7 +99,6 @@ public class RevDashboardData {
         private double gap;
 
         // Getters and Setters
-
         public double getBudget() {
             return budget;
         }
@@ -150,7 +130,6 @@ public class RevDashboardData {
         private double gap;
 
         // Getters and Setters
-
         public double getAccountExpected() {
             return accountExpected;
         }
@@ -183,7 +162,6 @@ public class RevDashboardData {
         private double sumOfPipeline_total;
 
         // Getters and Setters
-
         public double getSumOfPipeline_pitch() {
             return sumOfPipeline_pitch;
         }
@@ -216,4 +194,5 @@ public class RevDashboardData {
             this.sumOfPipeline_total = sumOfPipeline_total;
         }
     }
+
 }
