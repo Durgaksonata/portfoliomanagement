@@ -796,29 +796,37 @@ public class RevenueDashboardController {
         return newAccountData;
     }
 
+
+
     @PostMapping("/getByRoleAndName")
-    public ResponseEntity<String> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
+    public ResponseEntity<RevDashboardData> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
         List<String> roles = request.getRole();
         String name = request.getName();
 
         // Fetch matching user
         String[] nameParts = name.split(" ");
         if (nameParts.length != 2) {
-            return ResponseEntity.badRequest().body("Invalid name format");
+            return ResponseEntity.badRequest().build();
         }
         String firstName = nameParts[0];
         String lastName = nameParts[1];
         String deliveryDirector = firstName + " " + lastName;
 
-        // Construct response list to hold multiple responses
-        List<RevDashboardData> responses = new ArrayList<>();
+        // Construct response object
+        RevDashboardData response = new RevDashboardData();
+        response.setDeliveryDirector(deliveryDirector);
+
+        // Fetch delivery managers, account names, and financial years (assuming these are common for all accounts)
+        List<String> deliveryManagers = new ArrayList<>();
+        List<String> accountsNames = new ArrayList<>();
+        List<Integer> financialYears = new ArrayList<>();
 
         // Process each role separately
         for (String role : roles) {
             // Fetch matching role
             MD_Role mdRole = mdRolesRepository.findFirstByRole(role);
             if (mdRole == null) {
-                return ResponseEntity.badRequest().body("Invalid role: " + role);
+                return ResponseEntity.badRequest().build();
             }
 
             // Fetch matching records from RevenueBudgetSummary
@@ -830,28 +838,23 @@ public class RevenueDashboardController {
             // Fetch matching records from PipelineState
             List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
 
-            // Construct RevDashboardData for this role
-            RevDashboardData response = new RevDashboardData();
-            response.setDeliveryDirector(deliveryDirector);
-
-            List<String> deliveryManagers = revenueBudgetSummaries.stream()
+            // Collect delivery managers, account names, and financial years
+            deliveryManagers.addAll(revenueBudgetSummaries.stream()
                     .map(RevenueBudgetSummary::getDeliveryManager)
                     .distinct()
-                    .collect(Collectors.toList());
-            response.setDeliveryManager(deliveryManagers);
+                    .collect(Collectors.toList()));
 
-            List<String> accountsNames = revenueBudgetSummaries.stream()
+            accountsNames.addAll(revenueBudgetSummaries.stream()
                     .map(RevenueBudgetSummary::getAccount)
                     .distinct()
-                    .collect(Collectors.toList());
-            response.setAccountsNames(accountsNames);
+                    .collect(Collectors.toList()));
 
-            List<Integer> financialYears = revenueBudgetSummaries.stream()
+            financialYears.addAll(revenueBudgetSummaries.stream()
                     .map(RevenueBudgetSummary::getFinancialYear)
                     .distinct()
-                    .collect(Collectors.toList());
-            response.setFinancialYears(financialYears);
+                    .collect(Collectors.toList()));
 
+            // Process each account separately
             List<RevDashboardData.AccountData> accounts = new ArrayList<>();
             for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
                 RevDashboardData.AccountData accountData = new RevDashboardData.AccountData();
@@ -865,53 +868,51 @@ public class RevenueDashboardController {
                 revenueBudget.setGap(budgetSummary.getGap());
                 accountData.setRevenueBudget(revenueBudget);
 
+                // Find matching revenue growth summary
+                RevenueGrowthSummary matchingGrowthSummary = revenueGrowthSummaries.stream()
+                        .filter(g -> g.getAccount().equals(budgetSummary.getAccount()) &&
+                                g.getQuarter().equals(budgetSummary.getQuarter()) &&
+                                g.getFinancialYear() == budgetSummary.getFinancialYear())
+                        .findFirst()
+                        .orElse(null);
+                if (matchingGrowthSummary != null) {
+                    RevDashboardData.RevenueGrowth revenueGrowth = new RevDashboardData.RevenueGrowth();
+                    revenueGrowth.setAccountExpected(matchingGrowthSummary.getAccountExpected());
+                    revenueGrowth.setForecast(matchingGrowthSummary.getForecast());
+                    revenueGrowth.setGap(matchingGrowthSummary.getGap());
+                    accountData.setRevenueGrowth(revenueGrowth);
+                }
+
+                // Find matching pipeline state
+                PipelineState matchingPipelineState = pipelineStates.stream()
+                        .filter(p -> p.getAccount().equals(budgetSummary.getAccount()) &&
+                                p.getQuarter().equals(budgetSummary.getQuarter()) &&
+                                p.getFinancialYear() == budgetSummary.getFinancialYear())
+                        .findFirst()
+                        .orElse(null);
+                if (matchingPipelineState != null) {
+                    RevDashboardData.PipelineState pipelineState = new RevDashboardData.PipelineState();
+                    pipelineState.setSumOfPipeline_pitch(matchingPipelineState.getSumOfPipeline_pitch());
+                    pipelineState.setSumOfPipeline_opportunity(matchingPipelineState.getSumOfPipeline_opportunity());
+                    pipelineState.setSumOfPipeline_shaping(matchingPipelineState.getSumOfPipeline_shaping());
+                    pipelineState.setSumOfPipeline_total(matchingPipelineState.getSumOfPipeline_total());
+                    accountData.setPipelineState(pipelineState);
+                }
+
                 accounts.add(accountData);
             }
 
-            for (RevenueGrowthSummary growthSummary : revenueGrowthSummaries) {
-                for (RevDashboardData.AccountData accountData : accounts) {
-                    if (accountData.getAccount().equals(growthSummary.getAccount())) {
-                        RevDashboardData.RevenueGrowth revenueGrowth = new RevDashboardData.RevenueGrowth();
-                        revenueGrowth.setAccountExpected(growthSummary.getAccountExpected());
-                        revenueGrowth.setForecast(growthSummary.getForecast());
-                        revenueGrowth.setGap(growthSummary.getGap());
-                        accountData.setRevenueGrowth(revenueGrowth);
-                    }
-                }
-            }
-
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-
-            for (PipelineState pipelineState : pipelineStates) {
-                for (RevDashboardData.AccountData accountData : accounts) {
-                    if (accountData.getAccount().equals(pipelineState.getAccount())) {
-                        RevDashboardData.PipelineState pipelineStatus = new RevDashboardData.PipelineState();
-                        pipelineStatus.setSumOfPipeline_pitch(Double.parseDouble(decimalFormat.format(pipelineState.getSumOfPipeline_pitch())));
-                        pipelineStatus.setSumOfPipeline_opportunity(Double.parseDouble(decimalFormat.format(pipelineState.getSumOfPipeline_opportunity())));
-                        pipelineStatus.setSumOfPipeline_shaping(Double.parseDouble(decimalFormat.format(pipelineState.getSumOfPipeline_shaping())));
-                        pipelineStatus.setSumOfPipeline_total(Double.parseDouble(decimalFormat.format(pipelineState.getSumOfPipeline_total())));
-
-                        accountData.setPipelineState(pipelineStatus);
-                    }
-                }
-            }
-
             response.setAccounts(accounts);
-            responses.add(response); // Add each response to the list of responses
         }
 
-        // Serialize the responses to pretty-printed JSON
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonResponse;
-        try {
-            jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(responses);
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing response");
-        }
+        // Set collected delivery managers, account names, and financial years
+        response.setDeliveryManager(deliveryManagers.stream().distinct().collect(Collectors.toList()));
+        response.setAccountsNames(accountsNames.stream().distinct().collect(Collectors.toList()));
+        response.setFinancialYears(financialYears.stream().distinct().collect(Collectors.toList()));
 
-        return ResponseEntity.ok(jsonResponse);
+        // Return the RevDashboardData directly
+        return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/getAllData")
     public ResponseEntity<RevenueDashboardData> getDashboardData() {
