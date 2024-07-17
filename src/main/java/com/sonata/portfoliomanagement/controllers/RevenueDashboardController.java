@@ -797,7 +797,6 @@ public class RevenueDashboardController {
     }
 
 
-
     @PostMapping("/getByRoleAndName")
     public ResponseEntity<RevDashboardData> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
         List<String> roles = request.getRole();
@@ -892,10 +891,10 @@ public class RevenueDashboardController {
                         .orElse(null);
                 if (matchingPipelineState != null) {
                     RevDashboardData.PipelineState pipelineState = new RevDashboardData.PipelineState();
-                    pipelineState.setSumOfPipeline_pitch(matchingPipelineState.getSumOfPipeline_pitch());
-                    pipelineState.setSumOfPipeline_opportunity(matchingPipelineState.getSumOfPipeline_opportunity());
-                    pipelineState.setSumOfPipeline_shaping(matchingPipelineState.getSumOfPipeline_shaping());
-                    pipelineState.setSumOfPipeline_total(matchingPipelineState.getSumOfPipeline_total());
+                    pipelineState.setSumOfPipeline_pitch(formatDouble(matchingPipelineState.getSumOfPipeline_pitch()));
+                    pipelineState.setSumOfPipeline_opportunity(formatDouble(matchingPipelineState.getSumOfPipeline_opportunity()));
+                    pipelineState.setSumOfPipeline_shaping(formatDouble(matchingPipelineState.getSumOfPipeline_shaping()));
+                    pipelineState.setSumOfPipeline_total(formatDouble(matchingPipelineState.getSumOfPipeline_total()));
                     accountData.setPipelineState(pipelineState);
                 }
 
@@ -913,6 +912,12 @@ public class RevenueDashboardController {
         // Return the RevDashboardData directly
         return ResponseEntity.ok(response);
     }
+
+    // Helper method to format double values to two decimal places
+    private double formatDouble(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
 
     @GetMapping("/getAllData")
     public ResponseEntity<RevenueDashboardData> getDashboardData() {
