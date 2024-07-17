@@ -1,16 +1,21 @@
 package com.sonata.portfoliomanagement.model;
 
-public class RoleAndNameRequest {
+import java.util.List;
 
-    private String role;
+public class RoleAndNameRequest {
+    private List<String> role;
+
+    //    private String role;
     private String name;
 
     // Getters and setters
-    public String getRole() {
+
+
+    public List<String> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(List<String> role) {
         this.role = role;
     }
 
