@@ -97,4 +97,7 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     @Query("SELECT MAX(r.financialYear) FROM RevenueBudgetSummary r")
     Integer findMaxFinancialYear();
 
+    @Query("SELECT DISTINCT r.deliveryDirector FROM RevenueBudgetSummary r WHERE r.account = :account")
+    List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
+
 }

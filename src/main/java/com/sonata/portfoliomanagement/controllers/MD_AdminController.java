@@ -197,12 +197,139 @@ public class MD_AdminController {
     }
 
 
+//
+//    @PostMapping("/checkAdminAndReturnResponse")
+//    public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody MD_Admin user) {
+//        try {
+//            String email = user.getEmail();
+//            String password = user.getPassword();
+//
+//            // Check if user with provided email exists in the database
+//            boolean emailExists = adminService.userExistsByEmail(email);
+//            if (!emailExists) {
+//                // User with the provided email does not exist
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                        .body(Collections.singletonMap("response", "Email provided is incorrect"));
+//            }
+//            // Get the existing user
+//            MD_Admin existingUser = adminService.getUserByEmail(email);
+//            String fullName;
+//
+//            // Check if the provided password matches the one associated with the email
+//            boolean passwordCorrect = adminService.verifyPassword(email, password);
+//            //System.out.println(passwordCorrect);
+//            if (passwordCorrect) {
+//                // Check if isFirstLogin is true
+//                boolean isFirstLogin = existingUser.isFirstLogin();
+//                if(existingUser.getLastName().isEmpty()){
+//                     fullName = existingUser.getFirstName();
+//                }else{
+//                    fullName = existingUser.getFirstName() + " " + existingUser.getLastName();
+//                }
+//                String roles = existingUser.getRole();
+//                //System.out.println(isFirstLogin);
+//                if (isFirstLogin) {
+//                    // Update isFirstLogin to false and save the user
+//                    existingUser.setFirstLogin(false);
+//                    adminService.saveUser(existingUser);
+//
+//                    // Prepare the response JSON
+//                    Map<String, Object> response = new HashMap<>();
+//                    response.put("fullName", fullName);
+//                    response.put("email", email);
+//                    response.put("role", roles);
+//                    response.put("isFirstLogin", true);
+//                    response.put("response", "Welcome " + fullName + "! Please create a new password");
+//                    return ResponseEntity.status(HttpStatus.OK).body(response);
+//                } else {
+//                    // isFirstLogin is already false
+//                    Map<String, Object> response = new HashMap<>();
+//                    response.put("fullName", fullName);
+//                    response.put("email", email);
+//                    response.put("role", roles);
+//                    response.put("isFirstLogin", false);
+//                    response.put("response", "Logged in successfully");
+//                    return ResponseEntity.status(HttpStatus.OK).body(response);
+//
+//                }
+//            } else {
+//                // Password provided is incorrect
+//                Map<String, Object> errorResponse = new HashMap<>();
+//                errorResponse.put("response", "Password provided is incorrect");
+//                errorResponse.put("isFirstLogin", existingUser.isFirstLogin());
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(Collections.singletonMap("response", "Failed to check user: " + e.getMessage()));
+//        }
+//    }
+//
+//
+//
+//
+//    @PutMapping("/{email}")
+//    public ResponseEntity<Map<String, String>> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
+//        try {
+//            // Retrieve the user by email
+//            MD_Admin existingUser = adminService.getUserByEmail(email);
+//
+//            if (existingUser == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(Collections.singletonMap("response", "User with the provided email does not exist"));
+//            }
+//
+//            // Get the old and new passwords from the request body
+//            String oldPassword = passwordMap.get("oldPassword");
+//            String newPassword = passwordMap.get("newPassword");
+//
+//            // Decrypt the stored password
+//            String decryptedPasswordFromDB = AESUtil.decrypt(existingUser.getPassword());
+//
+//            // Check if the provided old password matches the decrypted password from the database
+//            if (!Objects.equals(oldPassword, decryptedPasswordFromDB)) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                        .body(Collections.singletonMap("response", "The old password provided is incorrect"));
+//            }
+//
+//            // Check if the new password is the same as the old password
+//            if (Objects.equals(newPassword, oldPassword)) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body(Collections.singletonMap("response", "The new password cannot be the same as the old password"));
+//            }
+//
+//            // Encrypt the new password and update the user's password
+//            String newEncryptedPassword = AESUtil.encrypt(newPassword);
+//            existingUser.setPassword(newEncryptedPassword);
+//            adminService.saveUser(existingUser);
+//
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(Collections.singletonMap("response", "Password updated successfully"));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(Collections.singletonMap("response", "Failed to update password: " + e.getMessage()));
+//        }
+//    }
+
+
+
 
     @PostMapping("/checkAdminAndReturnResponse")
     public ResponseEntity<Map<String, Object>> checkUserAndReturnResponse(@RequestBody MD_Admin user) {
         try {
+            // Check if the email and password are provided
             String email = user.getEmail();
             String password = user.getPassword();
+
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("response", "Email is required"));
+            }
+
+            if (password == null || password.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("response", "Password is required"));
+            }
 
             // Check if user with provided email exists in the database
             boolean emailExists = adminService.userExistsByEmail(email);
@@ -211,23 +338,24 @@ public class MD_AdminController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Collections.singletonMap("response", "Email provided is incorrect"));
             }
+
             // Get the existing user
             MD_Admin existingUser = adminService.getUserByEmail(email);
+            String fullName;
 
             // Check if the provided password matches the one associated with the email
             boolean passwordCorrect = adminService.verifyPassword(email, password);
-            //System.out.println(passwordCorrect);
             if (passwordCorrect) {
                 // Check if isFirstLogin is true
                 boolean isFirstLogin = existingUser.isFirstLogin();
-                String fullName = existingUser.getFirstName() + " " + existingUser.getLastName();
+                if (existingUser.getLastName().isEmpty()) {
+                    fullName = existingUser.getFirstName();
+                } else {
+                    fullName = existingUser.getFirstName() + " " + existingUser.getLastName();
+                }
                 String roles = existingUser.getRole();
-                //System.out.println(isFirstLogin);
-                if (isFirstLogin) {
-                    // Update isFirstLogin to false and save the user
-                    existingUser.setFirstLogin(false);
-                    adminService.saveUser(existingUser);
 
+                if (isFirstLogin) {
                     // Prepare the response JSON
                     Map<String, Object> response = new HashMap<>();
                     response.put("fullName", fullName);
@@ -245,7 +373,6 @@ public class MD_AdminController {
                     response.put("isFirstLogin", false);
                     response.put("response", "Logged in successfully");
                     return ResponseEntity.status(HttpStatus.OK).body(response);
-
                 }
             } else {
                 // Password provided is incorrect
@@ -261,11 +388,23 @@ public class MD_AdminController {
     }
 
 
-
-
     @PutMapping("/{email}")
     public ResponseEntity<Map<String, String>> updateUser(@PathVariable("email") String email, @RequestBody Map<String, String> passwordMap) {
         try {
+            // Check if the oldPassword and newPassword are provided
+            String oldPassword = passwordMap.get("oldPassword");
+            String newPassword = passwordMap.get("newPassword");
+
+            if (oldPassword == null || oldPassword.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("response", "Old password is required"));
+            }
+
+            if (newPassword == null || newPassword.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("response", "Cannot leave this field empty!!!"));
+            }
+
             // Retrieve the user by email
             MD_Admin existingUser = adminService.getUserByEmail(email);
 
@@ -273,10 +412,6 @@ public class MD_AdminController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Collections.singletonMap("response", "User with the provided email does not exist"));
             }
-
-            // Get the old and new passwords from the request body
-            String oldPassword = passwordMap.get("oldPassword");
-            String newPassword = passwordMap.get("newPassword");
 
             // Decrypt the stored password
             String decryptedPasswordFromDB = AESUtil.decrypt(existingUser.getPassword());
@@ -296,6 +431,7 @@ public class MD_AdminController {
             // Encrypt the new password and update the user's password
             String newEncryptedPassword = AESUtil.encrypt(newPassword);
             existingUser.setPassword(newEncryptedPassword);
+            existingUser.setFirstLogin(false); // Set isFirstLogin to false after password change
             adminService.saveUser(existingUser);
 
             return ResponseEntity.status(HttpStatus.OK)
@@ -305,6 +441,20 @@ public class MD_AdminController {
                     .body(Collections.singletonMap("response", "Failed to update password: " + e.getMessage()));
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

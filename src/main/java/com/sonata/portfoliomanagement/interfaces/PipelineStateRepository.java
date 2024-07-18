@@ -36,4 +36,7 @@ public interface PipelineStateRepository extends JpaRepository<PipelineState, In
     PipelineState findByAccountAndFinancialYearAndQuarter(String account, int financialYear, String quarter);
 
     List<PipelineState> findByFinancialYearIn(List<Integer> currentYear);
+
+    @Query("SELECT DISTINCT r.deliveryDirector FROM PipelineState r WHERE r.account = :account")
+    List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
 }

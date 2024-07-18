@@ -105,4 +105,7 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
 
     @Query("SELECT MAX(r.financialYear) FROM RevenueGrowthSummary r")
     Integer findMaxFinancialYear();
+
+    @Query("SELECT DISTINCT r.deliveryDirector FROM RevenueGrowthSummary r WHERE r.account = :account")
+    List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
 }

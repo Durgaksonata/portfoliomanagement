@@ -73,11 +73,11 @@ public class BaselineController {
     }
 
 
-    @PostMapping("/accountData")
-    public ResponseEntity<Map<String, Object>> getAccountData(@RequestBody List<String> accountNames) {
-        Map<String, Object> data = baseLineService.getAccountData(accountNames);
-        return new ResponseEntity<>(data, HttpStatus.OK);
-    }
+//    @PostMapping("/accountData")
+//    public ResponseEntity<Map<String, Object>> getAccountData(@RequestBody List<String> accountNames) {
+//        Map<String, Object> data = baseLineService.getAccountData(accountNames);
+//        return new ResponseEntity<>(data, HttpStatus.OK);
+//    }
 
 
 
@@ -278,6 +278,11 @@ public class BaselineController {
         );
     }
 
+
+    @PostMapping("/accountData")
+    public Map<String, Object> getAccountData(@RequestBody List<String> accountNames) {
+        return baseLineService.getAccountData(accountNames);
+    }
 
 
 

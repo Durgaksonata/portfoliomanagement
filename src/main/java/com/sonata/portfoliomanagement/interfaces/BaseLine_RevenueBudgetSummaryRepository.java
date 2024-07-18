@@ -2,6 +2,8 @@ package com.sonata.portfoliomanagement.interfaces;
 
 import com.sonata.portfoliomanagement.model.BaseLine_RevenueBudgetSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -17,4 +19,9 @@ public interface BaseLine_RevenueBudgetSummaryRepository extends JpaRepository<B
     List<BaseLine_RevenueBudgetSummary> findByDeliveryDirector(String deliveryDirector);
     List<BaseLine_RevenueBudgetSummary> findByDeliveryDirectorAndAccount(String deliveryDirector, String account);
 
+    @Query("SELECT DISTINCT r.deliveryDirector FROM BaseLine_RevenueBudgetSummary r WHERE r.account = :account")
+    List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
+
+    @Query("SELECT DISTINCT r.deliveryManager FROM BaseLine_RevenueBudgetSummary r WHERE r.account = :account")
+    List<String> findDeliveryManagersByAccount(@Param("account") String account);
 }
