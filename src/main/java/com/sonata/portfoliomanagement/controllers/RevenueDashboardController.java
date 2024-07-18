@@ -420,10 +420,10 @@ public class RevenueDashboardController {
     }
 
 
-    @PostMapping("/getRevenueDashboardByDirectors")
-    public ResponseEntity<List<RevDashboardDTO>> getRevenueDashboardByDirectors(@RequestBody List<String> deliveryDirectors) {
-        // Iterate through the list of delivery directors
-        List<RevDashboardDTO> result = new ArrayList<>();
+
+    @PostMapping("/getRevenueDashboardDirector")
+    public ResponseEntity<List<RevDashboardDTO>> getRevenueDashboardByDirector(@RequestBody List<String> deliveryDirectors) {
+        Map<String, RevDashboardDTO> directorMap = new HashMap<>();
 
         for (String deliveryDirector : deliveryDirectors) {
             logger.info("Fetching data for Delivery Director: {}", deliveryDirector);
@@ -432,122 +432,160 @@ public class RevenueDashboardController {
             List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
             List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
 
-            logger.info("Revenue Budget Summaries for {}: {}", deliveryDirector, revenueBudgetSummaries);
-            logger.info("Revenue Growth Summaries for {}: {}", deliveryDirector, revenueGrowthSummaries);
-            logger.info("Pipeline States for {}: {}", deliveryDirector, pipelineStates);
-
-            // Map to store aggregated data
-            Map<String, RevDashboardDTO> directorManagerMap = new HashMap<>();
-
-            // Aggregate RevenueBudgetSummary data
-            for (RevenueBudgetSummary revenueBudget : revenueBudgetSummaries) {
-                String directorManagerKey = generateDirectorManagerKey(revenueBudget.getDeliveryDirector(), revenueBudget.getDeliveryManager());
-                logger.info("Processing RevenueBudgetSummary for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            revenueBudget.getDeliveryDirector(),
-                            revenueBudget.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
-                }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), revenueBudget.getAccount(),
-                        revenueBudget.getFinancialYear(), revenueBudget.getQuarter());
-
-                RevDashboardDTO.RevenueBudgetSummary budgetSummary = accountData.getRevenueBudget();
-                if (budgetSummary == null) {
-                    budgetSummary = new RevDashboardDTO.RevenueBudgetSummary(0, 0, 0);
-                    accountData.setRevenueBudget(budgetSummary);
-                }
-                budgetSummary.setBudget(budgetSummary.getBudget() + revenueBudget.getBudget());
-                budgetSummary.setForecast(budgetSummary.getForecast() + revenueBudget.getForecast());
-                budgetSummary.setGap(budgetSummary.getGap() + revenueBudget.getGap());
-            }
-
-            // Aggregate RevenueGrowthSummary data
-            for (RevenueGrowthSummary revenueGrowth : revenueGrowthSummaries) {
-                String directorManagerKey = generateDirectorManagerKey(revenueGrowth.getDeliveryDirector(), revenueGrowth.getDeliveryManager());
-                logger.info("Processing RevenueGrowthSummary for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            revenueGrowth.getDeliveryDirector(),
-                            revenueGrowth.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
-                }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), revenueGrowth.getAccount(),
-                        revenueGrowth.getFinancialYear(), revenueGrowth.getQuarter());
-
-                RevDashboardDTO.RevenueGrowthSummary growthSummary = accountData.getRevenueGrowth();
-                if (growthSummary == null) {
-                    growthSummary = new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0);
-                    accountData.setRevenueGrowth(growthSummary);
-                }
-                growthSummary.setAccountExpected(growthSummary.getAccountExpected() + revenueGrowth.getAccountExpected());
-                growthSummary.setForecast(growthSummary.getForecast() + revenueGrowth.getForecast());
-                growthSummary.setGap(growthSummary.getGap() + revenueGrowth.getGap());
-            }
-
-            // Aggregate PipelineState data based on quarter
-            for (PipelineState pipelineState : pipelineStates) {
-                String directorManagerKey = generateDirectorManagerKey(pipelineState.getDeliveryDirector(), pipelineState.getDeliveryManager());
-                logger.info("Processing PipelineState for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            pipelineState.getDeliveryDirector(),
-                            pipelineState.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
-                }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), pipelineState.getAccount(),
-                        pipelineState.getFinancialYear(), pipelineState.getQuarter());
-
-                RevDashboardDTO.PipelineState pipelineSummary = accountData.getPipelineStatus();
-                if (pipelineSummary == null) {
-                    pipelineSummary = new RevDashboardDTO.PipelineState(0, 0, 0, 0);
-                    accountData.setPipelineStatus(pipelineSummary);
-                }
-                pipelineSummary.setSumOfPipeline_pitch(pipelineSummary.getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
-                pipelineSummary.setSumOfPipeline_opportunity(pipelineSummary.getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
-                pipelineSummary.setSumOfPipeline_total(pipelineSummary.getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
-                pipelineSummary.setSumOfPipeline_shaping(pipelineSummary.getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
-            }
-
-            // Add aggregated data to result list
-            result.addAll(directorManagerMap.values());
+            aggregateBudgetSummariesByDirector(revenueBudgetSummaries, directorMap, deliveryDirector);
+            aggregateGrowthSummariesByDirector(revenueGrowthSummaries, directorMap, deliveryDirector);
+            aggregatePipelineStatesByDirector(pipelineStates, directorMap, deliveryDirector);
         }
+
+        List<RevDashboardDTO> result = new ArrayList<>(directorMap.values());
+
+        // Consolidate financial years into a single list across all RevDashboardDTOs
+        Set<Integer> allFinancialYears = new HashSet<>();
+        result.forEach(dto -> allFinancialYears.addAll(dto.getFinancialYears()));
+        result.forEach(dto -> dto.setFinancialYears(new ArrayList<>(allFinancialYears)));
 
         return ResponseEntity.ok(result);
     }
 
-    private String generateDirectorManagerKey11(String deliveryDirector, String deliveryManager) {
-        return deliveryDirector + "_" + deliveryManager;
-    }
+    private void aggregateBudgetSummariesByDirector(List<RevenueBudgetSummary> revenueBudgetSummaries,
+                                                    Map<String, RevDashboardDTO> directorMap,
+                                                    String deliveryDirector) {
+        for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
+            int financialYear = budgetSummary.getFinancialYear();
+            String quarter = budgetSummary.getQuarter();
+            String account = budgetSummary.getAccount();
+            String deliveryManager = budgetSummary.getDeliveryManager();
 
-    private RevDashboardDTO.AccountData findOrCreateAccountData11(List<RevDashboardDTO.AccountData> accountDataList, String account, int financialYear, String quarter) {
-        for (RevDashboardDTO.AccountData accountData : accountDataList) {
-            if (accountData.getAccount().equals(account) && accountData.getFinancialYear() == financialYear && accountData.getQuarter().equals(quarter)) {
-                return accountData;
+            directorMap.putIfAbsent(deliveryDirector, new RevDashboardDTO(deliveryDirector));
+            RevDashboardDTO revDashboardDTO = directorMap.get(deliveryDirector);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+            // Add delivery manager to the list
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter) && a.getAccount().equals(account))
+                    .findFirst();
+
+            RevDashboardDTO.AccountData accountData;
+            if (optionalAccountData.isPresent()) {
+                accountData = optionalAccountData.get();
+                accountData.getRevenueBudget().setBudget(accountData.getRevenueBudget().getBudget() + budgetSummary.getBudget());
+                accountData.getRevenueBudget().setForecast(accountData.getRevenueBudget().getForecast() + budgetSummary.getForecast());
+                accountData.getRevenueBudget().setGap(accountData.getRevenueBudget().getGap() + budgetSummary.getGap());
+            } else {
+                accountData = new RevDashboardDTO.AccountData(account, financialYear, quarter,
+                        new RevDashboardDTO.RevenueBudgetSummary(budgetSummary.getBudget(), budgetSummary.getForecast(), budgetSummary.getGap()),
+                        new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0),
+                        new RevDashboardDTO.PipelineState(0, 0, 0, 0));
+                revDashboardDTO.getAccounts().add(accountData);
             }
         }
-
-        RevDashboardDTO.AccountData newAccountData = new RevDashboardDTO.AccountData(account, financialYear, quarter, null, null, null);
-        accountDataList.add(newAccountData);
-        return newAccountData;
     }
+
+    private void aggregateGrowthSummariesByDirector(List<RevenueGrowthSummary> revenueGrowthSummaries,
+                                                    Map<String, RevDashboardDTO> directorMap,
+                                                    String deliveryDirector) {
+        for (RevenueGrowthSummary growthSummary : revenueGrowthSummaries) {
+            int financialYear = growthSummary.getFinancialYear();
+            String quarter = growthSummary.getQuarter();
+            String account = growthSummary.getAccount();
+            String deliveryManager = growthSummary.getDeliveryManager();
+
+            RevDashboardDTO revDashboardDTO = directorMap.get(deliveryDirector);
+
+// Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+// Add delivery manager to the list
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter) && a.getAccount().equals(account))
+                    .findFirst();
+
+            RevDashboardDTO.AccountData accountData;
+            if (optionalAccountData.isPresent()) {
+                accountData = optionalAccountData.get();
+                accountData.getRevenueGrowth().setAccountExpected(accountData.getRevenueGrowth().getAccountExpected() + growthSummary.getAccountExpected());
+                accountData.getRevenueGrowth().setForecast(accountData.getRevenueGrowth().getForecast() + growthSummary.getForecast());
+                accountData.getRevenueGrowth().setGap(accountData.getRevenueGrowth().getGap() + growthSummary.getGap());
+            } else {
+                accountData = new RevDashboardDTO.AccountData(account, financialYear, quarter,
+                        new RevDashboardDTO.RevenueBudgetSummary(0, 0, 0),
+                        new RevDashboardDTO.RevenueGrowthSummary(growthSummary.getAccountExpected(), growthSummary.getForecast(), growthSummary.getGap()),
+                        new RevDashboardDTO.PipelineState(0, 0, 0, 0));
+                revDashboardDTO.getAccounts().add(accountData);
+            }
+        }
+    }
+
+    private void aggregatePipelineStatesByDirector(List<PipelineState> pipelineStates,
+                                                   Map<String, RevDashboardDTO> directorMap,
+                                                   String deliveryDirector) {
+        for (PipelineState pipelineState : pipelineStates) {
+            int financialYear = pipelineState.getFinancialYear();
+            String quarter = pipelineState.getQuarter();
+            String account = pipelineState.getAccount();
+            String deliveryManager = pipelineState.getDeliveryManager();
+
+            RevDashboardDTO revDashboardDTO = directorMap.get(deliveryDirector);
+
+// Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+// Add delivery manager to the list
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter) && a.getAccount().equals(account))
+                    .findFirst();
+
+            RevDashboardDTO.AccountData accountData;
+            if (optionalAccountData.isPresent()) {
+                accountData = optionalAccountData.get();
+                accountData.getPipelineStatus().setSumOfPipeline_pitch(accountData.getPipelineStatus().getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
+                accountData.getPipelineStatus().setSumOfPipeline_opportunity(accountData.getPipelineStatus().getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
+                accountData.getPipelineStatus().setSumOfPipeline_total(accountData.getPipelineStatus().getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
+                accountData.getPipelineStatus().setSumOfPipeline_shaping(accountData.getPipelineStatus().getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
+            } else {
+                accountData = new RevDashboardDTO.AccountData(account, financialYear, quarter,
+                        new RevDashboardDTO.RevenueBudgetSummary(0, 0, 0),
+                        new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0),
+                        new RevDashboardDTO.PipelineState(pipelineState.getSumOfPipeline_pitch(), pipelineState.getSumOfPipeline_opportunity(), pipelineState.getSumOfPipeline_total(), pipelineState.getSumOfPipeline_shaping()));
+                revDashboardDTO.getAccounts().add(accountData);
+            }
+        }
+    }
+
 
 
     @PostMapping("/getRevenueDashboardManager")
     public ResponseEntity<List<RevDashboardDTO>> getRevenueDashboardByManager(@RequestBody List<String> deliveryManagers) {
-        List<RevDashboardDTO> result = new ArrayList<>();
+        Map<String, Map<String, RevDashboardDTO>> directorMap = new HashMap<>();
 
         for (String deliveryManager : deliveryManagers) {
             logger.info("Fetching data for Delivery Manager: {}", deliveryManager);
@@ -556,126 +594,158 @@ public class RevenueDashboardController {
             List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryManager(deliveryManager);
             List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryManager(deliveryManager);
 
-            // Aggregate data for delivery manager
-            Map<String, RevDashboardDTO> directorManagerMap = aggregateData(revenueBudgetSummaries, revenueGrowthSummaries, pipelineStates);
-
-            // Add aggregated data to result list
-            result.addAll(directorManagerMap.values());
+            aggregateBudgetSummaries(revenueBudgetSummaries, directorMap, deliveryManager);
+            aggregateGrowthSummaries(revenueGrowthSummaries, directorMap, deliveryManager);
+            aggregatePipelineStates(pipelineStates, directorMap, deliveryManager);
         }
+
+        List<RevDashboardDTO> result = new ArrayList<>();
+        for (Map<String, RevDashboardDTO> managerMap : directorMap.values()) {
+            result.addAll(managerMap.values());
+        }
+
+        // Consolidate financial years into a single list across all RevDashboardDTOs
+        Set<Integer> allFinancialYears = new HashSet<>();
+        result.forEach(dto -> allFinancialYears.addAll(dto.getFinancialYears()));
+        result.forEach(dto -> dto.setFinancialYears(new ArrayList<>(allFinancialYears)));
 
         return ResponseEntity.ok(result);
     }
 
-    private Map<String, RevDashboardDTO> aggregateData(List<RevenueBudgetSummary> revenueBudgetSummaries,
-                                                       List<RevenueGrowthSummary> revenueGrowthSummaries,
-                                                       List<PipelineState> pipelineStates) {
-        Map<String, RevDashboardDTO> directorManagerMap = new HashMap<>();
+    private void aggregateBudgetSummaries(List<RevenueBudgetSummary> revenueBudgetSummaries,
+                                          Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                          String deliveryManager) {
+        for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
+            String director = budgetSummary.getDeliveryDirector();
+            int financialYear = budgetSummary.getFinancialYear();
+            String quarter = budgetSummary.getQuarter();
+            String account = budgetSummary.getAccount();
 
-        // Aggregate RevenueBudgetSummary data
-        for (RevenueBudgetSummary revenueBudget : revenueBudgetSummaries) {
-            String directorManagerKey = generateDirectorManagerKey(revenueBudget.getDeliveryDirector(), revenueBudget.getDeliveryManager());
-            logger.info("Processing RevenueBudgetSummary for key: {}", directorManagerKey);
+            directorMap.putIfAbsent(director, new HashMap<>());
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
 
-            if (!directorManagerMap.containsKey(directorManagerKey)) {
-                directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                        revenueBudget.getDeliveryDirector(),
-                        revenueBudget.getDeliveryManager(),
-                        new ArrayList<>()
-                ));
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
             }
 
-            RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-            RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), revenueBudget.getAccount(),
-                    revenueBudget.getFinancialYear(), revenueBudget.getQuarter());
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
 
-            RevDashboardDTO.RevenueBudgetSummary budgetSummary = accountData.getRevenueBudget();
-            if (budgetSummary == null) {
-                budgetSummary = new RevDashboardDTO.RevenueBudgetSummary(0, 0, 0);
-                accountData.setRevenueBudget(budgetSummary);
+            RevDashboardDTO.AccountData accountData;
+            if (optionalAccountData.isPresent()) {
+                accountData = optionalAccountData.get();
+                accountData.getRevenueBudget().setBudget(accountData.getRevenueBudget().getBudget() + budgetSummary.getBudget());
+                accountData.getRevenueBudget().setForecast(accountData.getRevenueBudget().getForecast() + budgetSummary.getForecast());
+                accountData.getRevenueBudget().setGap(accountData.getRevenueBudget().getGap() + budgetSummary.getGap());
+            } else {
+                accountData = new RevDashboardDTO.AccountData("multiple", financialYear, quarter,
+                        new RevDashboardDTO.RevenueBudgetSummary(budgetSummary.getBudget(), budgetSummary.getForecast(), budgetSummary.getGap()),
+                        new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0),
+                        new RevDashboardDTO.PipelineState(0, 0, 0, 0));
+                revDashboardDTO.getAccounts().add(accountData);
             }
-            budgetSummary.setBudget(budgetSummary.getBudget() + revenueBudget.getBudget());
-            budgetSummary.setForecast(budgetSummary.getForecast() + revenueBudget.getForecast());
-            budgetSummary.setGap(budgetSummary.getGap() + revenueBudget.getGap());
+
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
         }
+    }
 
-        // Aggregate RevenueGrowthSummary data
-        for (RevenueGrowthSummary revenueGrowth : revenueGrowthSummaries) {
-            String directorManagerKey = generateDirectorManagerKey(revenueGrowth.getDeliveryDirector(), revenueGrowth.getDeliveryManager());
-            logger.info("Processing RevenueGrowthSummary for key: {}", directorManagerKey);
+    private void aggregateGrowthSummaries(List<RevenueGrowthSummary> revenueGrowthSummaries,
+                                          Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                          String deliveryManager) {
+        for (RevenueGrowthSummary growthSummary : revenueGrowthSummaries) {
+            String director = growthSummary.getDeliveryDirector();
+            int financialYear = growthSummary.getFinancialYear();
+            String quarter = growthSummary.getQuarter();
+            String account = growthSummary.getAccount();
 
-            if (!directorManagerMap.containsKey(directorManagerKey)) {
-                directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                        revenueGrowth.getDeliveryDirector(),
-                        revenueGrowth.getDeliveryManager(),
-                        new ArrayList<>()
-                ));
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
+
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
             }
 
-            RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-            RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), revenueGrowth.getAccount(),
-                    revenueGrowth.getFinancialYear(), revenueGrowth.getQuarter());
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
 
-            RevDashboardDTO.RevenueGrowthSummary growthSummary = accountData.getRevenueGrowth();
-            if (growthSummary == null) {
-                growthSummary = new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0);
-                accountData.setRevenueGrowth(growthSummary);
+            if (optionalAccountData.isPresent()) {
+                RevDashboardDTO.AccountData accountData = optionalAccountData.get();
+                accountData.getRevenueGrowth().setAccountExpected(accountData.getRevenueGrowth().getAccountExpected() + growthSummary.getAccountExpected());
+                accountData.getRevenueGrowth().setForecast(accountData.getRevenueGrowth().getForecast() + growthSummary.getForecast());
+                accountData.getRevenueGrowth().setGap(accountData.getRevenueGrowth().getGap() + growthSummary.getGap());
             }
-            growthSummary.setAccountExpected(growthSummary.getAccountExpected() + revenueGrowth.getAccountExpected());
-            growthSummary.setForecast(growthSummary.getForecast() + revenueGrowth.getForecast());
-            growthSummary.setGap(growthSummary.getGap() + revenueGrowth.getGap());
+
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
         }
+    }
 
-        // Aggregate PipelineState data based on quarter
+    private void aggregatePipelineStates(List<PipelineState> pipelineStates,
+                                         Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                         String deliveryManager) {
         for (PipelineState pipelineState : pipelineStates) {
-            String directorManagerKey = generateDirectorManagerKey(pipelineState.getDeliveryDirector(), pipelineState.getDeliveryManager());
-            logger.info("Processing PipelineState for key: {}", directorManagerKey);
+            String director = pipelineState.getDeliveryDirector();
+            int financialYear = pipelineState.getFinancialYear();
+            String quarter = pipelineState.getQuarter();
+            String account = pipelineState.getAccount();
 
-            if (!directorManagerMap.containsKey(directorManagerKey)) {
-                directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                        pipelineState.getDeliveryDirector(),
-                        pipelineState.getDeliveryManager(),
-                        new ArrayList<>()
-                ));
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
+
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
             }
 
-            RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-            RevDashboardDTO.AccountData accountData = findOrCreateAccountData(dto.getAccounts(), pipelineState.getAccount(),
-                    pipelineState.getFinancialYear(), pipelineState.getQuarter());
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
 
-            RevDashboardDTO.PipelineState pipelineSummary = accountData.getPipelineStatus();
-            if (pipelineSummary == null) {
-                pipelineSummary = new RevDashboardDTO.PipelineState(0, 0, 0, 0);
-                accountData.setPipelineStatus(pipelineSummary);
+            if (optionalAccountData.isPresent()) {
+                RevDashboardDTO.AccountData accountData = optionalAccountData.get();
+                accountData.getPipelineStatus().setSumOfPipeline_pitch(accountData.getPipelineStatus().getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
+                accountData.getPipelineStatus().setSumOfPipeline_opportunity(accountData.getPipelineStatus().getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
+                accountData.getPipelineStatus().setSumOfPipeline_total(accountData.getPipelineStatus().getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
+                accountData.getPipelineStatus().setSumOfPipeline_shaping(accountData.getPipelineStatus().getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
             }
-            pipelineSummary.setSumOfPipeline_pitch(pipelineSummary.getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
-            pipelineSummary.setSumOfPipeline_opportunity(pipelineSummary.getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
-            pipelineSummary.setSumOfPipeline_total(pipelineSummary.getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
-            pipelineSummary.setSumOfPipeline_shaping(pipelineSummary.getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
-        }
 
-        return directorManagerMap;
-    }
-
-    private String generateDirectorManagerKey2(String deliveryDirector, String deliveryManager) {
-        return deliveryDirector + "_" + deliveryManager;
-    }
-
-    private RevDashboardDTO.AccountData findOrCreateAccountData2(List<RevDashboardDTO.AccountData> accountDataList, String account, int financialYear, String quarter) {
-        for (RevDashboardDTO.AccountData accountData : accountDataList) {
-            if (accountData.getAccount().equals(account) && accountData.getFinancialYear() == financialYear && accountData.getQuarter().equals(quarter)) {
-                return accountData;
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
             }
         }
-
-        RevDashboardDTO.AccountData newAccountData = new RevDashboardDTO.AccountData(account, financialYear, quarter, null, null, null);
-        accountDataList.add(newAccountData);
-        return newAccountData;
     }
 
-    @PostMapping("/getRevenueDashboardByaccount")
+
+
+    @PostMapping("/getRevenueDashboardByAccount")
     public ResponseEntity<List<RevDashboardDTO>> getRevenueDashboardByAccount(@RequestBody List<String> accounts) {
-        // Iterate through the list of accounts
-        List<RevDashboardDTO> result = new ArrayList<>();
+        Map<String, Map<String, RevDashboardDTO>> directorMap = new HashMap<>();
 
         for (String account : accounts) {
             logger.info("Fetching data for Account: {}", account);
@@ -684,116 +754,157 @@ public class RevenueDashboardController {
             List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByAccount(account);
             List<PipelineState> pipelineStates = pipelineStateRepository.findByAccount(account);
 
-            logger.info("Revenue Budget Summaries: {}", revenueBudgetSummaries);
-            logger.info("Revenue Growth Summaries: {}", revenueGrowthSummaries);
-            logger.info("Pipeline States: {}", pipelineStates);
+            aggregateBudgetSummariesByAccount(revenueBudgetSummaries, directorMap, account);
+            aggregateGrowthSummariesByAccount(revenueGrowthSummaries, directorMap, account);
+            aggregatePipelineStatesByAccount(pipelineStates, directorMap, account);
+        }
 
-            // Map to store aggregated data
-            Map<String, RevDashboardDTO> directorManagerMap = new HashMap<>();
+        List<RevDashboardDTO> result = new ArrayList<>();
+        for (Map<String, RevDashboardDTO> managerMap : directorMap.values()) {
+            for (RevDashboardDTO dto : managerMap.values()) {
+                // Check if there are accounts with data
+                if (!dto.getAccounts().isEmpty()) {
+                    // Consolidate financial years into a single list across all RevDashboardDTOs
+                    Set<Integer> allFinancialYears = new HashSet<>();
+                    dto.getAccounts().forEach(accountData -> allFinancialYears.add(accountData.getFinancialYear()));
+                    dto.setFinancialYears(new ArrayList<>(allFinancialYears));
 
-            // Aggregate RevenueBudgetSummary data
-            for (RevenueBudgetSummary revenueBudget : revenueBudgetSummaries) {
-                String directorManagerKey = generateDirectorManagerKey11(revenueBudget.getDeliveryDirector(), revenueBudget.getDeliveryManager());
-                logger.info("Processing RevenueBudgetSummary for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            revenueBudget.getDeliveryDirector(),
-                            revenueBudget.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
+                    // Add to result only if accounts are not empty
+                    result.add(dto);
                 }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData1(dto.getAccounts(), revenueBudget.getAccount(),
-                        revenueBudget.getFinancialYear(), revenueBudget.getQuarter());
-
-                RevDashboardDTO.RevenueBudgetSummary budgetSummary = accountData.getRevenueBudget();
-                if (budgetSummary == null) {
-                    budgetSummary = new RevDashboardDTO.RevenueBudgetSummary(0, 0, 0);
-                    accountData.setRevenueBudget(budgetSummary);
-                }
-                budgetSummary.setBudget(budgetSummary.getBudget() + revenueBudget.getBudget());
-                budgetSummary.setForecast(budgetSummary.getForecast() + revenueBudget.getForecast());
-                budgetSummary.setGap(budgetSummary.getGap() + revenueBudget.getGap());
             }
-
-            // Aggregate RevenueGrowthSummary data
-            for (RevenueGrowthSummary revenueGrowth : revenueGrowthSummaries) {
-                String directorManagerKey = generateDirectorManagerKey11(revenueGrowth.getDeliveryDirector(), revenueGrowth.getDeliveryManager());
-                logger.info("Processing RevenueGrowthSummary for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            revenueGrowth.getDeliveryDirector(),
-                            revenueGrowth.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
-                }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData1(dto.getAccounts(), revenueGrowth.getAccount(),
-                        revenueGrowth.getFinancialYear(), revenueGrowth.getQuarter());
-
-                RevDashboardDTO.RevenueGrowthSummary growthSummary = accountData.getRevenueGrowth();
-                if (growthSummary == null) {
-                    growthSummary = new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0);
-                    accountData.setRevenueGrowth(growthSummary);
-                }
-                growthSummary.setAccountExpected(growthSummary.getAccountExpected() + revenueGrowth.getAccountExpected());
-                growthSummary.setForecast(growthSummary.getForecast() + revenueGrowth.getForecast());
-                growthSummary.setGap(growthSummary.getGap() + revenueGrowth.getGap());
-            }
-
-            // Aggregate PipelineState data based on quarter
-            for (PipelineState pipelineState : pipelineStates) {
-                String directorManagerKey = generateDirectorManagerKey11(pipelineState.getDeliveryDirector(), pipelineState.getDeliveryManager());
-                logger.info("Processing PipelineState for key: {}", directorManagerKey);
-
-                if (!directorManagerMap.containsKey(directorManagerKey)) {
-                    directorManagerMap.put(directorManagerKey, new RevDashboardDTO(
-                            pipelineState.getDeliveryDirector(),
-                            pipelineState.getDeliveryManager(),
-                            new ArrayList<>()
-                    ));
-                }
-
-                RevDashboardDTO dto = directorManagerMap.get(directorManagerKey);
-                RevDashboardDTO.AccountData accountData = findOrCreateAccountData1(dto.getAccounts(), pipelineState.getAccount(),
-                        pipelineState.getFinancialYear(), pipelineState.getQuarter());
-
-                RevDashboardDTO.PipelineState pipelineSummary = accountData.getPipelineStatus();
-                if (pipelineSummary == null) {
-                    pipelineSummary = new RevDashboardDTO.PipelineState(0, 0, 0, 0);
-                    accountData.setPipelineStatus(pipelineSummary);
-                }
-                pipelineSummary.setSumOfPipeline_pitch(pipelineSummary.getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
-                pipelineSummary.setSumOfPipeline_opportunity(pipelineSummary.getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
-                pipelineSummary.setSumOfPipeline_total(pipelineSummary.getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
-                pipelineSummary.setSumOfPipeline_shaping(pipelineSummary.getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
-            }
-
-            // Add aggregated data to result list
-            result.addAll(directorManagerMap.values());
         }
 
         return ResponseEntity.ok(result);
     }
 
-    private String generateDirectorManagerKey1(String deliveryDirector, String deliveryManager) {
-        return deliveryDirector + "_" + deliveryManager;
-    }
+    private void aggregateBudgetSummariesByAccount(List<RevenueBudgetSummary> revenueBudgetSummaries,
+                                                   Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                                   String account) {
+        for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
+            String director = budgetSummary.getDeliveryDirector();
+            String deliveryManager = budgetSummary.getDeliveryManager();
+            int financialYear = budgetSummary.getFinancialYear();
+            String quarter = budgetSummary.getQuarter();
 
-    private RevDashboardDTO.AccountData findOrCreateAccountData1(List<RevDashboardDTO.AccountData> accountDataList, String account, int financialYear, String quarter) {
-        for (RevDashboardDTO.AccountData accountData : accountDataList) {
-            if (accountData.getAccount().equals(account) && accountData.getFinancialYear() == financialYear && accountData.getQuarter().equals(quarter)) {
-                return accountData;
+            directorMap.putIfAbsent(director, new HashMap<>());
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
+
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
+
+            RevDashboardDTO.AccountData accountData;
+            if (optionalAccountData.isPresent()) {
+                accountData = optionalAccountData.get();
+                accountData.getRevenueBudget().setBudget(accountData.getRevenueBudget().getBudget() + budgetSummary.getBudget());
+                accountData.getRevenueBudget().setForecast(accountData.getRevenueBudget().getForecast() + budgetSummary.getForecast());
+                accountData.getRevenueBudget().setGap(accountData.getRevenueBudget().getGap() + budgetSummary.getGap());
+            } else {
+                accountData = new RevDashboardDTO.AccountData("multiple", financialYear, quarter,
+                        new RevDashboardDTO.RevenueBudgetSummary(budgetSummary.getBudget(), budgetSummary.getForecast(), budgetSummary.getGap()),
+                        new RevDashboardDTO.RevenueGrowthSummary(0, 0, 0),
+                        new RevDashboardDTO.PipelineState(0, 0, 0, 0));
+                revDashboardDTO.getAccounts().add(accountData);
+            }
+
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
             }
         }
+    }
 
-        RevDashboardDTO.AccountData newAccountData = new RevDashboardDTO.AccountData(account, financialYear, quarter, null, null, null);
-        accountDataList.add(newAccountData);
-        return newAccountData;
+    private void aggregateGrowthSummariesByAccount(List<RevenueGrowthSummary> revenueGrowthSummaries,
+                                                   Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                                   String account) {
+        for (RevenueGrowthSummary growthSummary : revenueGrowthSummaries) {
+            String director = growthSummary.getDeliveryDirector();
+            String deliveryManager = growthSummary.getDeliveryManager();
+            int financialYear = growthSummary.getFinancialYear();
+            String quarter = growthSummary.getQuarter();
+
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
+
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
+
+            if (optionalAccountData.isPresent()) {
+                RevDashboardDTO.AccountData accountData = optionalAccountData.get();
+                accountData.getRevenueGrowth().setAccountExpected(accountData.getRevenueGrowth().getAccountExpected() + growthSummary.getAccountExpected());
+                accountData.getRevenueGrowth().setForecast(accountData.getRevenueGrowth().getForecast() + growthSummary.getForecast());
+                accountData.getRevenueGrowth().setGap(accountData.getRevenueGrowth().getGap() + growthSummary.getGap());
+            }
+
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
+        }
+    }
+
+    private void aggregatePipelineStatesByAccount(List<PipelineState> pipelineStates,
+                                                  Map<String, Map<String, RevDashboardDTO>> directorMap,
+                                                  String account) {
+        for (PipelineState pipelineState : pipelineStates) {
+            String director = pipelineState.getDeliveryDirector();
+            String deliveryManager = pipelineState.getDeliveryManager();
+            int financialYear = pipelineState.getFinancialYear();
+            String quarter = pipelineState.getQuarter();
+
+            Map<String, RevDashboardDTO> managerMap = directorMap.get(director);
+
+            String managerKey = director + "_" + financialYear + "_" + quarter;
+            managerMap.putIfAbsent(managerKey, new RevDashboardDTO(director, new ArrayList<>()));
+            RevDashboardDTO revDashboardDTO = managerMap.get(managerKey);
+
+            // Add account names and financial years to the lists
+            if (!revDashboardDTO.getAccountNames().contains(account)) {
+                revDashboardDTO.getAccountNames().add(account);
+            }
+            if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
+                revDashboardDTO.getFinancialYears().add(financialYear);
+            }
+
+            Optional<RevDashboardDTO.AccountData> optionalAccountData = revDashboardDTO.getAccounts().stream()
+                    .filter(a -> a.getFinancialYear() == financialYear && a.getQuarter().equals(quarter))
+                    .findFirst();
+
+            if (optionalAccountData.isPresent()) {
+                RevDashboardDTO.AccountData accountData = optionalAccountData.get();
+                accountData.getPipelineStatus().setSumOfPipeline_pitch(accountData.getPipelineStatus().getSumOfPipeline_pitch() + pipelineState.getSumOfPipeline_pitch());
+                accountData.getPipelineStatus().setSumOfPipeline_opportunity(accountData.getPipelineStatus().getSumOfPipeline_opportunity() + pipelineState.getSumOfPipeline_opportunity());
+                accountData.getPipelineStatus().setSumOfPipeline_total(accountData.getPipelineStatus().getSumOfPipeline_total() + pipelineState.getSumOfPipeline_total());
+                accountData.getPipelineStatus().setSumOfPipeline_shaping(accountData.getPipelineStatus().getSumOfPipeline_shaping() + pipelineState.getSumOfPipeline_shaping());
+            }
+
+            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            }
+        }
     }
 
 

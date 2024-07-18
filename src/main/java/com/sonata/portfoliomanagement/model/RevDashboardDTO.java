@@ -1,20 +1,38 @@
 package com.sonata.portfoliomanagement.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RevDashboardDTO {
     private String deliveryDirector;
-    private String deliveryManager;
+    private List<String> deliveryManagers;
+    private List<String> accountNames; // New field for account names
+    private List<Integer> financialYears;
     private List<AccountData> accounts;
 
-
-    public RevDashboardDTO(String deliveryDirector, String deliveryManager, List<AccountData> accounts) {
+    // Constructor for delivery director only
+    public RevDashboardDTO(String deliveryDirector) {
         this.deliveryDirector = deliveryDirector;
-        this.deliveryManager = deliveryManager;
-        this.accounts = accounts;
+        this.deliveryManagers = new ArrayList<>();
+        this.accountNames = new ArrayList<>(); // Initialize account names
+        this.financialYears = new ArrayList<>();
+        this.accounts = new ArrayList<>();
+    }
+
+    // Constructor for delivery director and delivery managers
+    public RevDashboardDTO(String deliveryDirector, List<String> deliveryManagers) {
+        this.deliveryDirector = deliveryDirector;
+        this.deliveryManagers = deliveryManagers;
+        this.accountNames = new ArrayList<>(); // Initialize account names
+        this.financialYears = new ArrayList<>();
+        this.accounts = new ArrayList<>();
     }
 
     // Getters and setters
+
+    public RevDashboardDTO(String deliveryDirector2, String deliveryManager, ArrayList arrayList) {
+        // TODO Auto-generated constructor stub
+    }
 
     public String getDeliveryDirector() {
         return deliveryDirector;
@@ -24,12 +42,30 @@ public class RevDashboardDTO {
         this.deliveryDirector = deliveryDirector;
     }
 
-    public String getDeliveryManager() {
-        return deliveryManager;
+    public List<String> getDeliveryManagers() {
+        return deliveryManagers;
     }
 
-    public void setDeliveryManager(String deliveryManager) {
-        this.deliveryManager = deliveryManager;
+    public void setDeliveryManagers(List<String> deliveryManagers) {
+        this.deliveryManagers = deliveryManagers;
+    }
+
+    public List<String> getAccountNames() {
+        return accountNames;
+    }
+
+    public void setAccountNames(List<String> accountNames) {
+        this.accountNames = accountNames;
+    }
+
+
+
+    public List<Integer> getFinancialYears() {
+        return financialYears;
+    }
+
+    public void setFinancialYears(List<Integer> financialYears) {
+        this.financialYears = financialYears;
     }
 
     public List<AccountData> getAccounts() {
@@ -116,54 +152,36 @@ public class RevDashboardDTO {
         private float forecast;
         private float gap;
 
-
-
         public RevenueBudgetSummary(float budget, float forecast, float gap) {
-            super();
             this.budget = budget;
             this.forecast = forecast;
             this.gap = gap;
         }
 
-
-
+        // Getters and setters
         public float getBudget() {
             return budget;
         }
-
-
 
         public void setBudget(float budget) {
             this.budget = budget;
         }
 
-
-
         public float getForecast() {
             return forecast;
         }
-
-
 
         public void setForecast(float forecast) {
             this.forecast = forecast;
         }
 
-
-
         public float getGap() {
             return gap;
         }
 
-
-
         public void setGap(float gap) {
             this.gap = gap;
         }
-
-        // Getters and setters
-
-
     }
 
     public static class RevenueGrowthSummary {
@@ -171,47 +189,36 @@ public class RevDashboardDTO {
         private float forecast;
         private float gap;
 
-
         public RevenueGrowthSummary(float accountExpected, float forecast, float gap) {
-            super();
             this.accountExpected = accountExpected;
             this.forecast = forecast;
             this.gap = gap;
         }
 
-
+        // Getters and setters
         public float getAccountExpected() {
             return accountExpected;
         }
-
 
         public void setAccountExpected(float accountExpected) {
             this.accountExpected = accountExpected;
         }
 
-
         public float getForecast() {
             return forecast;
         }
-
 
         public void setForecast(float forecast) {
             this.forecast = forecast;
         }
 
-
         public float getGap() {
             return gap;
         }
 
-
         public void setGap(float gap) {
             this.gap = gap;
         }
-
-        // Getters and setters
-
-
     }
 
     public static class PipelineState {
@@ -220,67 +227,45 @@ public class RevDashboardDTO {
         private float sumOfPipeline_total;
         private float sumOfPipeline_shaping;
 
-
-
         public PipelineState(float sumOfPipeline_pitch, float sumOfPipeline_opportunity, float sumOfPipeline_total,
                              float sumOfPipeline_shaping) {
-            super();
             this.sumOfPipeline_pitch = sumOfPipeline_pitch;
             this.sumOfPipeline_opportunity = sumOfPipeline_opportunity;
             this.sumOfPipeline_total = sumOfPipeline_total;
             this.sumOfPipeline_shaping = sumOfPipeline_shaping;
         }
 
-
-
+        // Getters and setters
         public float getSumOfPipeline_pitch() {
             return sumOfPipeline_pitch;
         }
-
-
 
         public void setSumOfPipeline_pitch(float sumOfPipeline_pitch) {
             this.sumOfPipeline_pitch = sumOfPipeline_pitch;
         }
 
-
-
         public float getSumOfPipeline_opportunity() {
             return sumOfPipeline_opportunity;
         }
-
-
 
         public void setSumOfPipeline_opportunity(float sumOfPipeline_opportunity) {
             this.sumOfPipeline_opportunity = sumOfPipeline_opportunity;
         }
 
-
-
         public float getSumOfPipeline_total() {
             return sumOfPipeline_total;
         }
-
-
 
         public void setSumOfPipeline_total(float sumOfPipeline_total) {
             this.sumOfPipeline_total = sumOfPipeline_total;
         }
 
-
-
         public float getSumOfPipeline_shaping() {
             return sumOfPipeline_shaping;
         }
 
-
-
         public void setSumOfPipeline_shaping(float sumOfPipeline_shaping) {
             this.sumOfPipeline_shaping = sumOfPipeline_shaping;
         }
-
-        // Getters and setters
-
-
     }
 }
