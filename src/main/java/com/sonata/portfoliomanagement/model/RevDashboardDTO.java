@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RevDashboardDTO {
     private String deliveryDirector;
-    private List<String> deliveryManagers;
+    private List<String> deliveryManager;
     private List<String> accountNames; // New field for account names
     private List<Integer> financialYears;
     private List<AccountData> accounts;
@@ -13,16 +13,16 @@ public class RevDashboardDTO {
     // Constructor for delivery director only
     public RevDashboardDTO(String deliveryDirector) {
         this.deliveryDirector = deliveryDirector;
-        this.deliveryManagers = new ArrayList<>();
+        this.deliveryManager = new ArrayList<>();
         this.accountNames = new ArrayList<>(); // Initialize account names
         this.financialYears = new ArrayList<>();
         this.accounts = new ArrayList<>();
     }
 
     // Constructor for delivery director and delivery managers
-    public RevDashboardDTO(String deliveryDirector, List<String> deliveryManagers) {
+    public RevDashboardDTO(String deliveryDirector, List<String> deliveryManager) {
         this.deliveryDirector = deliveryDirector;
-        this.deliveryManagers = deliveryManagers;
+        this.deliveryManager = deliveryManager;
         this.accountNames = new ArrayList<>(); // Initialize account names
         this.financialYears = new ArrayList<>();
         this.accounts = new ArrayList<>();
@@ -42,12 +42,12 @@ public class RevDashboardDTO {
         this.deliveryDirector = deliveryDirector;
     }
 
-    public List<String> getDeliveryManagers() {
-        return deliveryManagers;
+    public List<String> getDeliveryManager() {
+        return deliveryManager;
     }
 
-    public void setDeliveryManagers(List<String> deliveryManagers) {
-        this.deliveryManagers = deliveryManagers;
+    public void setDeliveryManager(List<String> deliveryManager) {
+        this.deliveryManager = deliveryManager;
     }
 
     public List<String> getAccountNames() {

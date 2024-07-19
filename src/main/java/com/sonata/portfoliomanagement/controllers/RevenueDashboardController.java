@@ -422,12 +422,12 @@ public class RevenueDashboardController {
 
 
     @PostMapping("/getRevenueDashboardDirector")
-    public ResponseEntity<RevDashboardDTO> getRevenueDashboardByDirector(@RequestBody List<String> deliveryDirectors) {
+    public ResponseEntity<RevDashboardDTO> getRevenueDashboardByDirector(@RequestBody List<String> deliveryDirector) {
         Map<String, RevDashboardDTO> directorMap = new HashMap<>();
 
         // Fetch and aggregate data for each delivery director
-        for (String deliveryDirector : deliveryDirectors) {
-            aggregateDataForDirector(deliveryDirector, directorMap);
+        for (String deliveryDirectors : deliveryDirector) {
+            aggregateDataForDirector(deliveryDirectors, directorMap);
         }
 
         // Prepare result list from directorMap values
@@ -512,8 +512,8 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(budgetSummary.getDeliveryManager())) {
-                revDashboardDTO.getDeliveryManagers().add(budgetSummary.getDeliveryManager());
+            if (!revDashboardDTO.getDeliveryManager().contains(budgetSummary.getDeliveryManager())) {
+                revDashboardDTO.getDeliveryManager().add(budgetSummary.getDeliveryManager());
             }
         }
     }
@@ -556,8 +556,8 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(growthSummary.getDeliveryManager())) {
-                revDashboardDTO.getDeliveryManagers().add(growthSummary.getDeliveryManager());
+            if (!revDashboardDTO.getDeliveryManager().contains(growthSummary.getDeliveryManager())) {
+                revDashboardDTO.getDeliveryManager().add(growthSummary.getDeliveryManager());
             }
         }
     }
@@ -602,14 +602,14 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(pipelineState.getDeliveryManager())) {
-                revDashboardDTO.getDeliveryManagers().add(pipelineState.getDeliveryManager());
+            if (!revDashboardDTO.getDeliveryManager().contains(pipelineState.getDeliveryManager())) {
+                revDashboardDTO.getDeliveryManager().add(pipelineState.getDeliveryManager());
             }
         }
     }
 
     @PostMapping("/getRevenueDashboardByManager")
-    public ResponseEntity<RevDashboardDTO1> getRevenueDashboardByManager(@RequestBody List<String> deliveryManagers) {
+    public ResponseEntity<RevDashboardDTO1> getRevenueDashboardByManager(@RequestBody List<String> deliveryManager) {
         Map<String, RevDashboardDTO1> directorMap = new HashMap<>();
 
         // Determine the highest and previous year
@@ -618,16 +618,16 @@ public class RevenueDashboardController {
         int previousYear = highestYear - 1;
         List<Integer> financialYears = Arrays.asList(highestYear, previousYear);
 
-        for (String deliveryManager : deliveryManagers) {
+        for (String deliveryManagers : deliveryManager) {
             logger.info("Fetching data for Delivery Manager: {}", deliveryManager);
 
-            List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryManagerAndFinancialYears(deliveryManager, financialYears);
-            List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryManagerAndFinancialYears(deliveryManager, financialYears);
-            List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryManagerAndFinancialYears(deliveryManager, financialYears);
+            List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryManagerAndFinancialYears(deliveryManagers, financialYears);
+            List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryManagerAndFinancialYears(deliveryManagers, financialYears);
+            List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryManagerAndFinancialYears(deliveryManagers, financialYears);
 
-            aggregateData(revenueBudgetSummaries, directorMap, deliveryManager, true);
-            aggregateData(revenueGrowthSummaries, directorMap, deliveryManager, false);
-            aggregateData(pipelineStates, directorMap, deliveryManager, false);
+            aggregateData(revenueBudgetSummaries, directorMap, deliveryManagers, true);
+            aggregateData(revenueGrowthSummaries, directorMap, deliveryManagers, false);
+            aggregateData(pipelineStates, directorMap, deliveryManagers, false);
         }
 
         // Aggregate data into a single RevDashboardDTO1
@@ -640,8 +640,8 @@ public class RevenueDashboardController {
         Set<Integer> allFinancialYears = new HashSet<>();
 
         result.forEach(dto -> {
-            allDeliveryDirectors.addAll(dto.getDeliveryDirectors());
-            allDeliveryManagers.addAll(dto.getDeliveryManagers());
+            allDeliveryDirectors.addAll(dto.getDeliveryDirector());
+            allDeliveryManagers.addAll(dto.getDeliveryManager());
             allFinancialYears.addAll(dto.getFinancialYears());
 
             // Add account names to the list
@@ -652,13 +652,13 @@ public class RevenueDashboardController {
         });
 
         // Debugging logs
-        logger.debug("Delivery Directors: {}", allDeliveryDirectors);
-        logger.debug("Delivery Managers: {}", allDeliveryManagers);
+        logger.debug("Delivery Director: {}", allDeliveryDirectors);
+        logger.debug("Delivery Manager: {}", allDeliveryManagers);
         logger.debug("Financial Years: {}", allFinancialYears);
         logger.debug("Account Names: {}", allAccountNames);
 
-        consolidatedDTO.setDeliveryDirectors(new ArrayList<>(allDeliveryDirectors));
-        consolidatedDTO.setDeliveryManagers(new ArrayList<>(allDeliveryManagers));
+        consolidatedDTO.setDeliveryDirector(new ArrayList<>(allDeliveryDirectors));
+        consolidatedDTO.setDeliveryManager(new ArrayList<>(allDeliveryManagers));
         consolidatedDTO.setAccountNames(new ArrayList<>(allAccountNames));
         consolidatedDTO.setFinancialYears(new ArrayList<>(allFinancialYears));
 
@@ -707,11 +707,11 @@ public class RevenueDashboardController {
             RevDashboardDTO1 revDashboardDTO1 = directorMap.get(director);
 
             // Add delivery manager and director to their lists
-            if (!revDashboardDTO1.getDeliveryDirectors().contains(director)) {
-                revDashboardDTO1.getDeliveryDirectors().add(director);
+            if (!revDashboardDTO1.getDeliveryDirector().contains(director)) {
+                revDashboardDTO1.getDeliveryDirector().add(director);
             }
-            if (!revDashboardDTO1.getDeliveryManagers().contains(deliveryManager)) {
-                revDashboardDTO1.getDeliveryManagers().add(deliveryManager);
+            if (!revDashboardDTO1.getDeliveryManager().contains(deliveryManager)) {
+                revDashboardDTO1.getDeliveryManager().add(deliveryManager);
             }
 
             // Add account names and financial years to the lists
@@ -922,8 +922,8 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
-                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            if (!revDashboardDTO.getDeliveryManager().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManager().add(deliveryManager);
             }
         }
     }
@@ -964,8 +964,8 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
-                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            if (!revDashboardDTO.getDeliveryManager().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManager().add(deliveryManager);
             }
         }
     }
@@ -1007,364 +1007,11 @@ public class RevenueDashboardController {
             if (!revDashboardDTO.getFinancialYears().contains(financialYear)) {
                 revDashboardDTO.getFinancialYears().add(financialYear);
             }
-            if (!revDashboardDTO.getDeliveryManagers().contains(deliveryManager)) {
-                revDashboardDTO.getDeliveryManagers().add(deliveryManager);
+            if (!revDashboardDTO.getDeliveryManager().contains(deliveryManager)) {
+                revDashboardDTO.getDeliveryManager().add(deliveryManager);
             }
         }
     }
-
-//
-//
-//
-//    @PostMapping("/getByRoleAndName")
-//    public ResponseEntity<RevDashboardData> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
-//        List<String> roles = request.getRole();
-//        String name = request.getName();
-//
-//        // Fetch matching user
-//        String[] nameParts = name.split(" ");
-//        if (nameParts.length != 2) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        String firstName = nameParts[0];
-//        String lastName = nameParts[1];
-//        String deliveryDirector = firstName + " " + lastName;
-//
-//        // Construct response object
-//        RevDashboardData response = new RevDashboardData();
-//        response.setDeliveryDirector(deliveryDirector);
-//
-//        // Fetch delivery managers, account names, and financial years
-//        Set<String> deliveryManagers = new HashSet<>();
-//        Set<String> accountsNames = new HashSet<>();
-//        Set<Integer> financialYears = new TreeSet<>(Collections.reverseOrder()); // Sorted in descending order
-//        Map<String, RevDashboardData.AccountData> aggregatedAccounts = new LinkedHashMap<>(); // To keep insertion order
-//
-//        // Process each role separately
-//        for (String role : roles) {
-//            // Fetch matching role
-//            MD_Role mdRole = mdRolesRepository.findFirstByRole(role);
-//            if (mdRole == null) {
-//                return ResponseEntity.badRequest().build();
-//            }
-//
-//            // Fetch matching records from RevenueBudgetSummary
-//            List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Fetch matching records from RevenueGrowthSummary
-//            List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Fetch matching records from PipelineState
-//            List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Collect delivery managers, account names, and financial years
-//            deliveryManagers.addAll(revenueBudgetSummaries.stream()
-//                    .map(RevenueBudgetSummary::getDeliveryManager)
-//                    .collect(Collectors.toSet()));
-//
-//            accountsNames.addAll(revenueBudgetSummaries.stream()
-//                    .map(RevenueBudgetSummary::getAccount)
-//                    .collect(Collectors.toSet()));
-//
-//            financialYears.addAll(revenueBudgetSummaries.stream()
-//                    .map(RevenueBudgetSummary::getFinancialYear)
-//                    .collect(Collectors.toSet()));
-//        }
-//
-//        // Restrict to the latest two financial years
-//        List<Integer> latestTwoFinancialYears = financialYears.stream()
-//                .limit(2)
-//                .collect(Collectors.toList());
-//
-//        // Initialize accounts map for aggregation
-//        for (Integer year : latestTwoFinancialYears) {
-//            for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
-//                String key = year + "-" + quarter;
-//                aggregatedAccounts.putIfAbsent(key, new RevDashboardData.AccountData());
-//                RevDashboardData.AccountData accountData = aggregatedAccounts.get(key);
-//                accountData.setAccount("all");
-//                accountData.setFinancialYear(year);
-//                accountData.setQuarter(quarter);
-//            }
-//        }
-//
-//        // Process each record for aggregation
-//        for (String role : roles) {
-//            // Fetch matching role
-//            MD_Role mdRole = mdRolesRepository.findFirstByRole(role);
-//            if (mdRole == null) {
-//                continue;
-//            }
-//
-//            // Fetch matching records from RevenueBudgetSummary
-//            List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Fetch matching records from RevenueGrowthSummary
-//            List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Fetch matching records from PipelineState
-//            List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
-//
-//            // Process each record for aggregation
-//            for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
-//                if (!latestTwoFinancialYears.contains(budgetSummary.getFinancialYear())) {
-//                    continue;
-//                }
-//
-//                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-//                RevDashboardData.AccountData accountData = aggregatedAccounts.get(key);
-//                if (accountData == null) {
-//                    continue;
-//                }
-//
-//                RevDashboardData.RevenueBudget revenueBudget = accountData.getRevenueBudget();
-//                if (revenueBudget == null) {
-//                    revenueBudget = new RevDashboardData.RevenueBudget();
-//                    accountData.setRevenueBudget(revenueBudget);
-//                }
-//                revenueBudget.setBudget(formatDouble(revenueBudget.getBudget() + budgetSummary.getBudget()));
-//                revenueBudget.setForecast(formatDouble(revenueBudget.getForecast() + budgetSummary.getForecast()));
-//                revenueBudget.setGap(formatDouble(revenueBudget.getGap() + budgetSummary.getGap()));
-//
-//                // Find matching revenue growth summary
-//                RevenueGrowthSummary matchingGrowthSummary = revenueGrowthSummaries.stream()
-//                        .filter(g -> g.getAccount().equals(budgetSummary.getAccount()) &&
-//                                g.getQuarter().equals(budgetSummary.getQuarter()) &&
-//                                g.getFinancialYear() == budgetSummary.getFinancialYear())
-//                        .findFirst()
-//                        .orElse(null);
-//                if (matchingGrowthSummary != null) {
-//                    RevDashboardData.RevenueGrowth revenueGrowth = accountData.getRevenueGrowth();
-//                    if (revenueGrowth == null) {
-//                        revenueGrowth = new RevDashboardData.RevenueGrowth();
-//                        accountData.setRevenueGrowth(revenueGrowth);
-//                    }
-//                    revenueGrowth.setAccountExpected(formatDouble(revenueGrowth.getAccountExpected() + matchingGrowthSummary.getAccountExpected()));
-//                    revenueGrowth.setForecast(formatDouble(revenueGrowth.getForecast() + matchingGrowthSummary.getForecast()));
-//                    revenueGrowth.setGap(formatDouble(revenueGrowth.getGap() + matchingGrowthSummary.getGap()));
-//                }
-//
-//                // Find matching pipeline state
-//                PipelineState matchingPipelineState = pipelineStates.stream()
-//                        .filter(p -> p.getAccount().equals(budgetSummary.getAccount()) &&
-//                                p.getQuarter().equals(budgetSummary.getQuarter()) &&
-//                                p.getFinancialYear() == budgetSummary.getFinancialYear())
-//                        .findFirst()
-//                        .orElse(null);
-//                if (matchingPipelineState != null) {
-//                    RevDashboardData.PipelineState pipelineState = accountData.getPipelineState();
-//                    if (pipelineState == null) {
-//                        pipelineState = new RevDashboardData.PipelineState();
-//                        accountData.setPipelineState(pipelineState);
-//                    }
-//                    pipelineState.setSumOfPipeline_pitch(formatDouble(pipelineState.getSumOfPipeline_pitch() + matchingPipelineState.getSumOfPipeline_pitch()));
-//                    pipelineState.setSumOfPipeline_opportunity(formatDouble(pipelineState.getSumOfPipeline_opportunity() + matchingPipelineState.getSumOfPipeline_opportunity()));
-//                    pipelineState.setSumOfPipeline_shaping(formatDouble(pipelineState.getSumOfPipeline_shaping() + matchingPipelineState.getSumOfPipeline_shaping()));
-//                    pipelineState.setSumOfPipeline_total(formatDouble(pipelineState.getSumOfPipeline_total() + matchingPipelineState.getSumOfPipeline_total()));
-//                }
-//            }
-//        }
-//
-//        // Prepare response list
-//        List<RevDashboardData.AccountData> responseAccounts = new ArrayList<>(aggregatedAccounts.values());
-//        responseAccounts.sort(Comparator.comparing(RevDashboardData.AccountData::getFinancialYear)
-//                .thenComparing(RevDashboardData.AccountData::getQuarter));
-//
-//        // Ensure only the latest 2 financial years with 4 quarters each
-//        if (responseAccounts.size() > 8) {
-//            responseAccounts = responseAccounts.subList(0, 8);
-//        }
-//
-//        // Set collected delivery managers, account names, and financial years
-//        response.setDeliveryManager(new ArrayList<>(deliveryManagers));
-//        response.setAccountsNames(new ArrayList<>(accountsNames));
-//        response.setFinancialYears(latestTwoFinancialYears);
-//        response.setAccounts(responseAccounts);
-//
-//        // Return the RevDashboardData directly
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    // Helper method to format double values to two decimal places
-//    private double formatDouble(double value) {
-//        return Math.round(value * 100.0) / 100.0;
-//    }
-//
-
-
-//
-//    @PostMapping("/getByRoleAndName")
-//    public ResponseEntity<RevDashboardData> getByRoleAndName(@RequestBody RoleAndNameRequest request) {
-//        List<String> roles = request.getRole();
-//        String name = request.getName();
-//
-//        // Split the name into first and last parts
-//        String[] nameParts = name.split(" ");
-//        if (nameParts.length != 2) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        String firstName = nameParts[0];
-//        String lastName = nameParts[1];
-//
-//        // Construct the deliveryDirector string if necessary
-//        String deliveryDirector = firstName + " " + lastName;
-//
-//        // Construct response object
-//        RevDashboardData response = new RevDashboardData();
-//        response.setDeliveryDirector(deliveryDirector);
-//
-//        // Initialize collections
-//        Set<String> deliveryManagers = new HashSet<>();
-//        Set<String> accountsNames = new HashSet<>();
-//        Set<Integer> financialYears = new TreeSet<>(Collections.reverseOrder());
-//        Map<String, RevDashboardData.AccountData> aggregatedAccounts = new LinkedHashMap<>();
-//
-//        // Process each role
-//        for (String role : roles) {
-//            if (role.equals("Delivery Director")) {
-//                List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//                List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
-//                List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
-//
-//                deliveryManagers.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getDeliveryManager).collect(Collectors.toSet()));
-//                accountsNames.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getAccount).collect(Collectors.toSet()));
-//                financialYears.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getFinancialYear).collect(Collectors.toSet()));
-//            } else if (role.equals("Delivery Manager")) {
-//                List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryManager(deliveryDirector);
-//                List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryManager(deliveryDirector);
-//                List<PipelineState> pipelineStates = pipelineStateRepository.findByDeliveryManager(deliveryDirector);
-//
-//                deliveryManagers.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getDeliveryManager).collect(Collectors.toSet()));
-//                accountsNames.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getAccount).collect(Collectors.toSet()));
-//                financialYears.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getFinancialYear).collect(Collectors.toSet()));
-//            } else if (role.equals("Project Manager")) {
-//                List<RevenueBudgetSummary> revenueBudgetSummaries = revenueBudgetSummaryRepository.findByProjectManager(deliveryDirector);
-//                List<RevenueGrowthSummary> revenueGrowthSummaries = revenueGrowthSummaryRepository.findByProjectManager(deliveryDirector);
-//
-//                deliveryManagers.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getDeliveryManager).collect(Collectors.toSet()));
-//                accountsNames.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getAccount).collect(Collectors.toSet()));
-//                financialYears.addAll(revenueBudgetSummaries.stream().map(RevenueBudgetSummary::getFinancialYear).collect(Collectors.toSet()));
-//            }
-//        }
-//
-//        // Restrict to the latest two financial years
-//        List<Integer> latestTwoFinancialYears = financialYears.stream().limit(2).collect(Collectors.toList());
-//
-//        // Initialize accounts map for aggregation
-//        for (Integer year : latestTwoFinancialYears) {
-//            for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
-//                String key = year + "-" + quarter;
-//                aggregatedAccounts.putIfAbsent(key, new RevDashboardData.AccountData());
-//                RevDashboardData.AccountData accountData = aggregatedAccounts.get(key);
-//                accountData.setAccount("all");
-//                accountData.setFinancialYear(year);
-//                accountData.setQuarter(quarter);
-//            }
-//        }
-//
-//        // Process records for aggregation
-//        for (String role : roles) {
-//            if (role.equals("Delivery Director")) {
-//                processAggregationForRole(revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector),
-//                        revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector),
-//                        pipelineStateRepository.findByDeliveryDirector(deliveryDirector),
-//                        aggregatedAccounts, latestTwoFinancialYears);
-//            } else if (role.equals("Delivery Manager")) {
-//                processAggregationForRole(revenueBudgetSummaryRepository.findByDeliveryManager(deliveryDirector),
-//                        revenueGrowthSummaryRepository.findByDeliveryManager(deliveryDirector),
-//                        pipelineStateRepository.findByDeliveryManager(deliveryDirector),
-//                        aggregatedAccounts, latestTwoFinancialYears);
-//            }
-//        }
-//
-//        // Prepare response list
-//        List<RevDashboardData.AccountData> responseAccounts = new ArrayList<>(aggregatedAccounts.values());
-//        responseAccounts.sort(Comparator.comparing(RevDashboardData.AccountData::getFinancialYear)
-//                .thenComparing(RevDashboardData.AccountData::getQuarter));
-//
-//        // Ensure only the latest 2 financial years with 4 quarters each
-//        if (responseAccounts.size() > 8) {
-//            responseAccounts = responseAccounts.subList(0, 8);
-//        }
-//
-//        // Set collected delivery managers, account names, and financial years
-//        response.setDeliveryManager(new ArrayList<>(deliveryManagers));
-//        response.setAccountsNames(new ArrayList<>(accountsNames));
-//        response.setFinancialYears(latestTwoFinancialYears);
-//        response.setAccounts(responseAccounts);
-//
-//        // Return the RevDashboardData directly
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    // Method to process aggregation for a given role
-//    private void processAggregationForRole(List<RevenueBudgetSummary> revenueBudgetSummaries,
-//                                           List<RevenueGrowthSummary> revenueGrowthSummaries,
-//                                           List<PipelineState> pipelineStates,
-//                                           Map<String, RevDashboardData.AccountData> aggregatedAccounts,
-//                                           List<Integer> latestTwoFinancialYears) {
-//        for (RevenueBudgetSummary budgetSummary : revenueBudgetSummaries) {
-//            if (!latestTwoFinancialYears.contains(budgetSummary.getFinancialYear())) {
-//                continue;
-//            }
-//
-//            String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-//            RevDashboardData.AccountData accountData = aggregatedAccounts.get(key);
-//            if (accountData == null) {
-//                continue;
-//            }
-//
-//            RevDashboardData.RevenueBudget revenueBudget = accountData.getRevenueBudget();
-//            if (revenueBudget == null) {
-//                revenueBudget = new RevDashboardData.RevenueBudget();
-//                accountData.setRevenueBudget(revenueBudget);
-//            }
-//            revenueBudget.setBudget(formatDouble(revenueBudget.getBudget() + budgetSummary.getBudget()));
-//            revenueBudget.setForecast(formatDouble(revenueBudget.getForecast() + budgetSummary.getForecast()));
-//            revenueBudget.setGap(formatDouble(revenueBudget.getGap() + budgetSummary.getGap()));
-//
-//            RevenueGrowthSummary matchingGrowthSummary = revenueGrowthSummaries.stream()
-//                    .filter(g -> g.getAccount().equals(budgetSummary.getAccount()) &&
-//                            g.getQuarter().equals(budgetSummary.getQuarter()) &&
-//                            g.getFinancialYear() == budgetSummary.getFinancialYear())
-//                    .findFirst()
-//                    .orElse(null);
-//            if (matchingGrowthSummary != null) {
-//                RevDashboardData.RevenueGrowth revenueGrowth = accountData.getRevenueGrowth();
-//                if (revenueGrowth == null) {
-//                    revenueGrowth = new RevDashboardData.RevenueGrowth();
-//                    accountData.setRevenueGrowth(revenueGrowth);
-//                }
-//                revenueGrowth.setAccountExpected(formatDouble(revenueGrowth.getAccountExpected() + matchingGrowthSummary.getAccountExpected()));
-//                revenueGrowth.setForecast(formatDouble(revenueGrowth.getForecast() + matchingGrowthSummary.getForecast()));
-//                revenueGrowth.setGap(formatDouble(revenueGrowth.getGap() + matchingGrowthSummary.getGap()));
-//            }
-//
-//            PipelineState matchingPipelineState = pipelineStates.stream()
-//                    .filter(p -> p.getAccount().equals(budgetSummary.getAccount()) &&
-//                            p.getQuarter().equals(budgetSummary.getQuarter()) &&
-//                            p.getFinancialYear() == budgetSummary.getFinancialYear())
-//                    .findFirst()
-//                    .orElse(null);
-//            if (matchingPipelineState != null) {
-//                RevDashboardData.PipelineState pipelineState = accountData.getPipelineState();
-//                if (pipelineState == null) {
-//                    pipelineState = new RevDashboardData.PipelineState();
-//                    accountData.setPipelineState(pipelineState);
-//                }
-//                pipelineState.setSumOfPipeline_pitch(formatDouble(pipelineState.getSumOfPipeline_pitch() + matchingPipelineState.getSumOfPipeline_pitch()));
-//                pipelineState.setSumOfPipeline_opportunity(formatDouble(pipelineState.getSumOfPipeline_opportunity() + matchingPipelineState.getSumOfPipeline_opportunity()));
-//                pipelineState.setSumOfPipeline_shaping(formatDouble(pipelineState.getSumOfPipeline_shaping() + matchingPipelineState.getSumOfPipeline_shaping()));
-//                pipelineState.setSumOfPipeline_total(formatDouble(pipelineState.getSumOfPipeline_total() + matchingPipelineState.getSumOfPipeline_total()));
-//            }
-//        }
-//    }
-//
-//    // Helper method to format double values to two decimal places
-//    private double formatDouble(double value) {
-//        return Math.round(value * 100.0) / 100.0;
-//    }
-//
 
 
     @PostMapping("/getByRoleAndName")

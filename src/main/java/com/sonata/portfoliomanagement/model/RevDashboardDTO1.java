@@ -4,43 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RevDashboardDTO1 {
-    private List<String> deliveryDirectors;
-    private List<String> deliveryManagers;
+    private List<String> deliveryDirector;
+    private List<String> deliveryManager;
     private List<String> accountNames;
     private List<Integer> financialYears;
     private List<AccountData> accounts;
 
     public RevDashboardDTO1() {
-        this.deliveryDirectors = new ArrayList<>();
-        this.deliveryManagers = new ArrayList<>();
+        this.deliveryDirector = new ArrayList<>();
+        this.deliveryManager = new ArrayList<>();
         this.accountNames = new ArrayList<>();
         this.financialYears = new ArrayList<>();
         this.accounts = new ArrayList<>();
     }
 
-    public RevDashboardDTO1(List<String> deliveryDirectors, List<String> deliveryManagers, List<String> accountNames, List<Integer> financialYears) {
-        this.deliveryDirectors = deliveryDirectors;
-        this.deliveryManagers = deliveryManagers;
+    public RevDashboardDTO1(List<String> deliveryDirector, List<String> deliveryManager, List<String> accountNames, List<Integer> financialYears) {
+        this.deliveryDirector = deliveryDirector;
+        this.deliveryManager = deliveryManager;
         this.accountNames = accountNames;
         this.financialYears = financialYears;
         this.accounts = new ArrayList<>();
     }
 
-    // Getters and setters
-    public List<String> getDeliveryDirectors() {
-        return deliveryDirectors;
+    public List<String> getDeliveryDirector() {
+        return deliveryDirector;
     }
 
-    public void setDeliveryDirectors(List<String> deliveryDirectors) {
-        this.deliveryDirectors = deliveryDirectors;
+    public void setDeliveryDirector(List<String> deliveryDirector) {
+        this.deliveryDirector = deliveryDirector;
     }
 
-    public List<String> getDeliveryManagers() {
-        return deliveryManagers;
+    public List<String> getDeliveryManager() {
+        return deliveryManager;
     }
 
-    public void setDeliveryManagers(List<String> deliveryManagers) {
-        this.deliveryManagers = deliveryManagers;
+    public void setDeliveryManager(List<String> deliveryManager) {
+        this.deliveryManager = deliveryManager;
     }
 
     public List<String> getAccountNames() {
