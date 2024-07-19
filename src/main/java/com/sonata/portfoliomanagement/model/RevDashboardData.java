@@ -1,6 +1,4 @@
 package com.sonata.portfoliomanagement.model;
-import java.util.List;
-
 
 import java.util.List;
 
@@ -10,16 +8,6 @@ public class RevDashboardData {
     private List<String> accountsNames;
     private List<Integer> financialYears;
     private List<AccountData> accounts;
-//    private String role;
-//    // Other fields and methods
-//
-//    public String getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(String role) {
-//        this.role = role;
-//    }
 
     // Getters and Setters
 

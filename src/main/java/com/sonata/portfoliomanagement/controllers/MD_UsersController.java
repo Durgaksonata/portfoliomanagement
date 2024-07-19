@@ -32,7 +32,6 @@ public class MD_UsersController {
 
 
 
-
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody MD_Users user) {
         Map<String, Object> response = new HashMap<>();
@@ -99,9 +98,6 @@ public class MD_UsersController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-
-
 
 
 
@@ -365,7 +361,7 @@ public class MD_UsersController {
             if (!emailExists) {
                 // User with the provided email does not exist
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Collections.singletonMap("response", "Email provided is incorrect"));
+                        .body(Collections.singletonMap("response", "User not found!"));
             }
 
             // Get the existing user

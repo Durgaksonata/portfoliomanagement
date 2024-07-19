@@ -336,7 +336,7 @@ public class MD_AdminController {
             if (!emailExists) {
                 // User with the provided email does not exist
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Collections.singletonMap("response", "Email provided is incorrect"));
+                        .body(Collections.singletonMap("response", "User not found!"));
             }
 
             // Get the existing user
