@@ -39,4 +39,6 @@ public interface PipelineStateRepository extends JpaRepository<PipelineState, In
 
     @Query("SELECT DISTINCT r.deliveryDirector FROM PipelineState r WHERE r.account = :account")
     List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
+
+
 }

@@ -389,8 +389,6 @@ public class BaselineController {
 //    }
 
 
-
-
     @PostMapping("/combinedByRoleAndName")
     public ResponseEntity<Map<String, Object>> getCombinedByRoleAndName(@RequestBody RoleAndNameRequest request) {
         List<String> roles = request.getRole();
@@ -403,16 +401,10 @@ public class BaselineController {
         }
         String firstName = nameParts[0];
         String lastName = nameParts[1];
-        String deliveryDirector = firstName + " " + lastName;
-        String deliveryManager = firstName + " " + lastName;
-
+        String fullName = firstName + " " + lastName;
 
         // Initialize response object
         Map<String, Object> response = new HashMap<>();
-        response.put("deliveryDirector", Collections.singletonList(deliveryDirector));
-        response.put("deliveryManager", Collections.singletonList(deliveryManager));
-
-        // Initialize sets for collecting data
         Set<String> deliveryManagers = new HashSet<>();
         Set<String> deliveryDirectors = new HashSet<>();
         Set<String> accountNames = new HashSet<>();
@@ -427,7 +419,7 @@ public class BaselineController {
         Map<String, Double> previousRvbForecasts = new LinkedHashMap<>();
         Map<String, Double> previousRvgForecasts = new LinkedHashMap<>();
 
-        // Process each role for both current and previous data
+        // Process each role
         for (String role : roles) {
             // Fetch matching role
             MD_Role mdRole = md_RolesRepository.findFirstByRole(role);
@@ -435,80 +427,148 @@ public class BaselineController {
                 return ResponseEntity.badRequest().build();
             }
 
-            // Fetch matching records for current and previous data
-            List<RevenueBudgetSummary> currentBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
-            List<RevenueGrowthSummary> currentGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
-            List<PipelineState> currentPipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
+            if (role.equals("Delivery Director")) {
+                // Fetch current and previous data for Delivery Director
+                List<RevenueBudgetSummary> currentBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(fullName);
+                List<RevenueGrowthSummary> currentGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(fullName);
+                List<PipelineState> currentPipelineStates = pipelineStateRepository.findByDeliveryDirector(fullName);
 
-            List<BaseLine_RevenueBudgetSummary> previousBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
-            List<BaseLine_RevenueGrowthSummary> previousGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
-            List<BaseLine_PipelineState> previousPipelineStates = baseLinePipelineStateRepository.findByDeliveryDirector(deliveryDirector);
+                List<BaseLine_RevenueBudgetSummary> previousBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findByDeliveryDirector(fullName);
+                List<BaseLine_RevenueGrowthSummary> previousGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findByDeliveryDirector(fullName);
+                List<BaseLine_PipelineState> previousPipelineStates = baseLinePipelineStateRepository.findByDeliveryDirector(fullName);
 
-            // Collect delivery managers, account names, and financial years
-            deliveryManagers.addAll(currentBudgetSummaries.stream()
-                    .map(RevenueBudgetSummary::getDeliveryManager)
-                    .collect(Collectors.toSet()));
-            deliveryManagers.addAll(previousBudgetSummaries.stream()
-                    .map(BaseLine_RevenueBudgetSummary::getDeliveryManager)
-                    .collect(Collectors.toSet()));
+                // Collect delivery managers, account names, and financial years
+                deliveryManagers.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getDeliveryManager)
+                        .collect(Collectors.toSet()));
+                deliveryManagers.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getDeliveryManager)
+                        .collect(Collectors.toSet()));
 
-            deliveryDirectors.addAll(currentBudgetSummaries.stream()
-                    .map(RevenueBudgetSummary::getDeliveryDirector)
-                    .collect(Collectors.toSet()));
-            deliveryDirectors.addAll(previousBudgetSummaries.stream()
-                    .map(BaseLine_RevenueBudgetSummary::getDeliveryDirector)
-                    .collect(Collectors.toSet()));
+                deliveryDirectors.add(fullName);
 
-            accountNames.addAll(currentBudgetSummaries.stream()
-                    .map(RevenueBudgetSummary::getAccount)
-                    .collect(Collectors.toSet()));
-            accountNames.addAll(previousBudgetSummaries.stream()
-                    .map(BaseLine_RevenueBudgetSummary::getAccount)
-                    .collect(Collectors.toSet()));
+                accountNames.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getAccount)
+                        .collect(Collectors.toSet()));
+                accountNames.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getAccount)
+                        .collect(Collectors.toSet()));
 
-            financialYears.addAll(currentBudgetSummaries.stream()
-                    .map(RevenueBudgetSummary::getFinancialYear)
-                    .collect(Collectors.toSet()));
-            financialYears.addAll(previousBudgetSummaries.stream()
-                    .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
-                    .collect(Collectors.toSet()));
+                financialYears.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getFinancialYear)
+                        .collect(Collectors.toSet()));
+                financialYears.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
+                        .collect(Collectors.toSet()));
 
-            // Aggregate current data
-            for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
-                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                currentRvbForecasts.putIfAbsent(key, 0.0);
-                currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
-            }
+                // Aggregate current data
+                for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
+                    String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                    currentRvbForecasts.putIfAbsent(key, 0.0);
+                    currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
+                }
 
-            for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
-                String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                currentRvgForecasts.putIfAbsent(key, 0.0);
-                currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
-            }
+                for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
+                    String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                    currentRvgForecasts.putIfAbsent(key, 0.0);
+                    currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
+                }
 
-            for (PipelineState pipelineState : currentPipelineStates) {
-                String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                currentPipelineSums.putIfAbsent(key, 0.0);
-                currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
-            }
+                for (PipelineState pipelineState : currentPipelineStates) {
+                    String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                    currentPipelineSums.putIfAbsent(key, 0.0);
+                    currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+                }
 
-            // Aggregate previous data
-            for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
-                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                previousRvbForecasts.putIfAbsent(key, 0.0);
-                previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
-            }
+                // Aggregate previous data
+                for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
+                    String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                    previousRvbForecasts.putIfAbsent(key, 0.0);
+                    previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
+                }
 
-            for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
-                String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                previousRvgForecasts.putIfAbsent(key, 0.0);
-                previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
-            }
+                for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
+                    String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                    previousRvgForecasts.putIfAbsent(key, 0.0);
+                    previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
+                }
 
-            for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
-                String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                previousPipelineSums.putIfAbsent(key, 0.0);
-                previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+                for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
+                    String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                    previousPipelineSums.putIfAbsent(key, 0.0);
+                    previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+                }
+            } else if (role.equals("Delivery Manager")) {
+                // Fetch current and previous data for Delivery Manager
+                List<RevenueBudgetSummary> currentBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryManager(fullName);
+                List<RevenueGrowthSummary> currentGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryManager(fullName);
+                List<PipelineState> currentPipelineStates = pipelineStateRepository.findByDeliveryManager(fullName);
+
+                List<BaseLine_RevenueBudgetSummary> previousBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findByDeliveryManager(fullName);
+                List<BaseLine_RevenueGrowthSummary> previousGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findByDeliveryManager(fullName);
+                List<BaseLine_PipelineState> previousPipelineStates = baseLinePipelineStateRepository.findByDeliveryManager(fullName);
+
+                // Collect delivery managers, account names, and financial years
+                deliveryManagers.add(fullName);
+
+                deliveryDirectors.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getDeliveryDirector)
+                        .collect(Collectors.toSet()));
+                deliveryDirectors.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getDeliveryDirector)
+                        .collect(Collectors.toSet()));
+
+                accountNames.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getAccount)
+                        .collect(Collectors.toSet()));
+                accountNames.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getAccount)
+                        .collect(Collectors.toSet()));
+
+                financialYears.addAll(currentBudgetSummaries.stream()
+                        .map(RevenueBudgetSummary::getFinancialYear)
+                        .collect(Collectors.toSet()));
+                financialYears.addAll(previousBudgetSummaries.stream()
+                        .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
+                        .collect(Collectors.toSet()));
+
+                // Aggregate current data
+                for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
+                    String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                    currentRvbForecasts.putIfAbsent(key, 0.0);
+                    currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
+                }
+
+                for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
+                    String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                    currentRvgForecasts.putIfAbsent(key, 0.0);
+                    currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
+                }
+
+                for (PipelineState pipelineState : currentPipelineStates) {
+                    String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                    currentPipelineSums.putIfAbsent(key, 0.0);
+                    currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+                }
+
+                // Aggregate previous data
+                for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
+                    String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                    previousRvbForecasts.putIfAbsent(key, 0.0);
+                    previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
+                }
+
+                for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
+                    String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                    previousRvgForecasts.putIfAbsent(key, 0.0);
+                    previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
+                }
+
+                for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
+                    String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                    previousPipelineSums.putIfAbsent(key, 0.0);
+                    previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+                }
             }
         }
 
@@ -519,7 +579,6 @@ public class BaselineController {
 
         // Prepare current data list
         List<Map<String, Object>> currentData = new ArrayList<>();
-        // Aggregate current data
         for (Integer year : latestTwoFinancialYears) {
             for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
                 String key = year + "-" + quarter;
@@ -535,7 +594,6 @@ public class BaselineController {
 
         // Prepare previous data list
         List<Map<String, Object>> previousData = new ArrayList<>();
-        // Aggregate previous data
         for (Integer year : latestTwoFinancialYears) {
             for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
                 String key = year + "-" + quarter;

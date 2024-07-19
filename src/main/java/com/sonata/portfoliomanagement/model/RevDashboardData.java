@@ -3,7 +3,7 @@ package com.sonata.portfoliomanagement.model;
 import java.util.List;
 
 public class RevDashboardData {
-    private String deliveryDirector;
+    private List<String> deliveryDirector;
     private List<String> deliveryManager;
     private List<String> accountsNames;
     private List<Integer> financialYears;
@@ -11,11 +11,12 @@ public class RevDashboardData {
 
     // Getters and Setters
 
-    public String getDeliveryDirector() {
+
+    public List<String> getDeliveryDirector() {
         return deliveryDirector;
     }
 
-    public void setDeliveryDirector(String deliveryDirector) {
+    public void setDeliveryDirector(List<String> deliveryDirector) {
         this.deliveryDirector = deliveryDirector;
     }
 
