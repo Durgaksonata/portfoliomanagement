@@ -108,4 +108,12 @@ public interface RevenueGrowthSummaryRepository extends JpaRepository<RevenueGro
 
     @Query("SELECT DISTINCT r.deliveryDirector FROM RevenueGrowthSummary r WHERE r.account = :account")
     List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
+
+
+
+    List<RevenueGrowthSummary> findByDeliveryDirectorAndFinancialYearIn(String deliveryDirector, List<Integer> financialYears);
+
+    // Custom query to fetch data by delivery manager and financial years
+    @Query("SELECT r FROM RevenueGrowthSummary r WHERE r.deliveryManager = :deliveryManager AND r.financialYear IN :financialYears")
+    List<RevenueGrowthSummary> findByDeliveryManagerAndFinancialYears(@Param("deliveryManager") String deliveryManager, @Param("financialYears") List<Integer> financialYears);
 }
