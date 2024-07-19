@@ -100,4 +100,11 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     @Query("SELECT DISTINCT r.deliveryDirector FROM RevenueBudgetSummary r WHERE r.account = :account")
     List<String> findDeliveryDirectorsByAccount(@Param("account") String account);
 
+    @Query("SELECT DISTINCT r.financialYear FROM RevenueBudgetSummary r")
+    List<Integer> findAllFinancialYears();
+
+
+
+
+
 }

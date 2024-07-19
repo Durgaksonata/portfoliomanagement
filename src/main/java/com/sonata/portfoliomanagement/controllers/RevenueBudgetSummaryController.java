@@ -676,10 +676,25 @@ public class RevenueBudgetSummaryController {
 		return revenues;
 	}
 
-	@GetMapping("/financialYear/{year}")
-	public List getByFinancialYear(@PathVariable("year") int year) {
-		return revenueRepo.findByFinancialYear(year);
+//	@GetMapping("/financialYear/{year}")
+//	public List getByFinancialYear(@PathVariable("year") int year) {
+//		return revenueRepo.findByFinancialYear(year);
+//	}
+//
+
+	@GetMapping("/latestFinancialYearDataa")
+	public List<RevenueBudgetSummary> getByLatestFinancialYear() {
+		List<Integer> financialYears = revenueRepo.findAllFinancialYears();
+		int maxYear = financialYears.stream()
+				.max(Integer::compare)
+				.orElseThrow(() -> new RuntimeException("No financial years found"));
+		return revenueRepo.findByFinancialYear(maxYear);
 	}
+
+
+
+
+
 	@GetMapping("/vertical/{vertical}")
 	public List<RevenueBudgetSummary> getByVertical(@PathVariable("vertical") String vertical) {
 		return revenueRepo.findAllByVertical(vertical);

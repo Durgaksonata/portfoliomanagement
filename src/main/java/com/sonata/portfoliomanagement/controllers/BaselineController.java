@@ -75,12 +75,6 @@ public class BaselineController {
     }
 
 
-//    @PostMapping("/accountData")
-//    public ResponseEntity<Map<String, Object>> getAccountData(@RequestBody List<String> accountNames) {
-//        Map<String, Object> data = baseLineService.getAccountData(accountNames);
-//        return new ResponseEntity<>(data, HttpStatus.OK);
-//    }
-
 
 
     @PostMapping("/deliveryDirectorData")
@@ -290,8 +284,281 @@ public class BaselineController {
 
 
 
+//
+//    @PostMapping("/baselineByRoleAndName")
+//    public ResponseEntity<Map<String, Object>> getBaselineByRoleAndName(@RequestBody RoleAndNameRequest request) {
+//        List<String> roles = request.getRole();
+//        String name = request.getName();
+//
+//        // Split name into first and last names
+//        String[] nameParts = name.split(" ");
+//        if (nameParts.length != 2) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        String firstName = nameParts[0];
+//        String lastName = nameParts[1];
+//        String deliveryDirector = firstName + " " + lastName;
+//
+//        // Construct response object
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("deliveryDirector", Collections.singletonList(deliveryDirector));
+//
+//        // Fetch baseline delivery managers, account names, and financial years
+//        Set<String> deliveryManagers = new HashSet<>();
+//        Set<String> accountNames = new HashSet<>();
+//        Set<Integer> financialYears = new TreeSet<>(Collections.reverseOrder()); // Sorted in descending order
+//
+//        // Aggregate data
+//        Map<String, Double> totalPipelineSums = new LinkedHashMap<>();
+//        Map<String, Double> rvbForecasts = new LinkedHashMap<>();
+//        Map<String, Double> rvgForecasts = new LinkedHashMap<>();
+//
+//        // Process each role separately
+//        for (String role : roles) {
+//            // Fetch matching role
+//            MD_Role mdRole = md_RolesRepository.findFirstByRole(role);
+//            if (mdRole == null) {
+//                return ResponseEntity.badRequest().build();
+//            }
+//
+//            // Fetch matching records from BaseLine_RevenueBudgetSummary
+//            List<BaseLine_RevenueBudgetSummary> baselineBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
+//            List<BaseLine_RevenueGrowthSummary> baselineGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
+//            List<BaseLine_PipelineState> baselinePipelineStates = baseLinePipelineStateRepository.findByDeliveryDirector(deliveryDirector);
+//
+//            // Collect delivery managers, account names, and financial years
+//            deliveryManagers.addAll(baselineBudgetSummaries.stream()
+//                    .map(BaseLine_RevenueBudgetSummary::getDeliveryManager)
+//                    .collect(Collectors.toSet()));
+//
+//            accountNames.addAll(baselineBudgetSummaries.stream()
+//                    .map(BaseLine_RevenueBudgetSummary::getAccount)
+//                    .collect(Collectors.toSet()));
+//
+//            financialYears.addAll(baselineBudgetSummaries.stream()
+//                    .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
+//                    .collect(Collectors.toSet()));
+//
+//            // Aggregate data by financial year and quarter
+//            for (BaseLine_RevenueBudgetSummary budgetSummary : baselineBudgetSummaries) {
+//                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+//                rvbForecasts.putIfAbsent(key, 0.0);
+//                rvbForecasts.put(key, rvbForecasts.get(key) + budgetSummary.getForecast());
+//            }
+//
+//            for (BaseLine_RevenueGrowthSummary growthSummary : baselineGrowthSummaries) {
+//                String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+//                rvgForecasts.putIfAbsent(key, 0.0);
+//                rvgForecasts.put(key, rvgForecasts.get(key) + growthSummary.getForecast());
+//            }
+//
+//            for (BaseLine_PipelineState pipelineState : baselinePipelineStates) {
+//                String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+//                totalPipelineSums.putIfAbsent(key, 0.0);
+//                totalPipelineSums.put(key, totalPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+//            }
+//        }
+//
+//        // Restrict to the latest two financial years
+//        List<Integer> latestTwoFinancialYears = financialYears.stream()
+//                .limit(2)
+//                .collect(Collectors.toList());
+//
+//        // Prepare previous data list
+//        List<Map<String, Object>> previousData = new ArrayList<>();
+//        for (Integer year : latestTwoFinancialYears) {
+//            for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
+//                String key = year + "-" + quarter;
+//                Map<String, Object> quarterData = new HashMap<>();
+//                quarterData.put("quarter", quarter);
+//                quarterData.put("financialYear", year);
+//                quarterData.put("totalPipelineSum", totalPipelineSums.getOrDefault(key, 0.0));
+//                quarterData.put("rvb_Forecast", rvbForecasts.getOrDefault(key, 0.0));
+//                quarterData.put("rvg_Forecast", rvgForecasts.getOrDefault(key, 0.0));
+//                previousData.add(quarterData);
+//            }
+//        }
+//
+//        // Set final response fields
+//        response.put("deliveryManager", new ArrayList<>(deliveryManagers));
+//        response.put("account", new ArrayList<>(accountNames));
+//        response.put("previous", previousData);
+//
+//        // Return the response
+//        return ResponseEntity.ok(response);
+//    }
 
 
+
+
+    @PostMapping("/combinedByRoleAndName")
+    public ResponseEntity<Map<String, Object>> getCombinedByRoleAndName(@RequestBody RoleAndNameRequest request) {
+        List<String> roles = request.getRole();
+        String name = request.getName();
+
+        // Split name into first and last names
+        String[] nameParts = name.split(" ");
+        if (nameParts.length != 2) {
+            return ResponseEntity.badRequest().build();
+        }
+        String firstName = nameParts[0];
+        String lastName = nameParts[1];
+        String deliveryDirector = firstName + " " + lastName;
+        String deliveryManager = firstName + " " + lastName;
+
+
+        // Initialize response object
+        Map<String, Object> response = new HashMap<>();
+        response.put("deliveryDirector", Collections.singletonList(deliveryDirector));
+        response.put("deliveryManager", Collections.singletonList(deliveryManager));
+
+        // Initialize sets for collecting data
+        Set<String> deliveryManagers = new HashSet<>();
+        Set<String> deliveryDirectors = new HashSet<>();
+        Set<String> accountNames = new HashSet<>();
+        Set<Integer> financialYears = new TreeSet<>(Collections.reverseOrder()); // Sorted in descending order
+
+        // Aggregated data maps for current and previous data
+        Map<String, Double> currentPipelineSums = new LinkedHashMap<>();
+        Map<String, Double> currentRvbForecasts = new LinkedHashMap<>();
+        Map<String, Double> currentRvgForecasts = new LinkedHashMap<>();
+
+        Map<String, Double> previousPipelineSums = new LinkedHashMap<>();
+        Map<String, Double> previousRvbForecasts = new LinkedHashMap<>();
+        Map<String, Double> previousRvgForecasts = new LinkedHashMap<>();
+
+        // Process each role for both current and previous data
+        for (String role : roles) {
+            // Fetch matching role
+            MD_Role mdRole = md_RolesRepository.findFirstByRole(role);
+            if (mdRole == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            // Fetch matching records for current and previous data
+            List<RevenueBudgetSummary> currentBudgetSummaries = revenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
+            List<RevenueGrowthSummary> currentGrowthSummaries = revenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
+            List<PipelineState> currentPipelineStates = pipelineStateRepository.findByDeliveryDirector(deliveryDirector);
+
+            List<BaseLine_RevenueBudgetSummary> previousBudgetSummaries = baseLineRevenueBudgetSummaryRepository.findByDeliveryDirector(deliveryDirector);
+            List<BaseLine_RevenueGrowthSummary> previousGrowthSummaries = baseLineRevenueGrowthSummaryRepository.findByDeliveryDirector(deliveryDirector);
+            List<BaseLine_PipelineState> previousPipelineStates = baseLinePipelineStateRepository.findByDeliveryDirector(deliveryDirector);
+
+            // Collect delivery managers, account names, and financial years
+            deliveryManagers.addAll(currentBudgetSummaries.stream()
+                    .map(RevenueBudgetSummary::getDeliveryManager)
+                    .collect(Collectors.toSet()));
+            deliveryManagers.addAll(previousBudgetSummaries.stream()
+                    .map(BaseLine_RevenueBudgetSummary::getDeliveryManager)
+                    .collect(Collectors.toSet()));
+
+            deliveryDirectors.addAll(currentBudgetSummaries.stream()
+                    .map(RevenueBudgetSummary::getDeliveryDirector)
+                    .collect(Collectors.toSet()));
+            deliveryDirectors.addAll(previousBudgetSummaries.stream()
+                    .map(BaseLine_RevenueBudgetSummary::getDeliveryDirector)
+                    .collect(Collectors.toSet()));
+
+            accountNames.addAll(currentBudgetSummaries.stream()
+                    .map(RevenueBudgetSummary::getAccount)
+                    .collect(Collectors.toSet()));
+            accountNames.addAll(previousBudgetSummaries.stream()
+                    .map(BaseLine_RevenueBudgetSummary::getAccount)
+                    .collect(Collectors.toSet()));
+
+            financialYears.addAll(currentBudgetSummaries.stream()
+                    .map(RevenueBudgetSummary::getFinancialYear)
+                    .collect(Collectors.toSet()));
+            financialYears.addAll(previousBudgetSummaries.stream()
+                    .map(BaseLine_RevenueBudgetSummary::getFinancialYear)
+                    .collect(Collectors.toSet()));
+
+            // Aggregate current data
+            for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
+                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                currentRvbForecasts.putIfAbsent(key, 0.0);
+                currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
+            }
+
+            for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
+                String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                currentRvgForecasts.putIfAbsent(key, 0.0);
+                currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
+            }
+
+            for (PipelineState pipelineState : currentPipelineStates) {
+                String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                currentPipelineSums.putIfAbsent(key, 0.0);
+                currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+            }
+
+            // Aggregate previous data
+            for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
+                String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
+                previousRvbForecasts.putIfAbsent(key, 0.0);
+                previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
+            }
+
+            for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
+                String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
+                previousRvgForecasts.putIfAbsent(key, 0.0);
+                previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
+            }
+
+            for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
+                String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
+                previousPipelineSums.putIfAbsent(key, 0.0);
+                previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
+            }
+        }
+
+        // Restrict to the latest two financial years
+        List<Integer> latestTwoFinancialYears = financialYears.stream()
+                .limit(2)
+                .collect(Collectors.toList());
+
+        // Prepare current data list
+        List<Map<String, Object>> currentData = new ArrayList<>();
+        // Aggregate current data
+        for (Integer year : latestTwoFinancialYears) {
+            for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
+                String key = year + "-" + quarter;
+                Map<String, Object> quarterData = new HashMap<>();
+                quarterData.put("quarter", quarter);
+                quarterData.put("financialYear", year);
+                quarterData.put("totalPipelineSum", currentPipelineSums.getOrDefault(key, 0.0));
+                quarterData.put("rvb_Forecast", currentRvbForecasts.getOrDefault(key, 0.0));
+                quarterData.put("rvg_Forecast", currentRvgForecasts.getOrDefault(key, 0.0));
+                currentData.add(quarterData);
+            }
+        }
+
+        // Prepare previous data list
+        List<Map<String, Object>> previousData = new ArrayList<>();
+        // Aggregate previous data
+        for (Integer year : latestTwoFinancialYears) {
+            for (String quarter : Arrays.asList("Q1", "Q2", "Q3", "Q4")) {
+                String key = year + "-" + quarter;
+                Map<String, Object> quarterData = new HashMap<>();
+                quarterData.put("quarter", quarter);
+                quarterData.put("financialYear", year);
+                quarterData.put("totalPipelineSum", previousPipelineSums.getOrDefault(key, 0.0));
+                quarterData.put("rvb_Forecast", previousRvbForecasts.getOrDefault(key, 0.0));
+                quarterData.put("rvg_Forecast", previousRvgForecasts.getOrDefault(key, 0.0));
+                previousData.add(quarterData);
+            }
+        }
+
+        // Set final response fields
+        response.put("deliveryManager", new ArrayList<>(deliveryManagers));
+        response.put("deliveryDirector", new ArrayList<>(deliveryDirectors));
+        response.put("account", new ArrayList<>(accountNames));
+        response.put("currentData", currentData);
+        response.put("previousData", previousData);
+
+        // Return the response
+        return ResponseEntity.ok(response);
+    }
 
 
 
