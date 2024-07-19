@@ -142,9 +142,15 @@ public class RevenueDashboardController {
             });
 
             BaseLine_PipelineState baseline = baselinePipelineMap.get(key);
-            baseline.setSumOfPipeline_opportunity(baseline.getSumOfPipeline_opportunity() + ps.getSumOfPipeline_opportunity());
-            baseline.setSumOfPipeline_shaping(baseline.getSumOfPipeline_shaping() + ps.getSumOfPipeline_shaping());
-            baseline.setSumOfPipeline_pitch(baseline.getSumOfPipeline_pitch() + ps.getSumOfPipeline_pitch());
+
+            if (ps.getAccount().equals(baseline.getAccount())) {
+                baseline.setSumOfPipeline_opportunity(baseline.getSumOfPipeline_opportunity() + ps.getSumOfPipeline_opportunity());
+                baseline.setSumOfPipeline_shaping(baseline.getSumOfPipeline_shaping() + ps.getSumOfPipeline_shaping());
+                baseline.setSumOfPipeline_pitch(baseline.getSumOfPipeline_pitch() + ps.getSumOfPipeline_pitch());
+            }
+//            baseline.setSumOfPipeline_opportunity(baseline.getSumOfPipeline_opportunity() + ps.getSumOfPipeline_opportunity());
+//            baseline.setSumOfPipeline_shaping(baseline.getSumOfPipeline_shaping() + ps.getSumOfPipeline_shaping());
+//            baseline.setSumOfPipeline_pitch(baseline.getSumOfPipeline_pitch() + ps.getSumOfPipeline_pitch());
             baseline.setSumOfPipeline_total(baseline.getSumOfPipeline_total() + ps.getSumOfPipeline_total());
         }
         baseLine_PipelineStateRepository.saveAll(baselinePipelineMap.values());
