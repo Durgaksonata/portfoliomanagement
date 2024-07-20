@@ -4,41 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RevDashboardDTO {
-    private String deliveryDirector;
+    private List<String> deliveryDirector;
     private List<String> deliveryManager;
-    private List<String> accountNames; // New field for account names
+    private List<String> accountsNames; // New field for account names
     private List<Integer> financialYears;
     private List<AccountData> accounts;
 
     // Constructor for delivery director only
-    public RevDashboardDTO(String deliveryDirector) {
-        this.deliveryDirector = deliveryDirector;
+    public RevDashboardDTO(List<String> deliveryDirector) {
+        this.deliveryDirector = deliveryDirector != null ? deliveryDirector : new ArrayList<>();
         this.deliveryManager = new ArrayList<>();
-        this.accountNames = new ArrayList<>(); // Initialize account names
+        this.accountsNames = new ArrayList<>(); // Initialize account names
         this.financialYears = new ArrayList<>();
         this.accounts = new ArrayList<>();
     }
 
-    // Constructor for delivery director and delivery managers
-    public RevDashboardDTO(String deliveryDirector, List<String> deliveryManager) {
+    public RevDashboardDTO(List<String> deliveryDirector, List<String> deliveryManager, List<String> accountsNames, List<Integer> financialYears) {
         this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
-        this.accountNames = new ArrayList<>(); // Initialize account names
-        this.financialYears = new ArrayList<>();
+        this.accountsNames = accountsNames;
+        this.financialYears = financialYears;
         this.accounts = new ArrayList<>();
     }
 
-    // Getters and setters
 
-    public RevDashboardDTO(String deliveryDirector2, String deliveryManager, ArrayList arrayList) {
+    public void setAccountsNames(List<String> accountsNames) {
+        this.accountsNames = accountsNames;
+    }
+
+    public RevDashboardDTO(String deliveryDirector, String deliveryManager, ArrayList arrayList) {
         // TODO Auto-generated constructor stub
     }
 
-    public String getDeliveryDirector() {
+    public List<String> getDeliveryDirector() {
         return deliveryDirector;
     }
 
-    public void setDeliveryDirector(String deliveryDirector) {
+    public void setDeliveryDirector(List<String> deliveryDirector) {
         this.deliveryDirector = deliveryDirector;
     }
 
@@ -50,12 +52,12 @@ public class RevDashboardDTO {
         this.deliveryManager = deliveryManager;
     }
 
-    public List<String> getAccountNames() {
-        return accountNames;
+    public List<String> getAccountsNames() {
+        return accountsNames;
     }
 
-    public void setAccountNames(List<String> accountNames) {
-        this.accountNames = accountNames;
+    public void setAccountNames(List<String> accountsNames) {
+        this.accountsNames = accountsNames;
     }
 
 
@@ -82,18 +84,18 @@ public class RevDashboardDTO {
         private String quarter;
         private RevenueBudgetSummary revenueBudget;
         private RevenueGrowthSummary revenueGrowth;
-        private PipelineState pipelineStatus;
+        private PipelineState pipelineState;
 
         public AccountData(String account, int financialYear, String quarter,
                            RevenueBudgetSummary revenueBudget,
                            RevenueGrowthSummary revenueGrowth,
-                           PipelineState pipelineStatus) {
+                           PipelineState pipelineState) {
             this.account = account;
             this.financialYear = financialYear;
             this.quarter = quarter;
             this.revenueBudget = revenueBudget;
             this.revenueGrowth = revenueGrowth;
-            this.pipelineStatus = pipelineStatus;
+            this.pipelineState = pipelineState;
         }
 
         // Getters and setters
@@ -138,12 +140,12 @@ public class RevDashboardDTO {
             this.revenueGrowth = revenueGrowth;
         }
 
-        public PipelineState getPipelineStatus() {
-            return pipelineStatus;
+        public PipelineState getpipelineState() {
+            return pipelineState;
         }
 
         public void setPipelineStatus(PipelineState pipelineStatus) {
-            this.pipelineStatus = pipelineStatus;
+            this.pipelineState = pipelineState;
         }
     }
 

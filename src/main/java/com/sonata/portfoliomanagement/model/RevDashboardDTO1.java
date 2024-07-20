@@ -6,22 +6,22 @@ import java.util.List;
 public class RevDashboardDTO1 {
     private List<String> deliveryDirector;
     private List<String> deliveryManager;
-    private List<String> accountNames;
+    private List<String> accountsNames;
     private List<Integer> financialYears;
     private List<AccountData> accounts;
 
     public RevDashboardDTO1() {
         this.deliveryDirector = new ArrayList<>();
         this.deliveryManager = new ArrayList<>();
-        this.accountNames = new ArrayList<>();
+        this.accountsNames = new ArrayList<>();
         this.financialYears = new ArrayList<>();
         this.accounts = new ArrayList<>();
     }
 
-    public RevDashboardDTO1(List<String> deliveryDirector, List<String> deliveryManager, List<String> accountNames, List<Integer> financialYears) {
+    public RevDashboardDTO1(List<String> deliveryDirector, List<String> deliveryManager, List<String> accountsNames, List<Integer> financialYears) {
         this.deliveryDirector = deliveryDirector;
         this.deliveryManager = deliveryManager;
-        this.accountNames = accountNames;
+        this.accountsNames = accountsNames;
         this.financialYears = financialYears;
         this.accounts = new ArrayList<>();
     }
@@ -42,12 +42,12 @@ public class RevDashboardDTO1 {
         this.deliveryManager = deliveryManager;
     }
 
-    public List<String> getAccountNames() {
-        return accountNames;
+    public List<String> getAccountsNames() {
+        return accountsNames;
     }
 
-    public void setAccountNames(List<String> accountNames) {
-        this.accountNames = accountNames;
+    public void setAccountsNames(List<String> accountsNames) {
+        this.accountsNames = accountsNames;
     }
 
     public List<Integer> getFinancialYears() {
@@ -66,24 +66,26 @@ public class RevDashboardDTO1 {
         this.accounts = accounts;
     }
 
+
+
     public static class AccountData {
         private String account;
         private int financialYear;
         private String quarter;
         private RevenueBudgetSummary revenueBudget;
         private RevenueGrowthSummary revenueGrowth;
-        private PipelineState pipelineStatus;
+        private PipelineState pipelineState;
 
         public AccountData(String account, int financialYear, String quarter,
                            RevenueBudgetSummary revenueBudget,
                            RevenueGrowthSummary revenueGrowth,
-                           PipelineState pipelineStatus) {
+                           PipelineState pipelineState) {
             this.account = account;
             this.financialYear = financialYear;
             this.quarter = quarter;
             this.revenueBudget = revenueBudget;
             this.revenueGrowth = revenueGrowth;
-            this.pipelineStatus = pipelineStatus;
+            this.pipelineState = pipelineState;
         }
 
         // Getters and setters
@@ -127,12 +129,12 @@ public class RevDashboardDTO1 {
             this.revenueGrowth = revenueGrowth;
         }
 
-        public PipelineState getPipelineStatus() {
-            return pipelineStatus;
+        public PipelineState getPipelineState() {
+            return pipelineState;
         }
 
-        public void setPipelineStatus(PipelineState pipelineStatus) {
-            this.pipelineStatus = pipelineStatus;
+        public void setPipelineStatus(PipelineState pipelineState) {
+            this.pipelineState = pipelineState;
         }
     }
 
