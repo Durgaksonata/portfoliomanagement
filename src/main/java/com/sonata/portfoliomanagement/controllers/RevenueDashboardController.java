@@ -677,7 +677,12 @@ public class RevenueDashboardController {
         consolidatedDTO.setDeliveryDirector(new ArrayList<>(allDeliveryDirectors));
         consolidatedDTO.setDeliveryManager(new ArrayList<>(allDeliveryManagers));
         consolidatedDTO.setAccountsNames(new ArrayList<>(allAccountsNames));
-        consolidatedDTO.setFinancialYears(new ArrayList<>(allFinancialYears));
+
+
+// Sort financial years in descending order
+        List<Integer> sortedFinancialYears = new ArrayList<>(allFinancialYears);
+        sortedFinancialYears.sort(Collections.reverseOrder());  // Sorting in descending order
+        consolidatedDTO.setFinancialYears(sortedFinancialYears);
 
         // Combine accounts under "all" and consolidate data
         consolidateAccounts(consolidatedDTO);
