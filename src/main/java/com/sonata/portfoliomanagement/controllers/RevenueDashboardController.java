@@ -6,14 +6,14 @@ import com.sonata.portfoliomanagement.interfaces.*;
 import com.sonata.portfoliomanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DecimalFormat;
+
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
