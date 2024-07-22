@@ -20,6 +20,11 @@ public class PipelineStateController {
     @Autowired
     private DataEntryRepository dataEntryRepository;
 
+    @GetMapping("/get")
+    public List<PipelineState> getPipelineState(){
+        return pipelineStateRepository.findAll();
+    }
+
 
     @PostMapping("/save")
     public PipelineState savePipelineState(@RequestBody PipelineState pipelineState) {

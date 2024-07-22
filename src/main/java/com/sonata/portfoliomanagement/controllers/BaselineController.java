@@ -307,13 +307,13 @@ public class BaselineController {
         Set<Integer> financialYears = new TreeSet<>(Collections.reverseOrder()); // Sorted in descending order
 
         // Aggregated data maps for current and previous data
-        Map<String, Double> currentPipelineSums = new LinkedHashMap<>();
-        Map<String, Double> currentRvbForecasts = new LinkedHashMap<>();
-        Map<String, Double> currentRvgForecasts = new LinkedHashMap<>();
+        Map<String, Float> currentPipelineSums = new LinkedHashMap<>();
+        Map<String, Float> currentRvbForecasts = new LinkedHashMap<>();
+        Map<String, Float> currentRvgForecasts = new LinkedHashMap<>();
 
-        Map<String, Double> previousPipelineSums = new LinkedHashMap<>();
-        Map<String, Double> previousRvbForecasts = new LinkedHashMap<>();
-        Map<String, Double> previousRvgForecasts = new LinkedHashMap<>();
+        Map<String, Float> previousPipelineSums = new LinkedHashMap<>();
+        Map<String, Float> previousRvbForecasts = new LinkedHashMap<>();
+        Map<String, Float> previousRvgForecasts = new LinkedHashMap<>();
 
         // Process each role
         for (String role : roles) {
@@ -360,38 +360,38 @@ public class BaselineController {
                 // Aggregate current data
                 for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
                     String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                    currentRvbForecasts.putIfAbsent(key, 0.0);
+                    currentRvbForecasts.putIfAbsent(key, 0.0F);
                     currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
                 }
 
                 for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
                     String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                    currentRvgForecasts.putIfAbsent(key, 0.0);
+                    currentRvgForecasts.putIfAbsent(key, 0.0F);
                     currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
                 }
 
                 for (PipelineState pipelineState : currentPipelineStates) {
                     String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                    currentPipelineSums.putIfAbsent(key, 0.0);
+                    currentPipelineSums.putIfAbsent(key, 0.0F);
                     currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
                 }
 
                 // Aggregate previous data
                 for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
                     String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                    previousRvbForecasts.putIfAbsent(key, 0.0);
+                    previousRvbForecasts.putIfAbsent(key, 0.0F);
                     previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
                 }
 
                 for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
                     String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                    previousRvgForecasts.putIfAbsent(key, 0.0);
+                    previousRvgForecasts.putIfAbsent(key, 0.0F);
                     previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
                 }
 
                 for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
                     String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                    previousPipelineSums.putIfAbsent(key, 0.0);
+                    previousPipelineSums.putIfAbsent(key, 0.0F);
                     previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
                 }
             } else if (role.equals("Delivery Manager")) {
@@ -431,38 +431,38 @@ public class BaselineController {
                 // Aggregate current data
                 for (RevenueBudgetSummary budgetSummary : currentBudgetSummaries) {
                     String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                    currentRvbForecasts.putIfAbsent(key, 0.0);
+                    currentRvbForecasts.putIfAbsent(key, 0.0F);
                     currentRvbForecasts.put(key, currentRvbForecasts.get(key) + budgetSummary.getForecast());
                 }
 
                 for (RevenueGrowthSummary growthSummary : currentGrowthSummaries) {
                     String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                    currentRvgForecasts.putIfAbsent(key, 0.0);
+                    currentRvgForecasts.putIfAbsent(key, 0.0F);
                     currentRvgForecasts.put(key, currentRvgForecasts.get(key) + growthSummary.getForecast());
                 }
 
                 for (PipelineState pipelineState : currentPipelineStates) {
                     String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                    currentPipelineSums.putIfAbsent(key, 0.0);
+                    currentPipelineSums.putIfAbsent(key, 0.0F);
                     currentPipelineSums.put(key, currentPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
                 }
 
                 // Aggregate previous data
                 for (BaseLine_RevenueBudgetSummary budgetSummary : previousBudgetSummaries) {
                     String key = budgetSummary.getFinancialYear() + "-" + budgetSummary.getQuarter();
-                    previousRvbForecasts.putIfAbsent(key, 0.0);
+                    previousRvbForecasts.putIfAbsent(key, 0.0F);
                     previousRvbForecasts.put(key, previousRvbForecasts.get(key) + budgetSummary.getForecast());
                 }
 
                 for (BaseLine_RevenueGrowthSummary growthSummary : previousGrowthSummaries) {
                     String key = growthSummary.getFinancialYear() + "-" + growthSummary.getQuarter();
-                    previousRvgForecasts.putIfAbsent(key, 0.0);
+                    previousRvgForecasts.putIfAbsent(key, 0.0F);
                     previousRvgForecasts.put(key, previousRvgForecasts.get(key) + growthSummary.getForecast());
                 }
 
                 for (BaseLine_PipelineState pipelineState : previousPipelineStates) {
                     String key = pipelineState.getFinancialYear() + "-" + pipelineState.getQuarter();
-                    previousPipelineSums.putIfAbsent(key, 0.0);
+                    previousPipelineSums.putIfAbsent(key, 0.0F);
                     previousPipelineSums.put(key, previousPipelineSums.get(key) + pipelineState.getSumOfPipeline_total());
                 }
             }
@@ -481,9 +481,9 @@ public class BaselineController {
                 Map<String, Object> quarterData = new HashMap<>();
                 quarterData.put("quarter", quarter);
                 quarterData.put("financialYear", year);
-                quarterData.put("totalPipelineSum", currentPipelineSums.getOrDefault(key, 0.0));
-                quarterData.put("rvb_Forecast", currentRvbForecasts.getOrDefault(key, 0.0));
-                quarterData.put("rvg_Forecast", currentRvgForecasts.getOrDefault(key, 0.0));
+                quarterData.put("totalPipelineSum", currentPipelineSums.getOrDefault(key, 0.0F));
+                quarterData.put("rvb_Forecast", currentRvbForecasts.getOrDefault(key, 0.0F));
+                quarterData.put("rvg_Forecast", currentRvgForecasts.getOrDefault(key, 0.0F));
                 currentData.add(quarterData);
             }
         }
@@ -496,9 +496,9 @@ public class BaselineController {
                 Map<String, Object> quarterData = new HashMap<>();
                 quarterData.put("quarter", quarter);
                 quarterData.put("financialYear", year);
-                quarterData.put("totalPipelineSum", previousPipelineSums.getOrDefault(key, 0.0));
-                quarterData.put("rvb_Forecast", previousRvbForecasts.getOrDefault(key, 0.0));
-                quarterData.put("rvg_Forecast", previousRvgForecasts.getOrDefault(key, 0.0));
+                quarterData.put("totalPipelineSum", previousPipelineSums.getOrDefault(key, 0.0F));
+                quarterData.put("rvb_Forecast", previousRvbForecasts.getOrDefault(key, 0.0F));
+                quarterData.put("rvg_Forecast", previousRvgForecasts.getOrDefault(key, 0.0F));
                 previousData.add(quarterData);
             }
         }
