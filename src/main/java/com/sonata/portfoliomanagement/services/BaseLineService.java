@@ -381,8 +381,8 @@ public class BaseLineService {
                 .filter(data -> data.getFinancialYear() == currentYear || data.getFinancialYear() == previousYear)
                 .collect(Collectors.toList());
 
-        response.put("deliveryDirectors", new ArrayList<>(deliveryDirectors));
-        response.put("deliveryManagers", new ArrayList<>(deliveryManagers));
+        response.put("deliveryDirector", new ArrayList<>(deliveryDirectors));
+        response.put("deliveryManager", new ArrayList<>(deliveryManagers));
         response.put("currentData", filteredCurrentData);
         response.put("previousData", filteredPreviousData);
         response.put("account", accountNames);
