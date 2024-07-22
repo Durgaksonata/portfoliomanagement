@@ -26,4 +26,8 @@ public interface BaseLine_RevenueGrowthSummaryRepository extends JpaRepository<B
 
     @Query("SELECT DISTINCT r.deliveryManager FROM BaseLine_RevenueGrowthSummary r WHERE r.account = :account")
     List<String> findDeliveryManagersByAccount(@Param("account") String account);
+
+    List<BaseLine_RevenueGrowthSummary> findByDeliveryDirectorIn(List<String> deliveryDirectorNames);
+
+    List<BaseLine_RevenueGrowthSummary> findByDeliveryManagerIn(List<String> deliveryManagerNames);
 }

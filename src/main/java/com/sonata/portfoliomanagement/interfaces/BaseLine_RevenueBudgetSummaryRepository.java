@@ -24,4 +24,8 @@ public interface BaseLine_RevenueBudgetSummaryRepository extends JpaRepository<B
 
     @Query("SELECT DISTINCT r.deliveryManager FROM BaseLine_RevenueBudgetSummary r WHERE r.account = :account")
     List<String> findDeliveryManagersByAccount(@Param("account") String account);
+
+    List<BaseLine_RevenueBudgetSummary> findByDeliveryDirectorIn(List<String> deliveryDirectorNames);
+
+    List<BaseLine_RevenueBudgetSummary> findByDeliveryManagerIn(List<String> deliveryManagerNames);
 }

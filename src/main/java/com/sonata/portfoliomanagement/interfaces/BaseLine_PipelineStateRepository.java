@@ -26,4 +26,8 @@ public interface BaseLine_PipelineStateRepository extends JpaRepository<BaseLine
 
     @Query("SELECT DISTINCT r.deliveryManager FROM BaseLine_PipelineState r WHERE r.account = :account")
     List<String> findDeliveryManagersByAccount(@Param("account") String account);
+
+    List<BaseLine_PipelineState> findByDeliveryDirectorIn(List<String> deliveryDirectorNames);
+
+    List<BaseLine_PipelineState> findByDeliveryManagerIn(List<String> deliveryManagerNames);
 }

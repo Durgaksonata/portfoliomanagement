@@ -118,7 +118,5 @@ public interface RevenueBudgetSummaryRepository extends JpaRepository<RevenueBud
     List<RevenueBudgetSummary> findByDeliveryManagerAndFinancialYears(@Param("deliveryManager") String deliveryManager, @Param("financialYears") List<Integer> financialYears);
 
 
-
-
-
+    List<RevenueBudgetSummary> findByDeliveryDirectorIn(List<String> deliveryDirectorNames);
 }
