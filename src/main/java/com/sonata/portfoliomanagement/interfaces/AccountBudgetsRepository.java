@@ -4,4 +4,6 @@ import com.sonata.portfoliomanagement.model.AccountBudgets;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountBudgetsRepository extends JpaRepository<AccountBudgets, Integer> {
+    AccountBudgets findByAccountAndFinancialYearAndQuarter(String account, int financialYear, String quarter);
+
 }

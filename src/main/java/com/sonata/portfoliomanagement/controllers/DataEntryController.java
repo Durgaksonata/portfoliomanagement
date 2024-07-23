@@ -12,6 +12,7 @@ import com.sonata.portfoliomanagement.interfaces.RevenueGrowthSummaryRepository;
 import com.sonata.portfoliomanagement.model.*;
 import com.sonata.portfoliomanagement.services.DataEntryService;
 import com.sonata.portfoliomanagement.services.DataPopulationService;
+import com.sonata.portfoliomanagement.services.PipelineStateService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,6 +33,8 @@ public class DataEntryController {
     private PursuitTrackerRepository pursuitTrackerRepository;
     @Autowired
     private DataEntryRepository dataEntryRepo;
+
+
 
     @Autowired
     private DataPopulationService dataPopulationService;
@@ -356,11 +359,11 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
 
 
 
-    @PostMapping("/populateAll")
-    public ResponseEntity<String> populateAllData() {
-        dataPopulationService.populateData();
-        return ResponseEntity.ok("Data populated successfully");
-    }
+//    @PostMapping("/populateAll")
+//    public ResponseEntity<String> populateAllData() {
+//        dataPopulationService.populateData();
+//        return ResponseEntity.ok("Data populated successfully");
+//    }
 
 
 
@@ -434,6 +437,10 @@ public ResponseEntity<String> deleteMultipleDataEntries(@RequestBody List<Intege
             DataEntry savedDataEntry = dataEntryService.saveDataEntry(dataEntry);
             savedDataEntries.add(savedDataEntry);
         }
+        // Populate additional data
+        dataPopulationService.populateData();
+
+
 
         response.put("message", "Data successfully created.");
         response.put("data", savedDataEntries);

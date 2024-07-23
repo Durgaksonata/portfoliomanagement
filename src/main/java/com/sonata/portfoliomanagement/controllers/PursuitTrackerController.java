@@ -7,6 +7,7 @@ import com.sonata.portfoliomanagement.model.MD_PursuitProbability;
 import com.sonata.portfoliomanagement.model.PursuitActions;
 import com.sonata.portfoliomanagement.model.PursuitTracker;
 import com.sonata.portfoliomanagement.model.PursuitTrackerDTO;
+import com.sonata.portfoliomanagement.services.PipelineStateService;
 import com.sonata.portfoliomanagement.services.PursuitTrackerService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ public class PursuitTrackerController {
     @Autowired
     private PursuitActionsRepository pursuitActionsRepository;
 
-
+    @Autowired
+    private PipelineStateService pipelineStateService;
 
     @Autowired
     private MD_PursuitProbabilityRepository mdPursuitProbabilityRepository;
@@ -61,6 +63,8 @@ public class PursuitTrackerController {
                 response.put("message", message);
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
+            // Update PipelineState after saving DataEntries
+            pipelineStateService.updatePipelineState();
 
             // Calculate stage based on PursuitStatus and Type
             String stage = calculateStage(pursuitTracker.getPursuitstatus(), pursuitTracker.getType());
